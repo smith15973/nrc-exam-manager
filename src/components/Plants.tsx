@@ -1,7 +1,7 @@
 // src/components/Test.tsx
 import React, { useState, useEffect } from 'react';
 
-const Test: React.FC = () => {
+const Plants: React.FC = () => {
   const [name, setName] = useState('');
   const [plants, setPlants] = useState<Plant[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -11,11 +11,11 @@ const Test: React.FC = () => {
     if (result.success) {
       setPlants(result.plants || []);
     } else {
-      setError(result.error || 'Failed to fetch users');
+      setError(result.error || 'Failed to fetch plants');
     }
   };
 
-  const handleAddUser = async (e: React.FormEvent) => {
+  const handleAddPlant = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name) {
       setError('Please fill in all fields');
@@ -27,9 +27,32 @@ const Test: React.FC = () => {
       setError(null);
       fetchPlants();
     } else {
-      setError(result.error || 'Failed to add user');
+      setError(result.error || 'Failed to add plant');
     }
   };
+
+  const handleUpdatePlant = async (plant: Plant) => {
+    if (!plant.name) {
+      setError('Please fill in all fields');
+      return;
+    }
+    const result = await window.api.updatePlant(plant);
+    if (result.success) {
+      setError(null);
+      fetchPlants();
+    } else {
+      setError(result.error || 'Failed to update plant');
+    }
+  };
+
+  const handleDeletePlant = async (plantId: number) => {
+    const result = await window.api.deletePlant(plantId);
+    if (result.success) {
+      fetchPlants();
+    } else {
+      setError(result.error || 'Failt to delete plant');
+    }
+  }
 
   useEffect(() => {
     fetchPlants();
@@ -38,7 +61,7 @@ const Test: React.FC = () => {
   return (
     <div style={{ padding: '20px' }}>
       <h1>Plant Management</h1>
-      <form onSubmit={handleAddUser}>
+      <form onSubmit={handleAddPlant}>
         <div>
           <label>Name: </label>
           <input
@@ -54,7 +77,10 @@ const Test: React.FC = () => {
       <ul>
         {plants.map((plant) => (
           <li key={plant.plant_id}>
-            {plant.name}
+            <div>
+              {plant.name}
+              <button onClick={() => handleDeletePlant(plant.plant_id!)}>Delete</button>
+            </div>
           </li>
         ))}
       </ul>
@@ -62,4 +88,4 @@ const Test: React.FC = () => {
   );
 };
 
-export default Test;
+export default Plants;
