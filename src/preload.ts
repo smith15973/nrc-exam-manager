@@ -1,8 +1,12 @@
 // src/main/preload.ts
 import { contextBridge, ipcRenderer } from 'electron';
-import { User } from '../db/db';
+import { Plant } from '../db/db';
 
 contextBridge.exposeInMainWorld('api', {
-  addUser: (user: User) => ipcRenderer.invoke('add-user', user),
-  getUsers: () => ipcRenderer.invoke('get-users'),
+  addPlant: (plant: Plant) => ipcRenderer.invoke('add-plant', plant),
+  getPlants: () => ipcRenderer.invoke('get-plants'),
+  getPlant: (plantId: number) => ipcRenderer.invoke('get-plant', plantId),
+  updatePlant: (plant: Plant) => ipcRenderer.invoke('update-plant', plant),
+  deletePlant: (plantId: number) => ipcRenderer.invoke('delete-plant', plantId),
+
 });
