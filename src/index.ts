@@ -55,12 +55,8 @@ const createWindow = (): void => {
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  // Configure DevTools to suppress autofill errors
-  const devToolsOptions = {
-    mode: 'detach' as const
-  };
 
-  mainWindow.webContents.openDevTools(devToolsOptions);
+  mainWindow.webContents.openDevTools();
 
   mainWindow.on('closed', () => {
     mainWindow = null;

@@ -38,7 +38,7 @@ export class Database {
 
       // load schema from external file
       try {
-        const schemaPath = path.join(app.getAppPath(), 'db/scehma.sql');
+        const schemaPath = path.join(app.getAppPath(), 'db/schema.sql');
 
         if (fs.existsSync(schemaPath)) {
           const schema = fs.readFileSync(schemaPath, 'utf8');
