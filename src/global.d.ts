@@ -1,7 +1,27 @@
 // src/renderer/global.d.ts
+interface Plant {
+  plant_id?: number;
+  name: string;
+}
+
+interface ApiResponse {
+  success: boolean;
+  error?: string;
+}
+
+interface PlantResponse extends ApiResponse {
+  plantId: number;
+  plant?: Plant;
+  plants?: Plant[];
+}
+
 interface Window {
   api: {
-    addUser: (user: { name: string; email: string }) => Promise<{ success: boolean; error?: string }>;
-    getUsers: () => Promise<{ success: boolean; users?: { id: number; name: string; email: string }[]; error?: string }>;
+    // plant operations
+    addPlant: (plant: Plant) => Promise<PlantResponse>;
+    getPlants: () => Promise<PlantResponse>;
+    getPlant: (plantId: number) => Promise<PlantResponse>;
+    updatePlant: (plant: Plant) => Promise<PlantResponse>;
+    deletePlant: (plantId: number) => Promise<PlantResponse>;
   };
 }

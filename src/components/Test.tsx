@@ -1,22 +1,15 @@
 // src/components/Test.tsx
 import React, { useState, useEffect } from 'react';
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-
 const Test: React.FC = () => {
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [users, setUsers] = useState<User[]>([]);
+  const [plants, setPlants] = useState<Plant[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchUsers = async () => {
-    const result = await window.api.getUsers();
+  const fetchPlants = async () => {
+    const result = await window.api.getPlants();
     if (result.success) {
-      setUsers(result.users || []);
+      setPlants(result.plants || []);
     } else {
       setError(result.error || 'Failed to fetch users');
     }
@@ -24,28 +17,27 @@ const Test: React.FC = () => {
 
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email) {
+    if (!name) {
       setError('Please fill in all fields');
       return;
     }
-    const result = await window.api.addUser({ name, email });
+    const result = await window.api.addPlant({ name });
     if (result.success) {
       setName('');
-      setEmail('');
       setError(null);
-      fetchUsers();
+      fetchPlants();
     } else {
       setError(result.error || 'Failed to add user');
     }
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchPlants();
   }, []);
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>User Management</h1>
+      <h1>Plant Management</h1>
       <form onSubmit={handleAddUser}>
         <div>
           <label>Name: </label>
@@ -55,22 +47,14 @@ const Test: React.FC = () => {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-        <div>
-          <label>Email: </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <button type="submit">Add User</button>
+        <button type="submit">Add Plant</button>
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <h2>Users</h2>
+      <h2>Plants</h2>
       <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            {user.name} ({user.email})
+        {plants.map((plant) => (
+          <li key={plant.plant_id}>
+            {plant.name}
           </li>
         ))}
       </ul>
