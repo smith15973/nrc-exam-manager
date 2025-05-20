@@ -21,6 +21,10 @@ const PlantsForm: React.FC<PlantFormProps> = ({ plantId }) => {
         }
     }, [plantId, fetchPlant]);
 
+    const handleChange = (key: string, value: string) => {
+        setPlant((prev) => ({ ...prev, [key]: value }));
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault;
         if (!plant.name.trim()) return;
@@ -37,16 +41,17 @@ const PlantsForm: React.FC<PlantFormProps> = ({ plantId }) => {
         <div style={{ padding: '20px' }}>
             <h1>Plant Management</h1>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Name: </label>
-                    <input
-                        type="text"
-                        value={plant.name}
-                        onChange={(e) => setPlant({ name: e.target.value })}
-                        placeholder='Enter Plant Name'
-                        required
-                    />
-                </div>
+                {plantSchema.map((field) => (
+                    <div key={field.key}>
+                        <label htmlFor={`${field.label}`}>{field.label}</label>
+                        <input type={field.type}
+                            value={(plant as any)[field.key] || ''}
+                            onChange={(e) => handleChange(field.key, e.target.value)}
+                            placeholder={`Enter ${field.label.toLowerCase()}`}
+                            required={field.required}
+                        />
+                    </div>
+                ))}
                 <button type='submit'>Add Plant</button>
             </form>
             {error && <p style={{ color: 'red' }}>{error}</p>}
