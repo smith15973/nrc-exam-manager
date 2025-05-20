@@ -1,12 +1,9 @@
+// db/db.ts
 import sqlite3 from 'sqlite3';
 import { app } from 'electron';
 import path from 'path';
 import fs from 'fs'
-
-export interface Plant {
-  plant_id?: number;
-  name: string;
-}
+import { schema } from './schema';
 
 export class Database {
   private db: sqlite3.Database;
@@ -15,7 +12,7 @@ export class Database {
 
   constructor() {
     const dbPath = path.join(app.getPath('userData'), 'nrc_exam_questions_database.db');
-    // console.log('Database location:', dbPath);
+    console.log('Database location:', dbPath);
     this.db = new sqlite3.Database(dbPath, (err) => {
       if (err) {
         console.error('Database connection error:', err);
@@ -36,47 +33,31 @@ export class Database {
     this.db.serialize(() => {
       this.db.run('BEGIN TRANSACTION');
 
-      // load schema from external file
+      // create tables from schema
       try {
-        const schemaPath = path.join(app.getAppPath(), 'db/schema.sql');
-
-        if (fs.existsSync(schemaPath)) {
-          const schema = fs.readFileSync(schemaPath, 'utf8');
-
-          const statements = schema.split(';').filter(stmt => stmt.trim() != '');
-
-          statements.forEach(statement => {
-            this.db.run(statement, (err) => {
-              if (err) console.error('Scehma statement error:', statement, err);
-            });
+        Object.entries(schema).forEach(([tableName, { columns }]) => {
+          const sql = `CREATE TABLE IF NOT EXISTS ${tableName} (${columns.join(', ')})`;
+          this.db.run(sql, (err) => {
+            if (err) {
+              console.error(`Schema error for ${tableName}`, err)
+            }
           });
-          console.log('Schema initialized form file');
-        } else {
-          console.error('Schema file not found at:', schemaPath);
-          throw new Error('Database schema file missing');
-        }
+        });
 
-        this.db.run(`
-          CREATE TABLE IF NOT EXISTS schema_version (
-          version INTEGER PRIMARY KEY,
-          applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-          )
-        `);
-
-        this.db.run(`
-          INSERT OR IGNORE INTO schema_version (version) VALUES (?)`,
-          [this.schemaVersion]);
+        this.db.run(
+          `INSERT OR IGNORE INTO schema_version (version) VALUES (?)`,
+          [this.schemaVersion]
+        );
 
         this.db.run('COMMIT');
+
+
         console.log('Database initialization completed successfully');
-
-
       } catch (error) {
-        this.db.run("ROLLBACK");
-        console.log('Database initialization failed', error);
+        this.db.run('ROLLBACK');
+        console.error("Database initialization failed: ", error);
       }
-
-    })
+    });
   }
 
   async addPlant(plant: Plant): Promise<number> {
@@ -142,7 +123,7 @@ export class Database {
         return;
       }
 
-      if (plant.plant_id) {
+      if (!plant.plant_id) {
         reject(new Error('Plant ID is required for update'));
         return;
       }

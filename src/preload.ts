@@ -1,6 +1,5 @@
 // src/main/preload.ts
 import { contextBridge, ipcRenderer } from 'electron';
-import { Plant } from '../db/db';
 
 contextBridge.exposeInMainWorld('api', {
   addPlant: (plant: Plant) => ipcRenderer.invoke('add-plant', plant),

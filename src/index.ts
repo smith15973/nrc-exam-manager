@@ -1,36 +1,11 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import { Database, Plant } from '../db/db';
-import path from 'path'
-import fs from 'fs'
+import { Database } from './components/lib/db';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 let mainWindow: BrowserWindow | null = null;
 let db: Database | null = null;
-
-// Ensure schema.sql is copied to the correct location
-const setupSchemaFile = () => {
-  const appPath = app.getAppPath();
-  const schemaSrc = path.join(__dirname, '..', 'db', 'schema.sql');
-  const schemaDestDir = path.join(appPath, 'db');
-  const schemaDest = path.join(schemaDestDir, 'schema.sql');
-
-  // Ensure destination directory exists
-  if (!fs.existsSync(schemaDestDir)) {
-    fs.mkdirSync(schemaDestDir, { recursive: true });
-  }
-
-  // Only copy if destination doesn't exist
-  if (!fs.existsSync(schemaDest) && fs.existsSync(schemaSrc)) {
-    try {
-      fs.copyFileSync(schemaSrc, schemaDest);
-      console.log('Schema file copied successfully');
-    } catch (err) {
-      console.error('Failed to copy schema file:', err);
-    }
-  }
-};
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -64,7 +39,6 @@ const createWindow = (): void => {
 };
 
 app.on('ready', () => {
-  setupSchemaFile();
   createWindow();
 });
 
