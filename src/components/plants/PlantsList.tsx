@@ -1,6 +1,8 @@
 // src/components/Test.tsx
 import React from 'react';
-import { useDatabase } from '../hooks/useDatabase';
+import { IconButton, List, ListItem, Typography, Box, ListItemButton, ListItemAvatar, Avatar } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 interface PlantListProps {
   plants: Plant[];
@@ -10,22 +12,30 @@ interface PlantListProps {
 const PlantsList: React.FC<PlantListProps> = ({ plants, deletePlant }) => {
 
   return (
-    <div style={{ padding: '20px' }}>
-
-
-      <h2>Plants</h2>
-      <ul>
+    <Box style={{ padding: '20px' }}>
+      <Typography variant='h4'>Plants</Typography>
+      <List>
         {plants.map((plant) => (
-          <li key={plant.plant_id}>
-            <div>
-              {plant.plant_id} {plant.name}
-              <button onClick={() => deletePlant(plant.plant_id!)}>Delete</button>
-
-            </div>
-          </li>
+          <ListItem
+            key={plant.plant_id}
+            secondaryAction={
+              <IconButton edge='end' aria-label='delete'>
+                <DeleteIcon onClick={() => deletePlant(plant.plant_id!)} />
+              </IconButton>
+            }
+            divider
+            disablePadding
+          >
+            <ListItemAvatar>
+              <Avatar variant='rounded' alt={plant.name} />
+            </ListItemAvatar>
+            <ListItemButton>
+              {plant.name}
+            </ListItemButton>
+          </ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Box>
   );
 };
 

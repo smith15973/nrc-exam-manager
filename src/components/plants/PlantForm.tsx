@@ -2,14 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { useDatabase } from '../hooks/useDatabase';
 import { defaultPlant, plantSchema } from '../lib/schema';
+import { Box, Button, TextField, Typography } from '@mui/material';
 
 interface PlantFormProps {
     plantId?: number;
+    addPlant: (plant: Plant) => void;
 }
 
-const PlantsForm: React.FC<PlantFormProps> = ({ plantId }) => {
+const PlantsForm: React.FC<PlantFormProps> = ({ plantId, addPlant }) => {
     const [plant, setPlant] = useState<Plant>(defaultPlant);
-    const { addPlant, error, fetchPlant } = useDatabase();
+    const { fetchPlant } = useDatabase();
 
     useEffect(() => {
         if (plantId) {
@@ -25,12 +27,11 @@ const PlantsForm: React.FC<PlantFormProps> = ({ plantId }) => {
         setPlant((prev) => ({ ...prev, [key]: value }));
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault;
+    const handleSubmit = async () => {
         if (!plant.name.trim()) return;
 
         try {
-            await addPlant(plant);
+            addPlant(plant);
             setPlant(defaultPlant);
         } catch (err) {
             // error handled by useDatabase hook
@@ -38,24 +39,20 @@ const PlantsForm: React.FC<PlantFormProps> = ({ plantId }) => {
     }
 
     return (
-        <div style={{ padding: '20px' }}>
-            <h1>Plant Management</h1>
-            <form onSubmit={handleSubmit}>
-                {plantSchema.map((field) => (
-                    <div key={field.key}>
-                        <label htmlFor={`${field.label}`}>{field.label}</label>
-                        <input type={field.type}
-                            value={(plant as any)[field.key] || ''}
-                            onChange={(e) => handleChange(field.key, e.target.value)}
-                            placeholder={`Enter ${field.label.toLowerCase()}`}
-                            required={field.required}
-                        />
-                    </div>
-                ))}
-                <button type='submit'>Add Plant</button>
-            </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-        </div>
+        <Box style={{ padding: '20px' }}>
+            <Typography variant='h4'>Plant Management</Typography>
+            {plantSchema.map((field) => (
+                <Box key={field.key}>
+                    <TextField type={field.type}
+                        value={(plant as any)[field.key] || ''}
+                        onChange={(e) => handleChange(field.key, e.target.value)}
+                        label={`${field.label}`}
+                        required={field.required}
+                    />
+                </Box>
+            ))}
+            <Button variant='contained' onClick={handleSubmit}>Add Plant</Button>
+        </Box>
     );
 };
 
