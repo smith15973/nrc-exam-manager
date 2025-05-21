@@ -1,6 +1,8 @@
 // src/components/Test.tsx
 import { IconButton, List, ListItem, Typography, Box, ListItemButton, ListItemAvatar, Avatar } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Link } from 'react-router-dom';
+
 
 
 interface PlantListProps {
@@ -28,7 +30,7 @@ export default function PlantsList(props: PlantListProps) {
             <ListItemAvatar>
               <Avatar variant='rounded' alt={plant.name} />
             </ListItemAvatar>
-            <ListItemButton>
+            <ListItemButton component={Link} to={`/plants/${plant.plant_id}`}>
               {plant.plant_id} {plant.name}
             </ListItemButton>
           </ListItem>

@@ -13,6 +13,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
 
 interface Props {
   /**
@@ -21,9 +22,12 @@ interface Props {
    */
   window?: () => Window;
 }
-
 const drawerWidth = 240;
-const navItems = ['Home', 'Question Search', 'Plants'];
+const navItems = [
+  { label: 'Home', link: '/' },
+  { label: 'Question Search', link: '/questions' },
+  { label: 'Plants', link: '/plants' }
+];
 
 export default function DrawerAppBar(props: Props) {
   const { window } = props;
@@ -33,17 +37,22 @@ export default function DrawerAppBar(props: Props) {
     setMobileOpen((prevState) => !prevState);
   };
 
+
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        MUI
+        NEM
       </Typography>
       <Divider />
       <List>
         {navItems.map((item) => (
-          <ListItem key={item} disablePadding>
-            <ListItemButton sx={{ textAlign: 'center' }}>
-              <ListItemText primary={item} />
+          <ListItem key={item.label} disablePadding>
+            <ListItemButton
+              component={Link}
+              to={item.link}
+              sx={{ textAlign: 'center' }}
+            >
+              <ListItemText primary={item.label} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -76,8 +85,12 @@ export default function DrawerAppBar(props: Props) {
           </Typography>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {navItems.map((item) => (
-              <Button key={item} sx={{ color: '#fff' }}>
-                {item}
+              <Button
+                component={Link}
+                to={item.link}
+                sx={{ color: '#fff' }}
+              >
+                {item.label}
               </Button>
             ))}
           </Box>
@@ -102,7 +115,7 @@ export default function DrawerAppBar(props: Props) {
       </nav>
       <Box component="main" sx={{ p: 3 }}>
         <Toolbar />
-        
+
       </Box>
     </Box>
   );

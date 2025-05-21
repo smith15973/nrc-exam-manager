@@ -2,21 +2,19 @@ import { useEffect, useState } from 'react';
 import { useDatabase } from '../hooks/useDatabase';
 import { Typography } from '@mui/material';
 import { defaultPlant } from '../lib/schema';
+import { useParams } from 'react-router-dom';
 
-interface PlantPageProps {
-    plantId: number;
-}
 
-export default function PlantsList(props: PlantPageProps) {
+export default function PlantsList() {
     const [plant, setPlant] = useState(defaultPlant);
-    const { plantId } = props;
+    const { plantId } = useParams<{ plantId: string }>();
     const { fetchPlant } = useDatabase();
 
 
 
     useEffect(() => {
         if (plantId) {
-            fetchPlant(plantId).then((fetchedPlant) => {
+            fetchPlant(parseInt(plantId)).then((fetchedPlant) => {
                 if (fetchedPlant) {
                     setPlant(fetchedPlant);
                 }

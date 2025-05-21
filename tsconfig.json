@@ -16,6 +16,7 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
+     "forceConsistentCasingInFileNames": true,
     "paths": {
       "*": [
         "node_modules/*"
