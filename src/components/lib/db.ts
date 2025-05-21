@@ -165,6 +165,115 @@ export class Database {
       );
     });
   }
+  
+  async addExam(exam: Exam): Promise<number> {
+    return new Promise((resolve, reject) => {
+      if (this.isClosing) {
+        reject(new Error('Database is closing'));
+        return;
+      }
+
+      this.db.run(
+        'INSERT INTO exams (name) VALUES (?)',
+        [exam.name],
+        function (err) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(this.lastID);
+          }
+        }
+      );
+    });
+  }
+
+  async getExams(): Promise<Exam[]> {
+    return new Promise((resolve, reject) => {
+      if (this.isClosing) {
+        reject(new Error('Database is closing'));
+        return;
+      }
+
+      console.log("IN db.ts")
+
+      this.db.all('SELECT * FROM exams', [], (err, rows: Exam[]) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+  }
+
+  async getExam(examId: number): Promise<Exam> {
+    return new Promise((resolve, reject) => {
+      if (this.isClosing) {
+        reject(new Error("Database is closing"));
+        return;
+      }
+      this.db.get("SELECT * FROM exams WHERE exam_id = ?", [examId], (err, row: Exam) => {
+        if (err) {
+          reject(err);
+        } else if (!row) {
+          reject(new Error('Exam not found'));
+        } else {
+          resolve(row);
+        }
+      });
+    });
+  }
+
+  async updateExam(exam: Exam): Promise<Exam> {
+    return new Promise((resolve, reject) => {
+      if (this.isClosing) {
+        reject(new Error("Database is closing"));
+        return;
+      }
+
+      if (!exam.exam_id) {
+        reject(new Error('Exam ID is required for update'));
+        return;
+      }
+
+      this.db.run(
+        'UPDATE exams SET name =? WHERE exam_id = ?',
+        [exam.name, exam.exam_id],
+        function (err) {
+          if (err) {
+            reject(err);
+          } else if (this.changes === 0) {
+            reject(new Error('Exam not found'));
+          } else {
+            resolve(exam);
+          }
+        }
+      );
+    });
+  }
+
+  async deleteExam(examId: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.isClosing) {
+        reject(new Error("Database is closing"));
+        return;
+      }
+
+      this.db.run(
+        'DELETE FROM exams WHERE exam_id = ?',
+        [examId],
+        function (err) {
+          if (err) {
+            reject(err);
+          } else if (this.changes === 0) {
+            reject(new Error('Exam not found'));
+          } else {
+            resolve();
+          }
+        }
+      );
+    });
+  }
 
   // Check if database is still connected
   isConnected(): boolean {

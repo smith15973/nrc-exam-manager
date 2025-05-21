@@ -4,6 +4,12 @@ interface Plant {
   name: string;
 }
 
+interface Exam {
+  exam_id?: number;
+  name: string;
+  plant_id: number;
+}
+
 interface ApiResponse {
   success: boolean;
   error?: string;
@@ -15,6 +21,12 @@ interface PlantResponse extends ApiResponse {
   plants?: Plant[];
 }
 
+interface ExamResponse extends ApiResponse {
+  examId: number;
+  exam?: Exam;
+  exams?: Exam[];
+}
+
 interface Window {
   api: {
     // plant operations
@@ -23,5 +35,12 @@ interface Window {
     getPlant: (plantId: number) => Promise<PlantResponse>;
     updatePlant: (plant: Plant) => Promise<PlantResponse>;
     deletePlant: (plantId: number) => Promise<PlantResponse>;
+
+    // exam operations
+    addExam: (exam: Exam) => Promise<ExamResponse>;
+    getExams: () => Promise<ExamResponse>;
+    getExam: (examId: number) => Promise<ExamResponse>;
+    updateExam: (exam: Exam) => Promise<ExamResponse>;
+    deleteExam: (examId: number) => Promise<ExamResponse>;
   };
 }

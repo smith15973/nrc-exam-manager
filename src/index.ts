@@ -106,7 +106,7 @@ ipcMain.handle('update-plant', async (_event, plant: Plant) => {
       db = new Database();
     }
     await db.updatePlant(plant);
-    return { success: true };
+    return { success: true, plant };
   } catch (err: any) {
     return { success: false, error: err.message };
   }
@@ -118,6 +118,66 @@ ipcMain.handle('delete-plant', async (_event, plantId: number) => {
       db = new Database();
     }
     await db.deletePlant(plantId);
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('add-exam', async (_event, exam: Exam) => {
+  try {
+    if (!db) {
+      db = new Database(); // Reopen if needed
+    }
+    const examId = await db.addExam(exam);
+    return { success: true, examId };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('get-exams', async () => {
+  try {
+    if (!db) {
+      db = new Database(); // Reopen if needed
+    }
+    const exams = await db.getExams();
+    return { success: true, exams };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('get-exam', async (_event, examId: number) => {
+  try {
+    if (!db) {
+      db = new Database();
+    }
+    const exam = await db.getExam(examId);
+    return { success: true, exam };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('update-exam', async (_event, exam: Exam) => {
+  try {
+    if (!db) {
+      db = new Database();
+    }
+    await db.updateExam(exam);
+    return { success: true, exam };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('delete-exam', async (_event, examId: number) => {
+  try {
+    if (!db) {
+      db = new Database();
+    }
+    await db.deleteExam(examId);
     return { success: true };
   } catch (err: any) {
     return { success: false, error: err.message };

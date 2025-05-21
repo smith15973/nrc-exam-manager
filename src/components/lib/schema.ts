@@ -90,3 +90,23 @@ export const plantSchema = schema.plants.columns
 export const defaultPlant: Plant = {
   name: '',
 };
+
+
+// Form schema for exams (derived from schema.exams)
+export const examSchema = schema.exams.columns
+  .filter(col => !col.includes('PRIMARY KEY') && !col.includes('FOREIGN KEY'))
+  .map(col => {
+    const [name, type] = col.split(' ');
+    return {
+      key: name,
+      label: name.charAt(0).toUpperCase() + name.slice(1),
+      type: type === 'TEXT' ? 'text' : 'number',
+      required: col.includes('NOT NULL'),
+    };
+  });
+
+// Default plant object
+export const defaultExam: Exam = {
+  name: '',
+  plant_id: 0,
+};
