@@ -189,6 +189,12 @@ ipcMain.handle('delete-plant', async (_event, plantId: number) => {
 });
 
 ipcMain.handle('add-exam', async (_event, exam: Exam) => {
+
+  // Validate required fields
+  if (!exam.plant_id) {
+    return { success: false, error: "Plant ID is required" };
+  }
+
   try {
     if (!db) {
       db = new Database(); // Reopen if needed

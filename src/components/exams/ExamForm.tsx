@@ -3,17 +3,6 @@ import { defaultExam, examSchema } from '../lib/schema';
 import { Box, Button, MenuItem, Select, TextField, FormControl, InputLabel, FormHelperText } from '@mui/material';
 import { useDatabase } from '../hooks/useDatabase';
 
-interface Plant {
-    plant_id: number;
-    name: string;
-}
-
-interface Exam {
-    exam_id?: number;
-    name: string;
-    plant_id: number;
-}
-
 interface PlantFormProps {
     exam?: Exam;
     handleSubmit: (exam: Exam) => void;

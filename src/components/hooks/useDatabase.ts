@@ -113,7 +113,11 @@ export const useDatabase = () => {
 
     const addExam = async (exam: Exam) => {
         if (!exam.name) {
-            setError('Please fill in all fields');
+            setError('Please fill in exam name');
+            return;
+        }
+        if (!exam.plant_id) {
+            setError('Please fill in the exam plant_id');
             return;
         }
         try {

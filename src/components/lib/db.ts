@@ -174,8 +174,8 @@ export class Database {
       }
 
       this.db.run(
-        'INSERT INTO exams (name) VALUES (?)',
-        [exam.name],
+        'INSERT INTO exams (name, plant_id) VALUES (?, ?)',
+        [exam.name, exam.plant_id],
         function (err) {
           if (err) {
             reject(err);
@@ -193,8 +193,6 @@ export class Database {
         reject(new Error('Database is closing'));
         return;
       }
-
-      console.log("IN db.ts")
 
       this.db.all('SELECT * FROM exams', [], (err, rows: Exam[]) => {
         if (err) {
@@ -235,10 +233,14 @@ export class Database {
         reject(new Error('Exam ID is required for update'));
         return;
       }
+      if (!exam.plant_id) {
+        reject(new Error('Plant ID is required for update'));
+        return;
+      }
 
       this.db.run(
-        'UPDATE exams SET name =? WHERE exam_id = ?',
-        [exam.name, exam.exam_id],
+        'UPDATE exams SET (name, plant_id) = (?, ?) WHERE exam_id = ?',
+        [exam.name, exam.plant_id, exam.exam_id],
         function (err) {
           if (err) {
             reject(err);
