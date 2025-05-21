@@ -1,20 +1,79 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { Database } from './components/lib/db';
+import * as path from 'path';
+import * as fs from 'fs';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
+// Define WindowState interface
+interface WindowState {
+  x?: number;
+  y?: number;
+  width: number;
+  height: number;
+}
+
 let mainWindow: BrowserWindow | null = null;
 let db: Database | null = null;
+
+// Path to store window position data
+const getWindowStatePath = (): string => {
+  return path.join(app.getPath('userData'), 'window-state.json');
+};
+
+// Function to save window position and size
+const saveWindowState = (window: BrowserWindow): void => {
+  if (!window.isMinimized() && !window.isMaximized()) {
+    const position = window.getPosition();
+    const size = window.getSize();
+    
+    const windowState: WindowState = {
+      x: position[0],
+      y: position[1],
+      width: size[0],
+      height: size[1]
+    };
+    
+    try {
+      fs.writeFileSync(getWindowStatePath(), JSON.stringify(windowState));
+    } catch (error) {
+      console.error('Error saving window state:', error);
+    }
+  }
+};
+
+// Function to load saved window state
+const loadWindowState = (): WindowState => {
+  try {
+    const windowStatePath = getWindowStatePath();
+    if (fs.existsSync(windowStatePath)) {
+      return JSON.parse(fs.readFileSync(windowStatePath, 'utf8'));
+    }
+  } catch (error) {
+    console.error('Error loading window state:', error);
+  }
+  
+  // Default window state if no saved state exists
+  return {
+    width: 1200,
+    height: 800
+  };
+};
 
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
 const createWindow = (): void => {
+  // Load saved window state
+  const windowState = loadWindowState();
+  
   mainWindow = new BrowserWindow({
-    height: 800,
-    width: 1200,
+    x: windowState.x,
+    y: windowState.y,
+    width: windowState.width,
+    height: windowState.height,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       contextIsolation: true,
@@ -27,12 +86,17 @@ const createWindow = (): void => {
     db = new Database();
     console.log('Database initialized');
   }
-
+  
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-
-
   mainWindow.webContents.openDevTools();
-
+  
+  // Save window state when the window is closed
+  mainWindow.on('close', () => {
+    if (mainWindow) {
+      saveWindowState(mainWindow);
+    }
+  });
+  
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
