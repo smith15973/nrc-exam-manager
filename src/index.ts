@@ -16,6 +16,7 @@ interface WindowState {
 
 let mainWindow: BrowserWindow | null = null;
 let db: Database | null = null;
+let isShuttingDown = false;
 
 // Path to store window position data
 const getWindowStatePath = (): string => {
@@ -59,6 +60,34 @@ const loadWindowState = (): WindowState => {
     width: 1200,
     height: 800
   };
+};
+
+// Add graceful shutdown function
+const handleShutdown = async (): Promise<void> => {
+  if (isShuttingDown) return;
+  isShuttingDown = true;
+  
+  console.log('Application shutting down...');
+  
+  // Save window state if window exists
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    saveWindowState(mainWindow);
+  }
+  
+  // Close the database connection
+  if (db) {
+    console.log('Closing database...');
+    try {
+      await db.close();
+      console.log('Database closed successfully');
+    } catch (err) {
+      console.error('Error closing database:', err);
+    }
+    db = null;
+  }
+  
+  // Exit the application with success code
+  process.exit(0);
 };
 
 if (require('electron-squirrel-startup')) {
@@ -106,13 +135,21 @@ app.on('ready', () => {
   createWindow();
 });
 
-// Only close the database when the app is really quitting
-app.on('will-quit', () => {
-  if (db) {
-    db.close();
-    db = null;
+// Register process event handlers for termination signals
+process.on('SIGINT', handleShutdown);
+process.on('SIGTERM', handleShutdown);
+process.on('SIGHUP', handleShutdown);
+
+// Modify will-quit to use our handleShutdown function
+app.on('will-quit', (event) => {
+  if (!isShuttingDown) {
+    // Prevent the default quit behavior
+    event.preventDefault();
+    // Use our custom shutdown handler
+    handleShutdown();
   }
 });
+
 
 // Modified to keep database connection open on macOS
 app.on('window-all-closed', () => {

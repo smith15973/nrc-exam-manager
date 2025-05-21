@@ -21,13 +21,14 @@ export default function ExamPage() {
                 }
             });
         }
-    }, []);
+    }, [examId]);
 
     const handleSubmit = async (updatedExam: Exam) => {
         try {
+            console.log("Updated", updatedExam)
             const savedExam = await updateExam(updatedExam);
             if (savedExam) {
-                setExam(savedExam);
+                setExam(updatedExam);
             }
         } catch (err) {
             console.error("Failed to update exam:", err);
@@ -36,8 +37,9 @@ export default function ExamPage() {
 
     return (
         <>
-            <Typography variant='h4'>Hello {exam.name}</Typography>
+            <Typography variant='h4'>{exam.name} - {exam.plant?.name}</Typography>
             <ExamForm exam={exam} handleSubmit={handleSubmit} />
+            <p>{JSON.stringify(exam)}</p>
 
 
         </>

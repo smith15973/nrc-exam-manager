@@ -38,6 +38,7 @@ export default function PlantPage() {
         <>
             <Typography variant='h4'>Hello {plant.name}</Typography>
             <PlantForm plant={plant} handleSubmit={handleSubmit} />
+            {JSON.stringify(plant)}
 
 
         </>

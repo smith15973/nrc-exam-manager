@@ -235,16 +235,42 @@ export class Database {
   async getExam(examId: number): Promise<Exam> {
     return new Promise((resolve, reject) => {
       if (this.isClosing) {
-        reject(new Error("Database is closing"));
+        reject(new Error('Database is closing'));
         return;
       }
-      this.db.get("SELECT * FROM exams WHERE exam_id = ?", [examId], (err, row: Exam) => {
+
+      // SQL query to join exams with plants
+      const query = `
+      SELECT 
+        e.*,
+        p.plant_id AS plant_plant_id,
+        p.name AS plant_name
+      FROM exams e
+      LEFT JOIN plants p ON e.plant_id = p.plant_id
+      WHERE exam_id = ?
+    `;
+
+      this.db.all(query, [examId], (err, rows) => {
         if (err) {
           reject(err);
-        } else if (!row) {
+        } else if (!rows || rows.length === 0) {
           reject(new Error('Exam not found'));
         } else {
-          resolve(row);
+          // Extract the first row as the exam
+          const row: any = rows[0];
+          const exam: any = {
+            exam_id: row.exam_id,
+            name: row.name,
+            // Add other exam fields
+            plant_id: row.plant_id,
+            // Create nested plant object
+            plant: row.plant_plant_id ? {
+              plant_id: row.plant_plant_id,
+              name: row.plant_name,
+              // Add other plant fields
+            } : null
+          };
+          resolve(exam);
         }
       });
     });

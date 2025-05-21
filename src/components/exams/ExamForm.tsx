@@ -16,6 +16,7 @@ export default function ExamForm(props: PlantFormProps) {
     useEffect(() => {
         if (exam) {
             setExamForm(exam);
+            console.log("FORM", exam)
         }
     }, [exam]);
 
