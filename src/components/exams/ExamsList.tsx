@@ -30,7 +30,7 @@ export default function ExamsList(props: ExamListProps) {
                             <Avatar variant='rounded' alt={exam.name} />
                         </ListItemAvatar>
                         <ListItemButton component={Link} to={`/exams/${exam.exam_id}`}>
-                            {exam.exam_id} {exam.name}
+                            {exam.exam_id} {exam.name} {exam.plant?.name}
                         </ListItemButton>
                     </ListItem>
                 ))}

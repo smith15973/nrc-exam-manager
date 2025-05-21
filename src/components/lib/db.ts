@@ -165,7 +165,7 @@ export class Database {
       );
     });
   }
-  
+
   async addExam(exam: Exam): Promise<number> {
     return new Promise((resolve, reject) => {
       if (this.isClosing) {
@@ -194,11 +194,39 @@ export class Database {
         return;
       }
 
-      this.db.all('SELECT * FROM exams', [], (err, rows: Exam[]) => {
+      // SQL query to join exams with plants
+      const query = `
+      SELECT 
+        e.*,
+        p.plant_id AS plant_plant_id,
+        p.name AS plant_name
+      FROM exams e
+      LEFT JOIN plants p ON e.plant_id = p.plant_id
+    `;
+
+      this.db.all(query, [], (err, rows) => {
         if (err) {
           reject(err);
         } else {
-          resolve(rows);
+          // Transform the flat rows into nested objects
+          const exams = rows.map((row: any) => {
+            // Extract exam fields
+            const exam: any = {
+              exam_id: row.exam_id,
+              name: row.name,
+              // Add other exam fields
+              plant_id: row.plant_id,
+              // Create nested plant object
+              plant: row.plant_plant_id ? {
+                plant_id: row.plant_plant_id,
+                name: row.plant_name,
+                // Add other plant fields
+              } : null
+            };
+            return exam;
+          });
+
+          resolve(exams);
         }
       });
     });

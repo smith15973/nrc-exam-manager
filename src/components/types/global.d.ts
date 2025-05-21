@@ -8,6 +8,10 @@ interface Exam {
   exam_id?: number;
   name: string;
   plant_id: number;
+  plant?: {
+    name: string;
+    plant_id: number;
+  }
 }
 
 interface ApiResponse {
