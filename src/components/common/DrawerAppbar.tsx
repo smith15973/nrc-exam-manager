@@ -26,7 +26,8 @@ const drawerWidth = 240;
 const navItems = [
   { label: 'Home', link: '/' },
   { label: 'Question Search', link: '/questions' },
-  { label: 'Plants', link: '/plants' }
+  { label: 'Plants', link: '/plants' },
+  { label: 'Exams', link: '/exams' }
 ];
 
 export default function DrawerAppBar(props: Props) {
@@ -86,6 +87,7 @@ export default function DrawerAppBar(props: Props) {
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {navItems.map((item) => (
               <Button
+                key={item.label}
                 component={Link}
                 to={item.link}
                 sx={{ color: '#fff' }}
