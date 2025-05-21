@@ -1,6 +1,5 @@
 // useDatabase.ts 
 import { useState, useEffect } from "react";
-import { Database } from "../lib/db";
 
 
 export const useDatabase = () => {
@@ -54,18 +53,21 @@ export const useDatabase = () => {
     const updatePlant = async (plant: Plant) => {
         if (!plant.name) {
             setError('Please fill in all fields');
-            return;
+            return null;
         }
         try {
             const result = await window.api.updatePlant(plant);
             if (result.success) {
                 setError(null);
                 await fetchPlants();
+                return result.plant ?? plant;
             } else {
                 setError(result.error || 'Failed to update plant');
+                return null;
             }
         } catch (err) {
             setError("Failed to update plant");
+            return null;
         }
     };
 

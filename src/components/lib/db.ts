@@ -2,7 +2,6 @@
 import sqlite3 from 'sqlite3';
 import { app } from 'electron';
 import path from 'path';
-import fs from 'fs'
 import { schema } from './schema';
 
 export class Database {
@@ -116,7 +115,7 @@ export class Database {
     });
   }
 
-  async updatePlant(plant: Plant): Promise<void> {
+  async updatePlant(plant: Plant): Promise<Plant> {
     return new Promise((resolve, reject) => {
       if (this.isClosing) {
         reject(new Error("Database is closing"));
@@ -137,7 +136,7 @@ export class Database {
           } else if (this.changes === 0) {
             reject(new Error('Plant not found'));
           } else {
-            resolve();
+            resolve(plant);
           }
         }
       );

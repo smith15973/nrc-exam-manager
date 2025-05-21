@@ -1,58 +1,42 @@
 // PlantForm.tsx
 import { useState, useEffect } from 'react';
-import { useDatabase } from '../hooks/useDatabase';
 import { defaultPlant, plantSchema } from '../lib/schema';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 
 interface PlantFormProps {
-    plantId?: number;
-    addPlant: (plant: Plant) => void;
+    plant?: Plant;
+    handleSubmit: (plant: Plant) => void;
 }
 
-export default function PlantsForm(props: PlantFormProps) {
-    const { plantId, addPlant } = props;
-    const [plant, setPlant] = useState<Plant>(defaultPlant);
-    const { fetchPlant } = useDatabase();
+export default function PlantForm(props: PlantFormProps) {
+    const { plant, handleSubmit } = props;
+    const [plantForm, setPlantForm] = useState<Plant>(defaultPlant);
 
     useEffect(() => {
-        if (plantId) {
-            fetchPlant(plantId).then((fetchedPlant) => {
-                if (fetchedPlant) {
-                    setPlant(fetchedPlant);
-                }
-            });
+        if (plant) {
+            setPlantForm(plant);
         }
-    }, [plantId, fetchPlant]);
+    }, [plant]);
 
     const handleChange = (key: string, value: string) => {
-        setPlant((prev) => ({ ...prev, [key]: value }));
+        setPlantForm((prev) => ({ ...prev, [key]: value }));
     }
 
-    const handleSubmit = async () => {
-        if (!plant.name.trim()) return;
-
-        try {
-            addPlant(plant);
-            setPlant(defaultPlant);
-        } catch (err) {
-            // error handled by useDatabase hook
-        }
-    }
 
     return (
-        <Box style={{ padding: '20px' }}>
-            <Typography variant='h4'>Plant Management</Typography>
+        <Box>
             {plantSchema.map((field) => (
-                <Box key={field.key}>
-                    <TextField type={field.type}
-                        value={(plant as any)[field.key] || ''}
+                <Box sx={{ pb: '10px' }} key={field.key}>
+                    <TextField
+                        type={field.type}
+                        value={(plantForm as any)[field.key] || ''}
                         onChange={(e) => handleChange(field.key, e.target.value)}
                         label={`${field.label}`}
                         required={field.required}
                     />
                 </Box>
             ))}
-            <Button variant='contained' onClick={handleSubmit}>Add Plant</Button>
+            <Button variant='contained' onClick={() => handleSubmit(plantForm)}>{plant ? 'Update' : 'Add'} Plant</Button>
         </Box>
     );
 };

@@ -1,5 +1,5 @@
 // src/components/Test.tsx
-import { IconButton, List, ListItem, Typography, Box, ListItemButton, ListItemAvatar, Avatar } from '@mui/material';
+import { IconButton, List, ListItem, Box, ListItemButton, ListItemAvatar, Avatar } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
 
@@ -13,8 +13,7 @@ interface PlantListProps {
 export default function PlantsList(props: PlantListProps) {
   const { plants, deletePlant } = props
   return (
-    <Box style={{ padding: '20px' }}>
-      <Typography variant='h4'>Plants</Typography>
+    <Box>
       <List>
         {plants.map((plant) => (
           <ListItem
