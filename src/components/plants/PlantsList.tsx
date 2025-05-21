@@ -1,5 +1,4 @@
 // src/components/Test.tsx
-import React from 'react';
 import { IconButton, List, ListItem, Typography, Box, ListItemButton, ListItemAvatar, Avatar } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -9,8 +8,8 @@ interface PlantListProps {
   deletePlant: (plantId: number) => void;
 }
 
-const PlantsList: React.FC<PlantListProps> = ({ plants, deletePlant }) => {
-
+export default function PlantsList(props: PlantListProps) {
+  const { plants, deletePlant } = props
   return (
     <Box style={{ padding: '20px' }}>
       <Typography variant='h4'>Plants</Typography>
@@ -30,7 +29,7 @@ const PlantsList: React.FC<PlantListProps> = ({ plants, deletePlant }) => {
               <Avatar variant='rounded' alt={plant.name} />
             </ListItemAvatar>
             <ListItemButton>
-              {plant.name}
+              {plant.plant_id} {plant.name}
             </ListItemButton>
           </ListItem>
         ))}
@@ -38,5 +37,3 @@ const PlantsList: React.FC<PlantListProps> = ({ plants, deletePlant }) => {
     </Box>
   );
 };
-
-export default PlantsList;

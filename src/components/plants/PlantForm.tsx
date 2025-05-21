@@ -1,5 +1,5 @@
 // PlantForm.tsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useDatabase } from '../hooks/useDatabase';
 import { defaultPlant, plantSchema } from '../lib/schema';
 import { Box, Button, TextField, Typography } from '@mui/material';
@@ -9,7 +9,8 @@ interface PlantFormProps {
     addPlant: (plant: Plant) => void;
 }
 
-const PlantsForm: React.FC<PlantFormProps> = ({ plantId, addPlant }) => {
+export default function PlantsForm(props: PlantFormProps) {
+    const { plantId, addPlant } = props;
     const [plant, setPlant] = useState<Plant>(defaultPlant);
     const { fetchPlant } = useDatabase();
 
@@ -56,4 +57,3 @@ const PlantsForm: React.FC<PlantFormProps> = ({ plantId, addPlant }) => {
     );
 };
 
-export default PlantsForm;

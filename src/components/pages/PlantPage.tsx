@@ -1,21 +1,34 @@
-import React from 'react';
-import PlantsForm from '../plants/PlantForm';
-import PlantsList from '../plants/PlantsList';
+import { useEffect, useState } from 'react';
 import { useDatabase } from '../hooks/useDatabase';
 import { Typography } from '@mui/material';
+import { defaultPlant } from '../lib/schema';
+
+interface PlantPageProps {
+    plantId: number;
+}
+
+export default function PlantsList(props: PlantPageProps) {
+    const [plant, setPlant] = useState(defaultPlant);
+    const { plantId } = props;
+    const { fetchPlant } = useDatabase();
 
 
-const PlantPage: React.FC = () => {
 
-    const { plants, addPlant, deletePlant, error } = useDatabase();
+    useEffect(() => {
+        if (plantId) {
+            fetchPlant(plantId).then((fetchedPlant) => {
+                if (fetchedPlant) {
+                    setPlant(fetchedPlant);
+                }
+            });
+        }
+    }, [plantId]);
 
     return (
         <>
-            <PlantsForm addPlant={addPlant} />
-            <PlantsList plants={plants} deletePlant={deletePlant} />
-            {error && <Typography variant='body2' style={{ color: 'red' }}>{error}</Typography>}
+            <Typography variant='h4'>
+                Hello {plant.name}
+            </Typography>
         </>
     )
 };
-
-export default PlantPage;

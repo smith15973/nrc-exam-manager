@@ -1,12 +1,16 @@
 // src/App.tsx
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import PlantPage from './components/pages/PlantPage';
+import DrawerAppBar from './components/common/DrawerAppbar';
+import HomePage from './components/pages/HomePage';
+
 
 const container = document.getElementById('root');
 if (container) {
     const root = createRoot(container);
     root.render(<>
-        <PlantPage />
+        <DrawerAppBar />
+        <HomePage />
+        <PlantPage plantId={1} />
     </>);
 }
