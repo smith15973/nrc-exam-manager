@@ -1,11 +1,12 @@
 // src/renderer/global.d.ts
 interface Plant {
-  plant_id?: number;
+  plant_id: number;
   name: string;
+  exams?: Exam[];
 }
 
 interface Exam {
-  exam_id?: number;
+  exam_id: number;
   name: string;
   plant_id: number;
   plant?: Plant;
@@ -34,6 +35,8 @@ interface Window {
     addPlant: (plant: Plant) => Promise<PlantResponse>;
     getPlants: () => Promise<PlantResponse>;
     getPlant: (plantId: number) => Promise<PlantResponse>;
+    getPlantWithExams: (plantId: number) => Promise<PlantResponse>;
+    getPlantsWithExams: () => Promise<PlantResponse>;
     updatePlant: (plant: Plant) => Promise<PlantResponse>;
     deletePlant: (plantId: number) => Promise<PlantResponse>;
 

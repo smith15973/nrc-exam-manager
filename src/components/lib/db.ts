@@ -97,6 +97,63 @@ export class Database {
     });
   }
 
+  async getPlantsWithExams(): Promise<Plant[]> {
+    return new Promise((resolve, reject) => {
+      if (this.isClosing) {
+        reject(new Error('Database is closing'));
+        return;
+      }
+
+      const query = `
+      SELECT
+        p.*,
+        e.exam_id,
+        e.name as exam_name,
+        e.plant_id as exam_plant_id
+      FROM plants p
+      LEFT JOIN exams e ON p.plant_id = e.plant_id
+      ORDER BY p.plant_id, e.exam_id
+        `;
+
+      this.db.all(query, [], (err, rows: any) => {
+        if (err) {
+          reject(err);
+        } else {
+          const plantsMap = new Map<number, Plant>();
+
+          rows.forEach((row: any) => {
+            const plantId = row.plant_id;
+
+            //add plant to map if not already added
+            if (!plantsMap.has(plantId)) {
+              plantsMap.set(plantId, {
+                plant_id: plantId,
+                name: row.name,
+                exams: []
+              });
+            }
+
+            const plant = plantsMap.get(plantId)!;
+
+            // Add exam if it exists (LEFT JOIN might have null exam data)
+            if (row.exam_id) {
+              plant.exams!.push({
+                exam_id: row.exam_id,
+                name: row.exam_name,
+                plant_id: row.exam_plant_id
+              });
+            }
+          });
+
+          // Convert map to array
+          const plants = Array.from(plantsMap.values());
+          resolve(plants);
+        }
+      });
+
+    })
+  }
+
   async getPlant(plantId: number): Promise<Plant> {
     return new Promise((resolve, reject) => {
       if (this.isClosing) {
@@ -113,6 +170,50 @@ export class Database {
         }
       });
     });
+  }
+
+  async getPlantWithExams(plantId: number): Promise<Plant> {
+    return new Promise((resolve, reject) => {
+      if (this.isClosing) {
+        reject(new Error('Database is closing'));
+        return;
+      }
+
+      const query = `
+      SELECT
+        p.*,
+        e.exam_id,
+        e.name as exam_name,
+        e.plant_id as exam_plant_id
+      FROM plants p
+      LEFT JOIN exams e ON p.plant_id = e.plant_id
+      WHERE p.plant_id = ?
+        `;
+
+      this.db.all(query, [plantId], (err, rows: any[]) => {
+        if (err) {
+          reject(err);
+        } else {
+
+          const row: any = rows[0]
+          const plant: Plant = {
+            plant_id: row.plant_id,
+            name: row.name,
+            exams: rows
+            .filter(row => row.exam_id) // Only include rows with actual exams
+            .map(row => ({
+              exam_id: row.exam_id,
+              name: row.exam_name,
+              plant_id: row.exam_plant_id
+            }))
+          }
+          
+          resolve(plant);
+        }
+      })
+    });
+
+
   }
 
   async updatePlant(plant: Plant): Promise<Plant> {

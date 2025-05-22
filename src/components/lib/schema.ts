@@ -88,6 +88,7 @@ export const plantSchema = schema.plants.columns
 
 // Default plant object
 export const defaultPlant: Plant = {
+  plant_id: 0,
   name: '',
 };
 
@@ -107,6 +108,7 @@ export const examSchema = schema.exams.columns
 
 // Default plant object
 export const defaultExam: Exam = {
+  exam_id: 0,
   name: '',
   plant_id: 0,
 };

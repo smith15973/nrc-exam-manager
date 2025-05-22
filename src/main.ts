@@ -28,14 +28,14 @@ const saveWindowState = (window: BrowserWindow): void => {
   if (!window.isMinimized() && !window.isMaximized()) {
     const position = window.getPosition();
     const size = window.getSize();
-    
+
     const windowState: WindowState = {
       x: position[0],
       y: position[1],
       width: size[0],
       height: size[1]
     };
-    
+
     try {
       fs.writeFileSync(getWindowStatePath(), JSON.stringify(windowState));
     } catch (error) {
@@ -54,7 +54,7 @@ const loadWindowState = (): WindowState => {
   } catch (error) {
     console.error('Error loading window state:', error);
   }
-  
+
   // Default window state if no saved state exists
   return {
     width: 1200,
@@ -66,14 +66,14 @@ const loadWindowState = (): WindowState => {
 const handleShutdown = async (): Promise<void> => {
   if (isShuttingDown) return;
   isShuttingDown = true;
-  
+
   console.log('Application shutting down...');
-  
+
   // Save window state if window exists
   if (mainWindow && !mainWindow.isDestroyed()) {
     saveWindowState(mainWindow);
   }
-  
+
   // Close the database connection
   if (db) {
     console.log('Closing database...');
@@ -85,7 +85,7 @@ const handleShutdown = async (): Promise<void> => {
     }
     db = null;
   }
-  
+
   // Exit the application with success code
   process.exit(0);
 };
@@ -97,7 +97,7 @@ if (require('electron-squirrel-startup')) {
 const createWindow = (): void => {
   // Load saved window state
   const windowState = loadWindowState();
-  
+
   mainWindow = new BrowserWindow({
     x: windowState.x,
     y: windowState.y,
@@ -115,17 +115,17 @@ const createWindow = (): void => {
     db = new Database();
     console.log('Database initialized');
   }
-  
+
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   mainWindow.webContents.openDevTools();
-  
+
   // Save window state when the window is closed
   mainWindow.on('close', () => {
     if (mainWindow) {
       saveWindowState(mainWindow);
     }
   });
-  
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
@@ -189,12 +189,36 @@ ipcMain.handle('get-plants', async () => {
   }
 });
 
+ipcMain.handle('get-plants-with-exams', async () => {
+  try {
+    if (!db) {
+      db = new Database(); // Reopen if needed
+    }
+    const plants = await db.getPlantsWithExams();
+    return { success: true, plants };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
 ipcMain.handle('get-plant', async (_event, plantId: number) => {
   try {
     if (!db) {
       db = new Database();
     }
     const plant = await db.getPlant(plantId);
+    return { success: true, plant };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('get-plant-with-exams', async (_event, plantId: number) => {
+  try {
+    if (!db) {
+      db = new Database(); // Reopen if needed
+    }
+    const plant = await db.getPlantWithExams(plantId);
     return { success: true, plant };
   } catch (err: any) {
     return { success: false, error: err.message };

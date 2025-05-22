@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 
 export const useDatabase = () => {
     const [plants, setPlants] = useState<Plant[]>([]);
+    const [plantsWithExams, setPlantsWithExams] = useState<Plant[]>([]);
     const [exams, setExams] = useState<Exam[]>([]);
     const [error, setError] = useState<string | null>(null);
 
@@ -19,6 +20,19 @@ export const useDatabase = () => {
             setError("Failed to fetch plants");
         }
     };
+
+    const fetchPlantsWithExams = async () => {
+        try {
+            const result = await window.api.getPlantsWithExams();
+            if (result.success) {
+                setPlantsWithExams(result.plants || [])
+            } else {
+                setError(result.error || 'Failed to fetch plants with exams');
+            }
+        } catch (err) {
+            setError("Failed to fetch plants with exams");
+        }
+    };
     const fetchPlant = async (plantId: number) => {
         try {
             const result = await window.api.getPlant(plantId);
@@ -29,6 +43,19 @@ export const useDatabase = () => {
             }
         } catch (err) {
             setError("Failed to fetch plant");
+        }
+    };
+
+    const fetchPlantWithExams = async (plantId: number) => {
+        try {
+            const result = await window.api.getPlantWithExams(plantId);
+            if (result.success) {
+                return result.plant ?? null;
+            } else {
+                setError(result.error || 'Failed to fetch plants with exams');
+            }
+        } catch (err) {
+            setError("Failed to fetch plants with exams");
         }
     };
 
@@ -171,9 +198,12 @@ export const useDatabase = () => {
     useEffect(() => {
         fetchPlants();
         fetchExams();
+        fetchPlantsWithExams();
     }, []);
 
-    return { plants, fetchPlant, addPlant, updatePlant, deletePlant, 
-        exams, fetchExam, addExam, updateExam, deleteExam, 
-        error }
+    return {
+        plants, fetchPlant, fetchPlantWithExams, plantsWithExams, addPlant, updatePlant, deletePlant,
+        exams, fetchExam, addExam, updateExam, deleteExam,
+        error
+    }
 }
