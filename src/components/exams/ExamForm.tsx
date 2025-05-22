@@ -3,12 +3,12 @@ import { defaultExam, examSchema } from '../lib/schema';
 import { Box, Button, MenuItem, Select, TextField, FormControl, InputLabel, FormHelperText } from '@mui/material';
 import { useDatabase } from '../hooks/useDatabase';
 
-interface PlantFormProps {
+interface ExamFormProps {
     exam?: Exam;
     handleSubmit: (exam: Exam) => void;
 }
 
-export default function ExamForm(props: PlantFormProps) {
+export default function ExamForm(props: ExamFormProps) {
     const { exam, handleSubmit } = props;
     const [examForm, setExamForm] = useState<Exam>(exam || defaultExam);
     const { plants } = useDatabase();
@@ -16,7 +16,6 @@ export default function ExamForm(props: PlantFormProps) {
     useEffect(() => {
         if (exam) {
             setExamForm(exam);
-            console.log("FORM", exam)
         }
     }, [exam]);
 

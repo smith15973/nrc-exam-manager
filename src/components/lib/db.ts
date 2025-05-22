@@ -221,7 +221,7 @@ export class Database {
                 plant_id: row.plant_plant_id,
                 name: row.plant_name,
                 // Add other plant fields
-              } : null
+              } : undefined
             };
             return exam;
           });
