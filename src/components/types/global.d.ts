@@ -128,5 +128,12 @@ interface Window {
     getExam: (examId: number) => Promise<ExamResponse>;
     updateExam: (exam: Exam) => Promise<ExamResponse>;
     deleteExam: (examId: number) => Promise<ExamResponse>;
+
+    // exam operations
+    addQuestion: (question: Question) => Promise<QuestionResponse>;
+    getQuestions: () => Promise<QuestionResponse>;
+    getQuestion: (questionId: number) => Promise<QuestionResponse>;
+    updateQuestion: (question: Question) => Promise<QuestionResponse>;
+    deleteQuestion: (questionId: number) => Promise<QuestionResponse>;
   };
 }

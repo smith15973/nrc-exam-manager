@@ -200,14 +200,14 @@ export class Database {
             plant_id: row.plant_id,
             name: row.name,
             exams: rows
-            .filter(row => row.exam_id) // Only include rows with actual exams
-            .map(row => ({
-              exam_id: row.exam_id,
-              name: row.exam_name,
-              plant_id: row.exam_plant_id
-            }))
+              .filter(row => row.exam_id) // Only include rows with actual exams
+              .map(row => ({
+                exam_id: row.exam_id,
+                name: row.exam_name,
+                plant_id: row.exam_plant_id
+              }))
           }
-          
+
           resolve(plant);
         }
       })
@@ -266,6 +266,8 @@ export class Database {
       );
     });
   }
+
+  // exams
 
   async addExam(exam: Exam): Promise<number> {
     return new Promise((resolve, reject) => {
@@ -424,6 +426,115 @@ export class Database {
             reject(err);
           } else if (this.changes === 0) {
             reject(new Error('Exam not found'));
+          } else {
+            resolve();
+          }
+        }
+      );
+    });
+  }
+
+
+  // questions
+  async addQuestion(question: Question): Promise<number> {
+    return new Promise((resolve, reject) => {
+      if (this.isClosing) {
+        reject(new Error('Database is closing'));
+        return;
+      }
+
+      this.db.run(
+        'INSERT INTO questions (question_text) VALUES (?)',
+        [question.question_text],
+        function (err) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(this.lastID);
+          }
+        }
+      );
+    });
+  }
+
+  async getQuestions(): Promise<Question[]> {
+    return new Promise((resolve, reject) => {
+      if (this.isClosing) {
+        reject(new Error('Database is closing'));
+        return;
+      }
+
+      this.db.all('SELECT * FROM questions', [], (err, rows: Question[]) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+  }
+  async getQuestion(questionId: number): Promise<Question> {
+    return new Promise((resolve, reject) => {
+      if (this.isClosing) {
+        reject(new Error('Database is closing'));
+        return;
+      }
+
+      this.db.get('SELECT * FROM questions WHERE question_id = ?', [questionId], (err, row: Question) => {
+        if (err) {
+          reject(err);
+        } else if (!row) {
+          reject(new Error("Question not found"))
+        } else {
+          resolve(row);
+        }
+      });
+    });
+  }
+
+  async updateQuestion(question: Question): Promise<Question> {
+    return new Promise((resolve, reject) => {
+      if (this.isClosing) {
+        reject(new Error("Database is closing"));
+        return;
+      }
+
+      if (!question.question_id) {
+        reject(new Error('Question ID is required for update'));
+        return;
+      }
+
+      this.db.run(
+        'UPDATE questions SET (question_text) = (?) WHERE question_id = ?',
+        [question.question_text, question.question_id],
+        function (err) {
+          if (err) {
+            reject(err);
+          } else if (this.changes === 0) {
+            reject(new Error('Question not found'));
+          } else {
+            resolve(question);
+          }
+        }
+      );
+    });
+  }
+
+  async deleteQuestion(questionId: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.isClosing) {
+        reject(new Error("Database is closing"));
+        return;
+      }
+
+      this.db.run(
+        'DELETE FROM questions WHERE question_id = ?',
+        [questionId],
+        function (err) {
+          if (err) {
+            reject(err);
+          } else if (this.changes === 0) {
+            reject(new Error('Question not found'));
           } else {
             resolve();
           }

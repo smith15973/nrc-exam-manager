@@ -165,6 +165,8 @@ app.on('activate', () => {
   }
 });
 
+
+// handle plants
 ipcMain.handle('add-plant', async (_event, plant: Plant) => {
   try {
     if (!db) {
@@ -249,6 +251,8 @@ ipcMain.handle('delete-plant', async (_event, plantId: number) => {
   }
 });
 
+
+// handle exams
 ipcMain.handle('add-exam', async (_event, exam: Exam) => {
 
   // Validate required fields
@@ -309,6 +313,69 @@ ipcMain.handle('delete-exam', async (_event, examId: number) => {
       db = new Database();
     }
     await db.deleteExam(examId);
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
+
+// handle questions
+ipcMain.handle('add-question', async (_event, question: Question) => {
+
+  try {
+    if (!db) {
+      db = new Database(); // Reopen if needed
+    }
+    const questionId = await db.addQuestion(question);
+    return { success: true, questionId };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('get-questions', async () => {
+  try {
+    if (!db) {
+      db = new Database(); // Reopen if needed
+    }
+    const questions = await db.getQuestions();
+    return { success: true, questions };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('get-question', async (_event, questionId: number) => {
+  try {
+    if (!db) {
+      db = new Database();
+    }
+    const question = await db.getQuestion(questionId);
+    return { success: true, question };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('update-question', async (_event, question: Question) => {
+  try {
+    if (!db) {
+      db = new Database();
+    }
+    await db.updateQuestion(question);
+    return { success: true, question };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('delete-question', async (_event, questionId: number) => {
+  try {
+    if (!db) {
+      db = new Database();
+    }
+    await db.deleteQuestion(questionId);
     return { success: true };
   } catch (err: any) {
     return { success: false, error: err.message };

@@ -16,4 +16,10 @@ contextBridge.exposeInMainWorld('api', {
   updateExam: (exam: Exam) => ipcRenderer.invoke('update-exam', exam),
   deleteExam: (examId: number) => ipcRenderer.invoke('delete-exam', examId),
 
+  addQuestion: (question: Question) => ipcRenderer.invoke('add-question', question),
+  getQuestions: () => ipcRenderer.invoke('get-questions'),
+  getQuestion: (questionId: number) => ipcRenderer.invoke('get-exam', questionId),
+  updateQuestion: (question: Question) => ipcRenderer.invoke('update-question', question),
+  deleteQuestion: (questionId: number) => ipcRenderer.invoke('delete-question', questionId),
+
 });
