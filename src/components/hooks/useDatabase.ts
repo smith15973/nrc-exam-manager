@@ -69,6 +69,7 @@ export const useDatabase = () => {
             if (result.success) {
                 setError(null);
                 await fetchPlants();
+                await fetchPlantsWithExams();
             } else {
                 setError(result.error || 'Failed to add plant');
             }
@@ -88,6 +89,7 @@ export const useDatabase = () => {
             if (result.success) {
                 setError(null);
                 await fetchPlants();
+                await fetchPlantsWithExams();
                 return result.plant ?? plant;
             } else {
                 setError(result.error || 'Failed to update plant');
@@ -104,6 +106,7 @@ export const useDatabase = () => {
             const result = await window.api.deletePlant(plantId);
             if (result.success) {
                 await fetchPlants();
+                await fetchPlantsWithExams();
             } else {
                 setError(result.error || 'Failed to delete plant');
             }

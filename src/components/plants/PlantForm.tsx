@@ -1,15 +1,16 @@
 // PlantForm.tsx
 import { useState, useEffect } from 'react';
 import { defaultPlant, plantSchema } from '../lib/schema';
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Button, SxProps, TextField } from '@mui/material';
 
 interface PlantFormProps {
     plant?: Plant;
     handleSubmit: (plant: Plant) => void;
+    sx?: SxProps;
 }
 
 export default function PlantForm(props: PlantFormProps) {
-    const { plant, handleSubmit } = props;
+    const { plant, handleSubmit, sx } = props;
     const [plantForm, setPlantForm] = useState<Plant>(defaultPlant);
 
     useEffect(() => {
@@ -22,9 +23,14 @@ export default function PlantForm(props: PlantFormProps) {
         setPlantForm((prev) => ({ ...prev, [key]: value }));
     }
 
+    const onSubmit = () => {
+        handleSubmit(plantForm)
+        setPlantForm(defaultPlant)
+    }
+
 
     return (
-        <Box>
+        <Box sx={sx}>
             {plantSchema.map((field) => (
                 <Box sx={{ pb: '10px' }} key={field.key}>
                     <TextField
@@ -38,8 +44,8 @@ export default function PlantForm(props: PlantFormProps) {
             ))}
             <Button
                 variant='contained'
-                onClick={() => handleSubmit(plantForm)}
-                disabled={!plantForm.name}
+                onClick={onSubmit}
+                disabled={!plantForm.name || plant == plantForm}
             >
                 {plant ? 'Update' : 'Add'} Plant
             </Button>

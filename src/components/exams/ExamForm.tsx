@@ -1,30 +1,40 @@
 import { useState, useEffect } from 'react';
 import { defaultExam, examSchema } from '../lib/schema';
-import { Box, Button, MenuItem, Select, TextField, FormControl, InputLabel, FormHelperText } from '@mui/material';
+import { Box, Button, MenuItem, Select, TextField, FormControl, InputLabel, FormHelperText, SxProps } from '@mui/material';
 import { useDatabase } from '../hooks/useDatabase';
 
 interface ExamFormProps {
     exam?: Exam;
+    plant?: Plant;
     handleSubmit: (exam: Exam) => void;
+    sx?: SxProps
 }
 
 export default function ExamForm(props: ExamFormProps) {
-    const { exam, handleSubmit } = props;
+    const { exam, handleSubmit, plant, sx } = props;
     const [examForm, setExamForm] = useState<Exam>(exam || defaultExam);
     const { plants } = useDatabase();
 
     useEffect(() => {
         if (exam) {
             setExamForm(exam);
+        } else if (plant) {
+            setExamForm((prev) => ({ ...prev, plant_id: plant.plant_id }));
         }
-    }, [exam]);
+    }, [exam, plant]);
 
     const handleChange = (key: string, value: any) => {
         setExamForm((prev) => ({ ...prev, [key]: value }));
+        console.log(examForm)
     };
 
+    const onSubmit = () => {
+        handleSubmit(examForm)
+        setExamForm(defaultExam)
+    }
+
     return (
-        <Box>
+        <Box sx={sx}>
             {examSchema.map((field) => {
                 // Skip plant_id as we'll handle it separately with a Select
                 if (field.key === 'plant_id') return null;
@@ -43,31 +53,41 @@ export default function ExamForm(props: ExamFormProps) {
                 );
             })}
 
-            {/* Plant selection dropdown */}
             <Box sx={{ pb: '10px' }}>
-                <FormControl fullWidth required>
-                    <InputLabel id="plant-select-label">Plant</InputLabel>
-                    <Select
-                        labelId="plant-select-label"
-                        id="plant-select"
-                        value={examForm.plant_id}
+                {plant ? (
+                    <TextField
+                        fullWidth
+                        type="text"
+                        value={plant.name}
                         label="Plant"
-                        onChange={(e) => handleChange('plant_id', e.target.value)}
-                    >
-                        <MenuItem value={0}>Select a Plant</MenuItem>
-                        {plants.map((plant: Plant) => (
-                            <MenuItem key={plant.plant_id} value={plant.plant_id}>
-                                {plant.name}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                    <FormHelperText>Select the plant for this exam</FormHelperText>
-                </FormControl>
+                        disabled
+                    />
+                ) : (
+                    <FormControl fullWidth required>
+                        <InputLabel id="plant-select-label">Plant</InputLabel>
+                        <Select
+                            labelId="plant-select-label"
+                            id="plant-select"
+                            value={examForm.plant_id}
+                            label="Plant"
+                            onChange={(e) => handleChange('plant_id', e.target.value)}
+                        >
+                            <MenuItem value={0}>Select a Plant</MenuItem>
+                            {plants.map((plant: Plant) => (
+                                <MenuItem key={plant.plant_id} value={plant.plant_id}>
+                                    {plant.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                        <FormHelperText>Select the plant for this exam</FormHelperText>
+                    </FormControl>
+                )}
             </Box>
+            
 
             <Button
                 variant="contained"
-                onClick={() => handleSubmit(examForm)}
+                onClick={onSubmit}
                 disabled={!examForm.name || examForm.plant_id === 0}
             >
                 {exam ? 'Update' : 'Add'} Exam

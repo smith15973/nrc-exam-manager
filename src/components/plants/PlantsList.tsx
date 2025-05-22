@@ -1,5 +1,5 @@
 // src/components/Test.tsx
-import { IconButton, List, ListItem, Box, ListItemButton, ListItemAvatar, Avatar } from '@mui/material';
+import { IconButton, List, ListItem, Box, ListItemButton, ListItemAvatar, Avatar, SxProps } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
 
@@ -8,13 +8,13 @@ import { Link } from 'react-router-dom';
 interface PlantListProps {
   plants: Plant[];
   deletePlant: (plantId: number) => void;
+  sx?: SxProps
 }
 
 export default function PlantsList(props: PlantListProps) {
-  const { plants, deletePlant } = props
+  const { plants, deletePlant, sx } = props
   return (
-    <Box>
-      <List>
+      <List sx={sx}>
         {plants.map((plant) => (
           <ListItem
             key={plant.plant_id}
@@ -35,6 +35,5 @@ export default function PlantsList(props: PlantListProps) {
           </ListItem>
         ))}
       </List>
-    </Box>
   );
 };

@@ -4,6 +4,8 @@ import { CircularProgress, Typography, Alert } from '@mui/material';
 import { defaultPlant } from '../lib/schema';
 import { useParams } from 'react-router-dom';
 import PlantForm from '../plants/PlantForm';
+import ExamsList from '../exams/ExamsList';
+import ExamForm from '../exams/ExamForm';
 
 
 export default function PlantPage() {
@@ -12,6 +14,7 @@ export default function PlantPage() {
     const { fetchPlantWithExams, updatePlant } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const { deleteExam, addExam } = useDatabase();
 
 
     // Single source of truth for loading exam data
@@ -56,6 +59,39 @@ export default function PlantPage() {
         }
     }
 
+    const handleDeleteExam = async (examId: number) => {
+        try {
+            setError(null);
+            await deleteExam(examId)
+            if (examId) {
+                loadPlant(plant.plant_id)
+            }
+        } catch (err) {
+            setError('Failed to delete exam');
+            console.error("Failed to delete exam:", err);
+        }
+    }
+
+    const handleSubmitExam = async (newExam: Exam) => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            // Update the exam
+            await addExam(newExam);
+
+            // Explicitly refetch to get the updated data with fresh plant info
+            if (newExam) {
+                await loadPlant(plant.plant_id);
+            }
+        } catch (err) {
+            setError('Failed to add exam');
+            console.error("Failed to add exam:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (loading && plant.plant_id === undefined) {
         // Initial loading state
         return (
@@ -75,7 +111,7 @@ export default function PlantPage() {
                 </Alert>
             )}
 
-            <PlantForm plant={plant} handleSubmit={handleSubmit} />
+            <PlantForm plant={plant} handleSubmit={handleSubmit} sx={{ pb: 2 }} />
 
             {loading && plant.plant_id && (
                 <Alert severity="info" sx={{ mt: 2 }}>
@@ -83,7 +119,8 @@ export default function PlantPage() {
                 </Alert>
             )}
 
-            {JSON.stringify(plant)}
+            <ExamForm plant={plant} handleSubmit={handleSubmitExam} />
+            <ExamsList exams={plant.exams || []} deleteExam={handleDeleteExam} />
 
 
         </>
