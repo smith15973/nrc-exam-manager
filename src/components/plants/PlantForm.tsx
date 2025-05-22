@@ -36,7 +36,13 @@ export default function PlantForm(props: PlantFormProps) {
                     />
                 </Box>
             ))}
-            <Button variant='contained' onClick={() => handleSubmit(plantForm)}>{plant ? 'Update' : 'Add'} Plant</Button>
+            <Button
+                variant='contained'
+                onClick={() => handleSubmit(plantForm)}
+                disabled={!plantForm.name}
+            >
+                {plant ? 'Update' : 'Add'} Plant
+            </Button>
         </Box>
     );
 };
