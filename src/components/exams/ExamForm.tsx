@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { defaultExam, examSchema } from '../lib/schema';
 import { Box, Button, MenuItem, Select, TextField, FormControl, InputLabel, FormHelperText, SxProps } from '@mui/material';
 import { useDatabase } from '../hooks/useDatabase';
+import PlantSelect from '../plants/PlantSelect';
 
 interface ExamFormProps {
     exam?: Exam;
@@ -25,7 +26,6 @@ export default function ExamForm(props: ExamFormProps) {
 
     const handleChange = (key: string, value: any) => {
         setExamForm((prev) => ({ ...prev, [key]: value }));
-        console.log(examForm)
     };
 
     const onSubmit = () => {
@@ -62,28 +62,11 @@ export default function ExamForm(props: ExamFormProps) {
                         label="Plant"
                         disabled
                     />
-                ) : (
-                    <FormControl fullWidth required>
-                        <InputLabel id="plant-select-label">Plant</InputLabel>
-                        <Select
-                            labelId="plant-select-label"
-                            id="plant-select"
-                            value={examForm.plant_id}
-                            label="Plant"
-                            onChange={(e) => handleChange('plant_id', e.target.value)}
-                        >
-                            <MenuItem value={0}>Select a Plant</MenuItem>
-                            {plants.map((plant: Plant) => (
-                                <MenuItem key={plant.plant_id} value={plant.plant_id}>
-                                    {plant.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        <FormHelperText>Select the plant for this exam</FormHelperText>
-                    </FormControl>
-                )}
+                ) :
+                    <PlantSelect handleChange={handleChange} plant_id={examForm.plant_id} plants={plants} />
+                }
             </Box>
-            
+
 
             <Button
                 variant="contained"
