@@ -31,6 +31,7 @@ export const schema = {
     columns: [
       'exam_id INTEGER NOT NULL',
       'question_id INTEGER NOT NULL',
+      'question_number INTEGER',
       'PRIMARY KEY (exam_id, question_id)',
       'FOREIGN KEY (exam_id) REFERENCES exams(exam_id) ON DELETE CASCADE',
       'FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE',
@@ -123,11 +124,18 @@ export const defaultQuestion: Question = {
   cognitive_level: null,
   objective: null,
   last_used: null,
+  answers: [
+    { answer_id: 0, question_id: 0, answer_text: '', is_correct: 0, option: 'A', justification: null },
+    { answer_id: 0, question_id: 0, answer_text: '', is_correct: 0, option: 'B', justification: null },
+    { answer_id: 0, question_id: 0, answer_text: '', is_correct: 0, option: 'C', justification: null },
+    { answer_id: 0, question_id: 0, answer_text: '', is_correct: 0, option: 'D', justification: null },
+  ],
 }
 
 export const defaultExamQuestion: ExamQuestion = {
   exam_id: 0,
   question_id: 0,
+  question_number: null,
 }
 
 export const defaultAnswer: Answer = {
@@ -135,6 +143,7 @@ export const defaultAnswer: Answer = {
   question_id: 0,
   answer_text: '',
   is_correct: 0,
+  option: null,
   justification: null,
 }
 

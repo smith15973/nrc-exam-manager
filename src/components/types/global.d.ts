@@ -35,6 +35,7 @@ interface Question {
 interface ExamQuestion {
   exam_id: number;
   question_id: number;
+  question_number: number | null;
   // Optional relationship properties
   exam?: Exam;
   question?: Question;
@@ -45,6 +46,7 @@ interface Answer {
   question_id: number;
   answer_text: string;
   is_correct: number;
+  option: string | null;
   justification: string | null;
   // Optional relationship properties
   question?: Question;

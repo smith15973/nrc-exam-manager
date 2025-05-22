@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { defaultQuestion, questionSchema } from '../lib/schema';
-import { Box, Button, MenuItem, Select, TextField, FormControl, InputLabel, FormHelperText, SxProps } from '@mui/material';
+import { Box, Button, TextField, SxProps } from '@mui/material';
 import { useDatabase } from '../hooks/useDatabase';
 import ExamSelect from '../exams/ExamSelect';
+import AnswerForm from '../answers/AnswerForm';
 
 interface QuestionFormProps {
     question?: Question;
@@ -16,11 +17,11 @@ export default function QuestionForm(props: QuestionFormProps) {
     const [questionForm, setQuestionForm] = useState<Question>(question || defaultQuestion);
     const { exams } = useDatabase();
 
+    const options = ['A', 'B', 'C', 'D'];
+
     useEffect(() => {
         if (question) {
             setQuestionForm(question);
-        } else if (exam) {
-            setQuestionForm((prev) => ({ ...prev, plant_id: exam.exam_id }));
         }
     }, [question, exam]);
 
@@ -64,6 +65,15 @@ export default function QuestionForm(props: QuestionFormProps) {
                 ) :
                     <ExamSelect handleChange={handleChange} exam_id={0} exams={exams} />
                 }
+            </Box>
+
+            <Box>
+                {options.map((option, idx) => {
+                    const answer = questionForm.answers?.find(ans => ans.option === option);
+                    return (
+                        <AnswerForm answer={answer as Answer} key={option} option={option} />
+                    )
+                })}
             </Box>
 
 
