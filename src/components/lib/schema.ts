@@ -24,7 +24,7 @@ export const schema = {
       'difficulty_level INTEGER CHECK (difficulty_level >= 1 AND difficulty_level <= 5)',
       'cognitive_level TEXT',
       'objective TEXT',
-      'last_used DATE',
+      'last_used TEXT',
     ],
   },
   exam_questions: {
@@ -68,47 +68,86 @@ export const schema = {
   schema_version: {
     columns: [
       'version INTEGER PRIMARY KEY',
-      'applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
+      'applied_at TEXT DEFAULT CURRENT_TIMESTAMP',
     ],
   },
 };
 
-// Form schema for plants (derived from schema.plants)
-export const plantSchema = schema.plants.columns
-  .filter(col => !col.includes('PRIMARY KEY') && !col.includes('FOREIGN KEY'))
-  .map(col => {
-    const [name, type] = col.split(' ');
-    return {
-      key: name,
-      label: name.charAt(0).toUpperCase() + name.slice(1),
-      type: type === 'TEXT' ? 'text' : 'number',
-      required: col.includes('NOT NULL'),
-    };
-  });
+// Utility function to generate form schema from table definition
+function generateSchema(table: { columns?: string[] }) {
+  if (!table || !Array.isArray(table.columns)) return [];
+  return table.columns
+    .filter(col => !col.includes('PRIMARY KEY') && !col.includes('FOREIGN KEY'))
+    .map(col => {
+      const [name, type] = col.split(' ');
+      return {
+        key: name,
+        label: name.charAt(0).toUpperCase() + name.slice(1),
+        type: type === 'TEXT' ? 'text' : 'number',
+        required: col.includes('NOT NULL'),
+      };
+    });
+}
+
+export const plantSchema = generateSchema(schema.plants);
+export const examSchema = generateSchema(schema.exams);
+export const questionSchema = generateSchema(schema.questions);
+export const examQuestionSchema = generateSchema(schema.exam_questions);
+export const answerSchema = generateSchema(schema.answers);
+export const questionKaNumberSchema = generateSchema(schema.question_ka_numbers);
+export const questionSystemNumberSchema = generateSchema(schema.question_system_numbers);
+
 
 // Default plant object
 export const defaultPlant: Plant = {
   plant_id: 0,
   name: '',
+  exams: [],
 };
 
-
-// Form schema for exams (derived from schema.exams)
-export const examSchema = schema.exams.columns
-  .filter(col => !col.includes('PRIMARY KEY') && !col.includes('FOREIGN KEY'))
-  .map(col => {
-    const [name, type] = col.split(' ');
-    return {
-      key: name,
-      label: name.charAt(0).toUpperCase() + name.slice(1),
-      type: type === 'TEXT' ? 'text' : 'number',
-      required: col.includes('NOT NULL'),
-    };
-  });
-
-// Default plant object
+// Default exam object
 export const defaultExam: Exam = {
   exam_id: 0,
   name: '',
   plant_id: 0,
 };
+
+// Default question object
+export const defaultQuestion: Question = {
+  question_id: 0,
+  question_text: '',
+  category: null,
+  exam_level: null,
+  technical_references: null,
+  difficulty_level: null,
+  cognitive_level: null,
+  objective: null,
+  last_used: null,
+}
+
+export const defaultExamQuestion: ExamQuestion = {
+  exam_id: 0,
+  question_id: 0,
+}
+
+export const defaultAnswer: Answer = {
+  answer_id: 0,
+  question_id: 0,
+  answer_text: '',
+  is_correct: 0,
+  justification: null,
+}
+
+export const defaultQuestionKaNumber: QuestionKaNumber = {
+  question_id: 0,
+  ka_number: '',
+  ka_statement: null,
+  ka_importance: null,
+}
+
+export const defaultQuestionSystemNumber: QuestionSystemNumber = {
+  question_id: 0,
+  system_number: '',
+  system_description: null,
+}
+
