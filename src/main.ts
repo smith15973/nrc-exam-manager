@@ -351,6 +351,7 @@ ipcMain.handle('get-question', async (_event, questionId: number) => {
     if (!db) {
       db = new Database();
     }
+
     const question = await db.getQuestion(questionId);
     return { success: true, question };
   } catch (err: any) {

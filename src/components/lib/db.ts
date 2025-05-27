@@ -479,7 +479,7 @@ export class Database {
         reject(new Error('Database is closing'));
         return;
       }
-
+      
       this.db.get('SELECT * FROM questions WHERE question_id = ?', [questionId], (err, row: Question) => {
         if (err) {
           reject(err);

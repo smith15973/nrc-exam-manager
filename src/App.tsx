@@ -9,6 +9,7 @@ import ExamsPage from './components/pages/ExamsPage';
 import ExamPage from './components/pages/ExamPage';
 import QuestionsPage from './components/pages/QuestionsPage';
 import PlantsPage from './components/pages/PlantsPage';
+import QuestionPage from './components/pages/QuestionPage';
 
 
 
@@ -24,6 +25,7 @@ const App = () => {
                 <Route path='/exams/' element={<ExamsPage />} />
                 <Route path='/exams/:examId' element={<ExamPage />} />
                 <Route path='/questions' element={<QuestionsPage />} />
+                <Route path='/questions/:questionId' element={<QuestionPage />} />
                 <Route path="*" element={<HomePage />} />
             </Routes>
         </HashRouter>
