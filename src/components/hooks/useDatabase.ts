@@ -246,6 +246,19 @@ export const useDatabase = () => {
             setError("Failed to fetch question");
         }
     };
+    const fetchQuestionWithAll = async (questionId: number) => {
+        try {
+            const result = await window.api.getQuestionAll(questionId);
+            console.log(result)
+            if (result.success) {
+                return result.question ?? null;
+            } else {
+                setError(result.error || 'Failed to fetch question');
+            }
+        } catch (err) {
+            setError("Failed to fetch question");
+        }
+    };
 
 
     const updateQuestion = async (question: Question) => {
@@ -293,7 +306,7 @@ export const useDatabase = () => {
     return {
         plants, fetchPlant, fetchPlantWithExams, plantsWithExams, addPlant, updatePlant, deletePlant,
         exams, fetchExam, addExam, updateExam, deleteExam,
-        addQuestion, fetchQuestion, questions, updateQuestion, deleteQuestion,
+        addQuestion, fetchQuestion, fetchQuestionWithAll, questions, updateQuestion, deleteQuestion,
         error
     }
 }

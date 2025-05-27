@@ -359,6 +359,19 @@ ipcMain.handle('get-question', async (_event, questionId: number) => {
   }
 });
 
+ipcMain.handle('get-question-with-all', async (_event, questionId: number) => {
+  try {
+    if (!db) {
+      db = new Database();
+    }
+
+    const question = await db.getQuestionAll(questionId);
+    return { success: true, question };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
 ipcMain.handle('update-question', async (_event, question: Question) => {
   try {
     if (!db) {

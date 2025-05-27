@@ -1,24 +1,25 @@
 
-import { MenuItem, Select, FormControl, InputLabel, FormHelperText } from '@mui/material';
+import { MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 
 interface ExamSelectProps {
     exam_id: number;
     exams: Exam[];
-    handleChange: (key: string, value: number) => void
+    handleChange: (idx: number, value: number) => void
+    idx: number;
 }
 
 export default function ExamSelect(props: ExamSelectProps) {
-    const { exam_id, exams, handleChange } = props;
+    const { exam_id, exams, handleChange, idx } = props;
 
     return (
-        <FormControl fullWidth required>
+        <FormControl sx={{ pb: 2 }} fullWidth required>
             <InputLabel id="exam-select-label">Exam</InputLabel>
             <Select
                 labelId="exam-select-label"
                 id="exam-select"
                 value={exam_id}
                 label="Exam"
-                onChange={(e) => handleChange('exam_id', e.target.value)}
+                onChange={(e) => handleChange(idx, Number(e.target.value))}
             >
                 <MenuItem value={0}>Select an Exam</MenuItem>
                 {exams.map((exam: Exam) => (
@@ -27,7 +28,6 @@ export default function ExamSelect(props: ExamSelectProps) {
                     </MenuItem>
                 ))}
             </Select>
-            <FormHelperText>Select an exam for this question</FormHelperText>
         </FormControl>
     )
 }

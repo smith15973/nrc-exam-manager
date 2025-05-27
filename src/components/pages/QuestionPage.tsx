@@ -9,7 +9,7 @@ import QuestionForm from '../questions/QuestionForm';
 export default function QuestionPage() {
     const [question, setQuestion] = useState(defaultQuestion);
     const { questionId } = useParams<{ questionId: string }>();
-    const { fetchQuestion, updateQuestion } = useDatabase();
+    const { fetchQuestionWithAll, fetchQuestion, updateQuestion } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -19,7 +19,7 @@ export default function QuestionPage() {
         try {
             setLoading(true);
             setError(null);
-            const fetchedQuestion = await fetchQuestion(id);
+            const fetchedQuestion = await fetchQuestionWithAll(id);
             if (fetchedQuestion) {
                 setQuestion(fetchedQuestion);
             } else {
@@ -73,7 +73,7 @@ export default function QuestionPage() {
 
     return (
         <>
-            <Typography variant='h4'>{question.question_text}</Typography>
+            <Typography variant='h4' sx={{ pb: 2 }}>Question: {question.question_text}</Typography>
 
             {error && (
                 <Alert severity="error" sx={{ mb: 2 }}>

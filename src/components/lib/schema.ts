@@ -44,6 +44,7 @@ export const schema = {
       'answer_text TEXT NOT NULL',
       'is_correct INTEGER NOT NULL CHECK (is_correct IN (0, 1))',
       'justification TEXT CHECK (is_correct = 0 OR justification IS NOT NULL)',
+      'option TEXT',
       'FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE',
     ],
   },
@@ -130,6 +131,9 @@ export const defaultQuestion: Question = {
     { answer_id: 0, question_id: 0, answer_text: '', is_correct: 0, option: 'C', justification: null },
     { answer_id: 0, question_id: 0, answer_text: '', is_correct: 0, option: 'D', justification: null },
   ],
+  ka_numbers: [],
+  system_numbers: [],
+  exams: [],
 }
 
 export const defaultExamQuestion: ExamQuestion = {

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { defaultQuestion, questionSchema, defaultAnswer } from '../lib/schema';
+import { defaultQuestion, questionSchema, defaultAnswer, defaultExam } from '../lib/schema';
 import { Box, Button, TextField, SxProps } from '@mui/material';
 import { useDatabase } from '../hooks/useDatabase';
-import ExamSelect from '../exams/ExamSelect';
 import AnswerForm from '../answers/AnswerForm';
+import MultiExamSelect from '../exams/MultiExamSelect';
+import ExamForm from '../exams/ExamForm';
 
 interface QuestionFormProps {
     question?: Question;
@@ -15,6 +16,7 @@ interface QuestionFormProps {
 export default function QuestionForm(props: QuestionFormProps) {
     const { question, handleSubmit, exam, sx } = props;
     const [questionForm, setQuestionForm] = useState<Question>(question || defaultQuestion);
+    const [questionExams, setQuestionExams] = useState<number[]>([])
     const { exams } = useDatabase();
 
     useEffect(() => {
@@ -22,6 +24,13 @@ export default function QuestionForm(props: QuestionFormProps) {
             setQuestionForm(question);
         }
     }, [question, exam]);
+
+
+    useEffect(() => {
+        const examIds = questionForm.exams?.map(exam => exam.exam_id).filter((id): id is number => id !== undefined) || [];
+        setQuestionExams(examIds);
+    }, [questionForm])
+
 
     const handleChange = (key: string, value: any) => {
         setQuestionForm((prev) => ({ ...prev, [key]: value }));
@@ -44,6 +53,24 @@ export default function QuestionForm(props: QuestionFormProps) {
         });
     };
 
+    const handleExamsChange = (newExamList: number[]) => {
+        setQuestionExams(newExamList);
+
+        // Sync with questionForm.exams
+        const selectedExams = exams.filter(exam => newExamList.includes(exam.exam_id));
+        setQuestionForm(prev => ({
+            ...prev,
+            exams: selectedExams
+        }));
+    }
+
+    const handleAddExamClick = () => {
+        setQuestionForm(prev => ({
+            ...prev,
+            exams: [...(prev.exams || []), defaultExam]
+        }));
+    }
+
     const onSubmit = () => {
         handleSubmit(questionForm)
         setQuestionForm(defaultQuestion)
@@ -56,7 +83,7 @@ export default function QuestionForm(props: QuestionFormProps) {
                 if (field.key === 'plant_id') return null;
 
                 return (
-                    <Box sx={{ pb: '10px' }} key={field.key}>
+                    <Box sx={{ pb: 2 }} key={field.key}>
                         <TextField
                             fullWidth
                             type={field.type}
@@ -68,19 +95,13 @@ export default function QuestionForm(props: QuestionFormProps) {
                     </Box>
                 );
             })}
-            <Box sx={{ pb: '10px' }}>
-                {exam ? (
-                    <TextField
-                        fullWidth
-                        type="text"
-                        value={exam.name}
-                        label="Plant"
-                        disabled
-                    />
-                ) :
-                    <ExamSelect handleChange={handleChange} exam_id={0} exams={exams} />
-                }
-            </Box>
+
+            <MultiExamSelect
+                examList={questionExams}
+                examOptions={exams}
+                handleAddExamClick={handleAddExamClick}
+                onExamsUpdate={handleExamsChange}
+            />
 
             <Box>
                 {questionForm.answers?.map((answer, idx) => {

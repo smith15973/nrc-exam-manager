@@ -32,6 +32,28 @@ interface Question {
   system_numbers?: QuestionSystemNumber[];
 }
 
+interface QuestionAll {
+  question_id: number;
+  question_text: string;
+  category: string | null;
+  exam_level: string | null;
+  technical_references: string | null;
+  difficulty_level: number | null;
+  cognitive_level: string | null;
+  objective: string | null;
+  last_used: string | null;
+  answer_id: number | null;
+  answer_text: string | null;
+  answer_question_id: number | null;
+  is_correct: number | null;
+  option: string | null;
+  justification: string | null;
+  exam_id: number | null;
+  exam_name: string | null;
+  exam_plant_id: number | null;
+}
+
+
 interface ExamQuestion {
   exam_id: number;
   question_id: number;
@@ -135,6 +157,7 @@ interface Window {
     addQuestion: (question: Question) => Promise<QuestionResponse>;
     getQuestions: () => Promise<QuestionResponse>;
     getQuestion: (questionId: number) => Promise<QuestionResponse>;
+    getQuestionAll: (questionId: number) => Promise<QuestionResponse>;
     updateQuestion: (question: Question) => Promise<QuestionResponse>;
     deleteQuestion: (questionId: number) => Promise<QuestionResponse>;
   };

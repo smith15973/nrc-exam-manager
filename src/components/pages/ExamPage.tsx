@@ -73,7 +73,7 @@ export default function ExamPage() {
 
     return (
         <>
-            <Typography variant='h4'>{exam.name} - {exam.plant?.name}</Typography>
+            <Typography sx={{ pb: 2 }} variant='h4'>Exam: {exam.name} - {exam.plant?.name}</Typography>
 
             {error && (
                 <Alert severity="error" sx={{ mb: 2 }}>
