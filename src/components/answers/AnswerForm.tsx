@@ -1,12 +1,30 @@
 import { Box, FormControlLabel, FormGroup, Switch, TextField } from "@mui/material";
+import { useState, useEffect } from "react";
+import { defaultAnswer } from "../lib/schema";
+
 
 interface AnswerFormProps {
-    answer: Answer
-    option: string;
+    answer: Answer;
+    updateQuestionForm: (answer: Answer) => void
 }
 
 export default function AnswerForm(props: AnswerFormProps) {
-    const { answer, option } = props;
+    const { answer, updateQuestionForm } = props;
+    const [answerForm, setAnswerForm] = useState<Answer>(answer || defaultAnswer);
+
+    useEffect(() => {
+        if (answer && JSON.stringify(answer) !== JSON.stringify(answerForm)) {
+            setAnswerForm(answer);
+        }
+    }, [answer]);
+
+    const handleChange = (key: string, value: any) => {
+        setAnswerForm((prev) => ({ ...prev, [key]: value }));
+    }
+
+    useEffect(() => {
+        updateQuestionForm(answerForm);
+    }, [answerForm]);
 
     return (
         <Box >
@@ -15,14 +33,15 @@ export default function AnswerForm(props: AnswerFormProps) {
                     fullWidth
                     multiline
                     rows={3}
-                    label={`Answer ${option}`}
-                    value={answer.answer_text}
+                    label={`Answer ${answerForm.option}`}
+                    value={answerForm.answer_text}
+                    onChange={(e) => handleChange("answer_text", e.currentTarget.value)}
                 />
 
 
                 <FormControlLabel
                     control={
-                        <Switch value={answer.is_correct} />
+                        <Switch value={answerForm.is_correct} onChange={(e) => handleChange('is_correct', e.currentTarget.checked)} />
                     }
                     label="Correct"
                 />

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { defaultQuestion, questionSchema } from '../lib/schema';
+import { defaultQuestion, questionSchema, defaultAnswer } from '../lib/schema';
 import { Box, Button, TextField, SxProps } from '@mui/material';
 import { useDatabase } from '../hooks/useDatabase';
 import ExamSelect from '../exams/ExamSelect';
@@ -17,8 +17,6 @@ export default function QuestionForm(props: QuestionFormProps) {
     const [questionForm, setQuestionForm] = useState<Question>(question || defaultQuestion);
     const { exams } = useDatabase();
 
-    const options = ['A', 'B', 'C', 'D'];
-
     useEffect(() => {
         if (question) {
             setQuestionForm(question);
@@ -27,6 +25,23 @@ export default function QuestionForm(props: QuestionFormProps) {
 
     const handleChange = (key: string, value: any) => {
         setQuestionForm((prev) => ({ ...prev, [key]: value }));
+    };
+
+    const handleAnswerChange = (newAnswer: Answer) => {
+        setQuestionForm((prev) => {
+            // Ensure answers is always a 4-element tuple
+            let answers: [Answer, Answer, Answer, Answer];
+            if (prev.answers && prev.answers.length === 4) {
+                answers = [...prev.answers] as [Answer, Answer, Answer, Answer];
+            } else {
+                answers = [defaultAnswer, defaultAnswer, defaultAnswer, defaultAnswer]
+            }
+            const index = answers.findIndex((ans) => ans.option === newAnswer.option);
+            if (index !== -1) {
+                answers[index] = { ...newAnswer };
+            }
+            return { ...prev, answers };
+        });
     };
 
     const onSubmit = () => {
@@ -68,10 +83,9 @@ export default function QuestionForm(props: QuestionFormProps) {
             </Box>
 
             <Box>
-                {options.map((option, idx) => {
-                    const answer = questionForm.answers?.find(ans => ans.option === option);
+                {questionForm.answers?.map((answer, idx) => {
                     return (
-                        <AnswerForm answer={answer as Answer} key={option} option={option} />
+                        <AnswerForm updateQuestionForm={handleAnswerChange} answer={answer} key={idx} />
                     )
                 })}
             </Box>

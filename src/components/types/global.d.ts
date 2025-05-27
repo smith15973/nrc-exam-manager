@@ -26,7 +26,7 @@ interface Question {
   objective: string | null;
   last_used: string | null;
   // Optional relationship properties
-  answers?: Answer[];
+  answers?: [Answer, Answer, Answer, Answer];
   exams?: Exam[];
   ka_numbers?: QuestionKaNumber[];
   system_numbers?: QuestionSystemNumber[];
