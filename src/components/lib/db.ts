@@ -7,7 +7,7 @@ import { schema } from './schema';
 export class Database {
   private db: sqlite3.Database;
   private isClosing: boolean = false;
-  
+
   // Define what changed in each version
   private static readonly MIGRATIONS = {
     1: {
@@ -32,15 +32,15 @@ export class Database {
       }
     },
   } as const;
-  
+
   // Current version is the highest migration number
   private readonly currentSchemaVersion = Math.max(...Object.keys(Database.MIGRATIONS).map(Number));
-  
+
   constructor() {
     const dbPath = path.join(app.getPath('userData'), 'nrc_exam_questions_database.db');
     console.log('Database location:', dbPath);
     console.log('Target schema version:', this.currentSchemaVersion);
-    
+
     this.db = new sqlite3.Database(dbPath, (err) => {
       if (err) {
         console.error('Database connection error:', err);
@@ -72,7 +72,7 @@ export class Database {
 
   private async runMigrations(fromVersion: number, toVersion: number) {
     console.log(`🔄 Running migrations from v${fromVersion} to v${toVersion}`);
-    
+
     for (let version = fromVersion + 1; version <= toVersion; version++) {
       const migration = Database.MIGRATIONS[version as keyof typeof Database.MIGRATIONS];
       if (migration) {
@@ -87,22 +87,22 @@ export class Database {
     return new Promise((resolve, reject) => {
       this.db.serialize(() => {
         this.db.run('BEGIN TRANSACTION');
-        
+
         try {
           // Run the migration
           migration.up(this.db);
-          
+
           // Record the migration
           this.db.run(
-            'INSERT OR REPLACE INTO schema_version (version) VALUES (?)', 
+            'INSERT OR REPLACE INTO schema_version (version) VALUES (?)',
             [version]
           );
-          
+
           this.db.run('COMMIT', (err) => {
             if (err) reject(err);
             else resolve();
           });
-          
+
         } catch (error) {
           this.db.run('ROLLBACK');
           reject(error);
@@ -113,11 +113,11 @@ export class Database {
 
   private async init() {
     this.db.run('PRAGMA foreign_keys = ON');
-    
+
     try {
       const currentVersion = await this.getCurrentSchemaVersion();
       console.log(`📊 Current schema version: ${currentVersion}`);
-      
+
       if (currentVersion < this.currentSchemaVersion) {
         await this.runMigrations(currentVersion, this.currentSchemaVersion);
         console.log('🎉 Database migrations completed successfully');
@@ -511,17 +511,100 @@ export class Database {
         return;
       }
 
-      this.db.run(
-        'INSERT INTO questions (question_text, category, exam_level, technical_references, difficulty_level, cognitive_level, objective, last_used) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-        [question.question_text, question.category, question.exam_level, question.technical_references, question.difficulty_level, question.cognitive_level, question.objective, question.last_used],
-        function (err) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(this.lastID);
+      console.log("IN DB WITH", question);
+
+      const self = this;
+      this.db.serialize(() => {
+        self.db.run('BEGIN TRANSACTION');
+
+        self.db.run(
+          'INSERT INTO questions (question_text, category, exam_level, technical_references, difficulty_level, cognitive_level, objective, last_used) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+          [
+            question.question_text,
+            question.category,
+            question.exam_level,
+            question.technical_references,
+            question.difficulty_level,
+            question.cognitive_level,
+            question.objective,
+            question.last_used
+          ],
+          function (err) {
+            if (err) {
+              self.db.run('ROLLBACK');
+              reject(err);
+              return;
+            }
+
+            const questionId = this.lastID;
+            const insertOperations: Promise<void>[] = [];
+
+            // Handle exam relationships
+            if (question.exams?.length) {
+              const examPromise = new Promise<void>((resolveExam, rejectExam) => {
+                const placeholders = question.exams!.map(() => '(?, ?)').join(', ');
+                const values: any[] = [];
+
+                question.exams!.forEach(exam => {
+                  values.push(exam.exam_id, questionId);
+                });
+
+                self.db.run(
+                  `INSERT INTO exam_questions (exam_id, question_id) VALUES ${placeholders}`,
+                  values,
+                  (examErr) => {
+                    if (examErr) rejectExam(examErr);
+                    else resolveExam();
+                  }
+                );
+              });
+              insertOperations.push(examPromise);
+            }
+
+            // handle answers
+            if (question.answers?.length) {
+              const answerPromise = new Promise<void>((resolveAnswer, rejectAnswer) => {
+                const placeholders = question.answers!.map(() => '(?, ?, ?, ?, ?)').join(', ');
+                const values: any[] = [];
+
+                question.answers!.forEach(answer => {
+                  values.push(
+                    questionId,
+                    answer.answer_text,
+                    answer.is_correct ? 1 : 0,
+                    answer.justification,
+                    answer.option
+                  );
+                });
+
+                self.db.run(
+                  `INSERT INTO answers (question_id, answer_text, is_correct, justification, option) VALUES ${placeholders}`,
+                  values,
+                  (answerErr) => {
+                    if (answerErr) rejectAnswer(answerErr);
+                    else resolveAnswer();
+                  }
+                );
+              });
+              insertOperations.push(answerPromise);
+            }
+
+            Promise.all(insertOperations).then(() => {
+              self.db.run('COMMIT', (commitErr) => {
+                if (commitErr) {
+                  reject(commitErr);
+                } else {
+                  resolve(questionId)
+                }
+              });
+            })
+              .catch((insertErr) => {
+                self.db.run('ROLLBACK');
+                reject(insertErr)
+              });
           }
-        }
-      );
+        );
+      });
     });
   }
 
@@ -596,7 +679,7 @@ export class Database {
 
           const row: any = rows[0]
           const question: Question = {
-            question_id: row.quesiton_id,
+            question_id: row.question_id,
             question_text: row.question_text,
             category: row.category,
             exam_level: row.exam_level,
@@ -645,19 +728,19 @@ export class Database {
         return;
       }
 
-      this.db.run(
-        'UPDATE questions SET (question_text) = (?) WHERE question_id = ?',
-        [question.question_text, question.question_id],
-        function (err) {
-          if (err) {
-            reject(err);
-          } else if (this.changes === 0) {
-            reject(new Error('Question not found'));
-          } else {
-            resolve(question);
+        this.db.run(
+          'UPDATE questions SET (question_text) = (?) WHERE question_id = ?',
+          [question.question_text, question.question_id],
+          function (err) {
+            if (err) {
+              reject(err);
+            } else if (this.changes === 0) {
+              reject(new Error('Question not found'));
+            } else {
+              resolve(question);
+            }
           }
-        }
-      );
+        );
     });
   }
 

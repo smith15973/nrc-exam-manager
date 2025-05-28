@@ -31,7 +31,6 @@ export const schema = {
     columns: [
       'exam_id INTEGER NOT NULL',
       'question_id INTEGER NOT NULL',
-      'question_number INTEGER',
       'PRIMARY KEY (exam_id, question_id)',
       'FOREIGN KEY (exam_id) REFERENCES exams(exam_id) ON DELETE CASCADE',
       'FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE',
@@ -43,7 +42,7 @@ export const schema = {
       'question_id INTEGER NOT NULL',
       'answer_text TEXT NOT NULL',
       'is_correct INTEGER NOT NULL CHECK (is_correct IN (0, 1))',
-      'justification TEXT CHECK (is_correct = 0 OR justification IS NOT NULL)',
+      'justification TEXT',
       'option TEXT',
       'FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE',
     ],

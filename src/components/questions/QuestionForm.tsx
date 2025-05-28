@@ -4,7 +4,7 @@ import { Box, Button, TextField, SxProps } from '@mui/material';
 import { useDatabase } from '../hooks/useDatabase';
 import AnswerForm from '../answers/AnswerForm';
 import MultiExamSelect from '../exams/MultiExamSelect';
-import ExamForm from '../exams/ExamForm';
+import ErrorPopup from '../common/ErrorPopup';
 
 interface QuestionFormProps {
     question?: Question;
@@ -119,6 +119,8 @@ export default function QuestionForm(props: QuestionFormProps) {
             >
                 {question ? 'Update' : 'Add'} Question
             </Button>
+
+            <ErrorPopup />
         </Box>
     );
 }

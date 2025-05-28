@@ -9,7 +9,7 @@ import QuestionForm from '../questions/QuestionForm';
 export default function QuestionPage() {
     const [question, setQuestion] = useState(defaultQuestion);
     const { questionId } = useParams<{ questionId: string }>();
-    const { fetchQuestionWithAll, fetchQuestion, updateQuestion } = useDatabase();
+    const { fetchQuestionWithAll, updateQuestion } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -45,6 +45,8 @@ export default function QuestionPage() {
         try {
             setLoading(true);
             setError(null);
+
+            console.log(updatedQuestion)
 
             // Update the question
             await updateQuestion(updatedQuestion);

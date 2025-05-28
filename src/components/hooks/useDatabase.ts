@@ -249,7 +249,6 @@ export const useDatabase = () => {
     const fetchQuestionWithAll = async (questionId: number) => {
         try {
             const result = await window.api.getQuestionAll(questionId);
-            console.log(result)
             if (result.success) {
                 return result.question ?? null;
             } else {
