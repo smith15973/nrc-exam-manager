@@ -152,13 +152,17 @@ interface Window {
     getExam: (examId: number) => Promise<ExamResponse>;
     updateExam: (exam: Exam) => Promise<ExamResponse>;
     deleteExam: (examId: number) => Promise<ExamResponse>;
+    getExamsByQuestionId: (questionId: number) => Promise<ExamResponse>;
 
     // question operations
     addQuestion: (question: Question) => Promise<QuestionResponse>;
     getQuestions: () => Promise<QuestionResponse>;
-    getQuestion: (questionId: number) => Promise<QuestionResponse>;
+    getQuestionById: (questionId: number) => Promise<QuestionResponse>;
+    
     getQuestionAll: (questionId: number) => Promise<QuestionResponse>;
     updateQuestion: (question: Question) => Promise<QuestionResponse>;
     deleteQuestion: (questionId: number) => Promise<QuestionResponse>;
+
+    getAnswersByQuestionId: (questionId: number) => Promise<AnswerResponse>;
   };
 }

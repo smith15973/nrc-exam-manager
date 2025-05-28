@@ -624,18 +624,22 @@ export class Database {
       });
     });
   }
-  async getQuestion(questionId: number): Promise<Question> {
+
+  // Individual query functions
+  async getQuestionById(questionId: number): Promise<Question> {
     return new Promise((resolve, reject) => {
       if (this.isClosing) {
         reject(new Error('Database is closing'));
         return;
       }
 
-      this.db.get('SELECT * FROM questions WHERE question_id = ?', [questionId], (err, row: Question) => {
+      const query = 'SELECT * FROM questions WHERE question_id = ?';
+
+      this.db.get(query, [questionId], (err, row: Question) => {
         if (err) {
           reject(err);
         } else if (!row) {
-          reject(new Error("Question not found"))
+          reject(new Error(`Question with ID ${questionId} not found`));
         } else {
           resolve(row);
         }
@@ -643,9 +647,34 @@ export class Database {
     });
   }
 
+  async getAnswersByQuestionId(questionId: number): Promise<Answer[]> {
+    return new Promise((resolve, reject) => {
+      if (this.isClosing) {
+        reject(new Error('Database is closing'));
+        return;
+      }
 
+      const query = 'SELECT * FROM answers WHERE question_id = ? ORDER BY answer_id';
 
-  async getQuestionAll(questionId: number): Promise<Question> {
+      this.db.all(query, [questionId], (err, rows: any[]) => {
+        if (err) {
+          reject(err);
+        } else {
+          const answers: Answer[] = rows.map(row => ({
+            answer_id: row.answer_id,
+            question_id: row.question_id,
+            answer_text: row.answer_text,
+            is_correct: row.is_correct,
+            option: row.option,
+            justification: row.justification
+          }));
+          resolve(answers);
+        }
+      });
+    });
+  }
+
+  async getExamsByQuestionId(questionId: number): Promise<Exam[]> {
     return new Promise((resolve, reject) => {
       if (this.isClosing) {
         reject(new Error('Database is closing'));
@@ -653,65 +682,58 @@ export class Database {
       }
 
       const query = `
-      SELECT
-        q.*,
-        a.answer_id,
-        a.answer_text,
-        a.question_id AS answer_question_id,
-        a.is_correct,
-        a.option,
-        a.justification,
-        e.exam_id,
-        e.name AS exam_name,
-        e.plant_id AS exam_plant_id
-      FROM questions q
-      LEFT JOIN answers a ON q.question_id = a.question_id
-      LEFT JOIN exam_questions eq ON q.question_id = eq.question_id
-      LEFT JOIN exams e ON eq.exam_id = e.exam_id
-      WHERE q.question_id = ?
-        `;
+      SELECT e.exam_id, e.name, e.plant_id 
+      FROM exams e
+      INNER JOIN exam_questions eq ON e.exam_id = eq.exam_id
+      WHERE eq.question_id = ?
+      ORDER BY e.exam_id
+    `;
 
-      this.db.all(query, [questionId], (err, rows: QuestionAll[]) => {
-        console.log(JSON.stringify(rows));
+      this.db.all(query, [questionId], (err, rows: any[]) => {
         if (err) {
           reject(err);
         } else {
-
-          const row: any = rows[0]
-          const question: Question = {
-            question_id: row.question_id,
-            question_text: row.question_text,
-            category: row.category,
-            exam_level: row.exam_level,
-            technical_references: row.technical_references,
-            difficulty_level: row.difficulty_level,
-            cognitive_level: row.cognitive_level,
-            objective: row.objective,
-            last_used: row.last_used,
-            answers: rows
-              .filter(row => row.answer_id) // Only include rows with actual answers
-              .map(row => ({
-                answer_id: row.answer_id,
-                question_id: row.answer_question_id,
-                answer_text: row.answer_text,
-                is_correct: row.is_correct,
-                option: row.option,
-                justification: row.justification
-              })) as [Answer, Answer, Answer, Answer],
-            exams: rows
-              .filter(row => row.exam_id) // Only include rows with actual exams
-              .map(row => ({
-                exam_id: row.exam_id!,
-                name: row.exam_name!,
-                plant_id: row.exam_plant_id!,
-              }))
-          }
-
-          resolve(question);
+          const exams = rows.map(row => ({
+            exam_id: row.exam_id,
+            name: row.name,
+            plant_id: row.plant_id,
+          }));
+          resolve(exams);
         }
-      })
+      });
     });
+  }
 
+
+
+
+  async getQuestionAll(questionId: number): Promise<Question> {
+    try {
+      // Get all data in parallel for better performance
+      const [questionRow, answers, exams] = await Promise.all([
+        this.getQuestionById(questionId),
+        this.getAnswersByQuestionId(questionId),
+        this.getExamsByQuestionId(questionId),
+      ]);
+
+      const question: Question = {
+        question_id: questionRow.question_id,
+        question_text: questionRow.question_text,
+        category: questionRow.category,
+        exam_level: questionRow.exam_level,
+        technical_references: questionRow.technical_references,
+        difficulty_level: questionRow.difficulty_level,
+        cognitive_level: questionRow.cognitive_level,
+        objective: questionRow.objective,
+        last_used: questionRow.last_used,
+        answers: answers as [Answer, Answer, Answer, Answer],
+        exams: exams,
+      };
+
+      return question;
+    } catch (error) {
+      throw error;
+    }
   }
 
 
@@ -728,19 +750,19 @@ export class Database {
         return;
       }
 
-        this.db.run(
-          'UPDATE questions SET (question_text) = (?) WHERE question_id = ?',
-          [question.question_text, question.question_id],
-          function (err) {
-            if (err) {
-              reject(err);
-            } else if (this.changes === 0) {
-              reject(new Error('Question not found'));
-            } else {
-              resolve(question);
-            }
+      this.db.run(
+        'UPDATE questions SET (question_text) = (?) WHERE question_id = ?',
+        [question.question_text, question.question_id],
+        function (err) {
+          if (err) {
+            reject(err);
+          } else if (this.changes === 0) {
+            reject(new Error('Question not found'));
+          } else {
+            resolve(question);
           }
-        );
+        }
+      );
     });
   }
 

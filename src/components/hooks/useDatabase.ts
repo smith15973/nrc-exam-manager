@@ -129,6 +129,19 @@ export const useDatabase = () => {
         }
     };
 
+    const getExamsByQuestionId = async (questionId: number) => {
+        try {
+            const result = await window.api.getExamsByQuestionId(questionId)
+            if (result.success) {
+                return result.exams;
+            } else {
+                setError(result.error || `Failed to get exams with questionId ${questionId}`);
+            }
+        } catch (err) {
+            setError(`Failed to get exams with questionId ${questionId}`);
+        }
+    };
+
     const fetchExam = async (examId: number) => {
         try {
             const result = await window.api.getExam(examId);
@@ -213,11 +226,11 @@ export const useDatabase = () => {
                 setError(null);
                 await fetchQuestions();
             } else {
-                setError(result.error || 'Failed to add exam');
+                setError(result.error || 'Failed to add question');
             }
         }
         catch (err) {
-            setError("Failed to add exam");
+            setError("Failed to add question");
         }
     };
 
@@ -234,21 +247,23 @@ export const useDatabase = () => {
         }
     };
 
-    const fetchQuestion = async (questionId: number) => {
+    const getQuestionById = async (questionId: number) => {
         try {
-            const result = await window.api.getQuestion(questionId);
+            const result = await window.api.getQuestionById(questionId);
             if (result.success) {
                 return result.question ?? null;
             } else {
-                setError(result.error || 'Failed to fetch question');
+                setError(result.error || `Failed to get question with id ${questionId}`);
             }
         } catch (err) {
-            setError("Failed to fetch question");
+            setError(`Failed to get question with id ${questionId}`);
         }
     };
-    const fetchQuestionWithAll = async (questionId: number) => {
+
+    const getQuestionWithAll = async (questionId: number) => {
         try {
             const result = await window.api.getQuestionAll(questionId);
+            console.log(result)
             if (result.success) {
                 return result.question ?? null;
             } else {
@@ -293,6 +308,19 @@ export const useDatabase = () => {
         }
     }
 
+    const getAnswersByQuestionId = async (questionId: number) => {
+        try {
+            const result = await window.api.getAnswersByQuestionId(questionId)
+            if (result.success) {
+                return result.answers;
+            } else {
+                setError(result.error || `Failed to get answers by questionId: ${questionId}`);
+            }
+        } catch (err) {
+            setError(`Failed to get answers by questionId: ${questionId}`);
+        }
+    };
+
 
 
     useEffect(() => {
@@ -304,8 +332,9 @@ export const useDatabase = () => {
 
     return {
         plants, fetchPlant, fetchPlantWithExams, plantsWithExams, addPlant, updatePlant, deletePlant,
-        exams, fetchExam, addExam, updateExam, deleteExam,
-        addQuestion, fetchQuestion, fetchQuestionWithAll, questions, updateQuestion, deleteQuestion,
+        exams, fetchExam, addExam, updateExam, deleteExam, getExamsByQuestionId,
+        addQuestion, getQuestionById, getQuestionWithAll, questions, updateQuestion, deleteQuestion,
+        getAnswersByQuestionId,
         error
     }
 }

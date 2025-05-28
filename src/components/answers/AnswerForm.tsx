@@ -41,7 +41,7 @@ export default function AnswerForm(props: AnswerFormProps) {
 
                 <FormControlLabel
                     control={
-                        <Switch value={answerForm.is_correct} onChange={(e) => handleChange('is_correct', e.currentTarget.checked)} />
+                        <Switch checked={answerForm.is_correct === 1} onChange={(e) => handleChange('is_correct', e.currentTarget.checked ? 1 : 0)} />
                     }
                     label="Correct"
                 />

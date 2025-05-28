@@ -18,7 +18,9 @@ contextBridge.exposeInMainWorld('api', {
 
   addQuestion: (question: Question) => ipcRenderer.invoke('add-question', question),
   getQuestions: () => ipcRenderer.invoke('get-questions'),
-  getQuestion: (questionId: number) => ipcRenderer.invoke('get-question', questionId),
+  getQuestionById: (questionId: number) => ipcRenderer.invoke('get-question-by-id', questionId),
+  getAnswersByQuestionId: (questionId: number) => ipcRenderer.invoke('get-answers-by-question-id', questionId),
+  getExamsByQuestionId: (questionId: number) => ipcRenderer.invoke('get-exams-by-question-id', questionId),
   getQuestionAll: (questionId: number) => ipcRenderer.invoke('get-question-with-all', questionId),
   updateQuestion: (question: Question) => ipcRenderer.invoke('update-question', question),
   deleteQuestion: (questionId: number) => ipcRenderer.invoke('delete-question', questionId),

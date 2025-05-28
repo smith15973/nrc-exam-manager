@@ -346,14 +346,40 @@ ipcMain.handle('get-questions', async () => {
   }
 });
 
-ipcMain.handle('get-question', async (_event, questionId: number) => {
+ipcMain.handle('get-question-by-id', async (_event, questionId: number) => {
   try {
     if (!db) {
       db = new Database();
     }
 
-    const question = await db.getQuestion(questionId);
+    const question = await db.getQuestionById(questionId);
     return { success: true, question };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('get-answers-by-question-id', async (_event, questionId: number) => {
+  try {
+    if (!db) {
+      db = new Database();
+    }
+
+    const answers = await db.getAnswersByQuestionId(questionId);
+    return { success: true, answers };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('get-exams-by-question-id', async (_event, questionId: number) => {
+  try {
+    if (!db) {
+      db = new Database();
+    }
+
+    const exams = await db.getExamsByQuestionId(questionId);
+    return { success: true, exams };
   } catch (err: any) {
     return { success: false, error: err.message };
   }
