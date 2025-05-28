@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDatabase } from '../hooks/useDatabase';
 import { CircularProgress, Typography, Alert } from '@mui/material';
-import { defaultPlant } from '../lib/schema';
+import { defaultPlant } from '../db/schema';
 import { useParams } from 'react-router-dom';
 import PlantForm from '../plants/PlantForm';
 import ExamsList from '../exams/ExamsList';

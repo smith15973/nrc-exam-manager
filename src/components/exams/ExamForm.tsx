@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { defaultExam, examSchema } from '../lib/schema';
+import { defaultExam, examSchema } from '../db/schema';
 import { Box, Button, MenuItem, Select, TextField, FormControl, InputLabel, FormHelperText, SxProps } from '@mui/material';
 import { useDatabase } from '../hooks/useDatabase';
 import PlantSelect from '../plants/PlantSelect';

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDatabase } from '../hooks/useDatabase';
 import { Alert, CircularProgress, Typography } from '@mui/material';
-import { defaultExam } from '../lib/schema';
+import { defaultExam } from '../db/schema';
 import { useParams } from 'react-router-dom';
 import ExamForm from '../exams/ExamForm';
 

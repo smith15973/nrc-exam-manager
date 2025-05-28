@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { defaultQuestion, questionSchema, defaultAnswer, defaultExam } from '../lib/schema';
+import { defaultQuestion, questionSchema, defaultAnswer, defaultExam } from '../db/schema';
 import { Box, Button, TextField, SxProps } from '@mui/material';
 import { useDatabase } from '../hooks/useDatabase';
 import AnswerForm from '../answers/AnswerForm';

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDatabase } from '../hooks/useDatabase';
 import { Alert, CircularProgress, Typography } from '@mui/material';
-import { defaultQuestion } from '../lib/schema';
+import { defaultQuestion } from '../db/schema';
 import { useParams } from 'react-router-dom';
 import QuestionForm from '../questions/QuestionForm';
 

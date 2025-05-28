@@ -1,6 +1,6 @@
 // PlantForm.tsx
 import { useState, useEffect } from 'react';
-import { defaultPlant, plantSchema } from '../lib/schema';
+import { defaultPlant, plantSchema } from '../db/schema';
 import { Box, Button, SxProps, TextField } from '@mui/material';
 
 interface PlantFormProps {
