@@ -1,28 +1,42 @@
 // src/main/preload.ts
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, Data, ipcRenderer } from 'electron';
 
-contextBridge.exposeInMainWorld('api', {
-  addPlant: (plant: Plant) => ipcRenderer.invoke('add-plant', plant),
-  getPlants: () => ipcRenderer.invoke('get-plants'),
-  getPlantsWithExams: () => ipcRenderer.invoke('get-plants-with-exams'),
-  getPlantWithExams: (plantId: number) => ipcRenderer.invoke('get-plant-with-exams', plantId),
-  getPlant: (plantId: number) => ipcRenderer.invoke('get-plant', plantId),
-  updatePlant: (plant: Plant) => ipcRenderer.invoke('update-plant', plant),
-  deletePlant: (plantId: number) => ipcRenderer.invoke('delete-plant', plantId),
+const api = {
+  // Single data function that handles everything
+  data: (operation: DataOperation): Promise<DataResponse> =>
+    ipcRenderer.invoke('data', operation),
 
-  addExam: (exam: Exam) => ipcRenderer.invoke('add-exam', exam),
-  getExams: () => ipcRenderer.invoke('get-exams'),
-  getExam: (examId: number) => ipcRenderer.invoke('get-exam', examId),
-  updateExam: (exam: Exam) => ipcRenderer.invoke('update-exam', exam),
-  deleteExam: (examId: number) => ipcRenderer.invoke('delete-exam', examId),
+  // Convenience methods for better DX
+  plants: {
+    create: (plant: Plant) => ipcRenderer.invoke('data', { entity: 'plants', action: 'create', data: plant }),
+    getAll: () => ipcRenderer.invoke('data', { entity: 'plants', action: 'read' }),
+    getById: (id: number) => ipcRenderer.invoke('data', { entity: 'plants', action: 'read', data: id }),
+    update: (plant: Plant) => ipcRenderer.invoke('data', { entity: 'plants', action: 'update', data: plant }),
+    delete: (id: number) => ipcRenderer.invoke('data', { entity: 'plants', action: 'delete', data: id }),
+    getAllWithExams: () => ipcRenderer.invoke('data', { entity: 'plants', action: 'readWithExams' }),
+    getByIdWithExams: (id: number) => ipcRenderer.invoke('data', { entity: 'plants', action: 'readWithExams', data: id }),
+  },
 
-  addQuestion: (question: Question) => ipcRenderer.invoke('add-question', question),
-  getQuestions: () => ipcRenderer.invoke('get-questions'),
-  getQuestionById: (questionId: number) => ipcRenderer.invoke('get-question-by-id', questionId),
-  getAnswersByQuestionId: (questionId: number) => ipcRenderer.invoke('get-answers-by-question-id', questionId),
-  getExamsByQuestionId: (questionId: number) => ipcRenderer.invoke('get-exams-by-question-id', questionId),
-  getQuestionAll: (questionId: number) => ipcRenderer.invoke('get-question-with-all', questionId),
-  updateQuestion: (question: Question) => ipcRenderer.invoke('update-question', question),
-  deleteQuestion: (questionId: number) => ipcRenderer.invoke('delete-question', questionId),
+  exams: {
+    create: (exam: Exam) => ipcRenderer.invoke('data', { entity: 'exams', action: 'create', data: exam }),
+    getAll: () => ipcRenderer.invoke('data', { entity: 'exams', action: 'read' }),
+    getById: (id: number) => ipcRenderer.invoke('data', { entity: 'exams', action: 'read', data: id }),
+    update: (exam: Exam) => ipcRenderer.invoke('data', { entity: 'exams', action: 'update', data: exam }),
+    delete: (id: number) => ipcRenderer.invoke('data', { entity: 'exams', action: 'delete', data: id }),
+  },
 
-});
+  questions: {
+    create: (question: Question) => ipcRenderer.invoke('data', { entity: 'questions', action: 'create', data: question }),
+    getAll: () => ipcRenderer.invoke('data', { entity: 'questions', action: 'read' }),
+    getById: (id: number) => ipcRenderer.invoke('data', { entity: 'questions', action: 'read', data: id }),
+    update: (question: Question) => ipcRenderer.invoke('data', { entity: 'questions', action: 'update', data: question }),
+    delete: (id: number) => ipcRenderer.invoke('data', { entity: 'questions', action: 'delete', data: id }),
+    getWithAll: (id: number) => ipcRenderer.invoke('data', { entity: 'questions', action: 'readWithAll', data: id }),
+    getAnswers: (id: number) => ipcRenderer.invoke('data', { entity: 'questions', action: 'readAnswers', data: id }),
+    getExams: (id: number) => ipcRenderer.invoke('data', { entity: 'questions', action: 'readExams', data: id }),
+  }
+};
+
+contextBridge.exposeInMainWorld('electronAPI', api);
+
+export type ElectronAPI = typeof api;

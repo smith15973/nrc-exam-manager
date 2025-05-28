@@ -135,34 +135,30 @@ interface QuestionSystemNumberResponse extends ApiResponse {
   questionSystemNumbers?: QuestionSystemNumber[];
 }
 
-interface Window {
-  api: {
-    // plant operations
-    addPlant: (plant: Plant) => Promise<PlantResponse>;
-    getPlants: () => Promise<PlantResponse>;
-    getPlant: (plantId: number) => Promise<PlantResponse>;
-    getPlantWithExams: (plantId: number) => Promise<PlantResponse>;
-    getPlantsWithExams: () => Promise<PlantResponse>;
-    updatePlant: (plant: Plant) => Promise<PlantResponse>;
-    deletePlant: (plantId: number) => Promise<PlantResponse>;
+// Define all possible operations
+type DataOperation =
+  // Plants
+  | { entity: 'plants'; action: 'create'; data: Plant }
+  | { entity: 'plants'; action: 'read'; data?: number }
+  | { entity: 'plants'; action: 'update'; data: Plant }
+  | { entity: 'plants'; action: 'delete'; data: number }
+  | { entity: 'plants'; action: 'readWithExams'; data?: number }
+  // Exams  
+  | { entity: 'exams'; action: 'create'; data: Exam }
+  | { entity: 'exams'; action: 'read'; data?: number }
+  | { entity: 'exams'; action: 'update'; data: Exam }
+  | { entity: 'exams'; action: 'delete'; data: number }
+  // Questions
+  | { entity: 'questions'; action: 'create'; data: Question }
+  | { entity: 'questions'; action: 'read'; data?: number }
+  | { entity: 'questions'; action: 'update'; data: Question }
+  | { entity: 'questions'; action: 'delete'; data: number }
+  | { entity: 'questions'; action: 'readWithAll'; data: number }
+  | { entity: 'questions'; action: 'readAnswers'; data: number }
+  | { entity: 'questions'; action: 'readExams'; data: number };
 
-    // exam operations
-    addExam: (exam: Exam) => Promise<ExamResponse>;
-    getExams: () => Promise<ExamResponse>;
-    getExam: (examId: number) => Promise<ExamResponse>;
-    updateExam: (exam: Exam) => Promise<ExamResponse>;
-    deleteExam: (examId: number) => Promise<ExamResponse>;
-    getExamsByQuestionId: (questionId: number) => Promise<ExamResponse>;
-
-    // question operations
-    addQuestion: (question: Question) => Promise<QuestionResponse>;
-    getQuestions: () => Promise<QuestionResponse>;
-    getQuestionById: (questionId: number) => Promise<QuestionResponse>;
-    
-    getQuestionAll: (questionId: number) => Promise<QuestionResponse>;
-    updateQuestion: (question: Question) => Promise<QuestionResponse>;
-    deleteQuestion: (questionId: number) => Promise<QuestionResponse>;
-
-    getAnswersByQuestionId: (questionId: number) => Promise<AnswerResponse>;
-  };
+interface DataResponse<T = any> {
+  success: boolean;
+  data?: T;
+  error?: string;
 }

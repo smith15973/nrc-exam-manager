@@ -11,26 +11,25 @@ import ExamForm from '../../exams/components/ExamForm';
 export default function PlantPage() {
     const [plant, setPlant] = useState(defaultPlant);
     const { plantId } = useParams<{ plantId: string }>();
-    const { getPlantWithExams, updatePlant } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const { deleteExam, addExam } = useDatabase();
+    const {plants} = useDatabase();
 
 
-    // Single source of truth for loading exam data
-    const loadPlant = async (id: number) => {
+    const loadPlantById = async (id: number) => {
+        setLoading(true);
+        setError(null);
+
         try {
-            setLoading(true);
-            setError(null);
-            const fetchedPlant = await getPlantWithExams(id);
-            if (fetchedPlant) {
-                setPlant(fetchedPlant);
+            const result = await plants.getById(id);
+            if (result.success) {
+                setPlant(result.data);
             } else {
-                setError('Plant not found');
+                setError(result.error || 'Failed to load plant');
             }
         } catch (err) {
-            setError('Failed to load plant');
-            console.error('Failed to load plant:', err);
+            setError('Error loading plant');
+            console.error(err);
         } finally {
             setLoading(false);
         }
@@ -39,7 +38,7 @@ export default function PlantPage() {
 
     useEffect(() => {
         if (plantId) {
-            loadPlant(parseInt(plantId));
+            loadPlantById(parseInt(plantId));
         }
     }, []);
 

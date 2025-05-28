@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { defaultExam, examSchema } from '../../../data/db/schema';
-import { Box, Button, MenuItem, Select, TextField, FormControl, InputLabel, FormHelperText, SxProps } from '@mui/material';
+import { Box, Button,  TextField, SxProps } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import PlantSelect from '../../plants/components/PlantSelect';
 
@@ -63,7 +63,7 @@ export default function ExamForm(props: ExamFormProps) {
                         disabled
                     />
                 ) :
-                    <PlantSelect handleChange={handleChange} plant_id={examForm.plant_id} plants={plants} />
+                    <PlantSelect handleChange={handleChange} plant_id={examForm.plant_id} plants={plants.getAll} />
                 }
             </Box>
 
