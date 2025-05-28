@@ -9,7 +9,7 @@ export const useDatabase = () => {
     const [questions, setQuestions] = useState<Question[]>([]);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchPlants = async () => {
+    const getPlants = async () => {
         try {
             const result = await window.api.getPlants();
             if (result.success) {
@@ -22,7 +22,7 @@ export const useDatabase = () => {
         }
     };
 
-    const fetchPlantsWithExams = async () => {
+    const getPlantsWithExams = async () => {
         try {
             const result = await window.api.getPlantsWithExams();
             if (result.success) {
@@ -34,7 +34,7 @@ export const useDatabase = () => {
             setError("Failed to fetch plants with exams");
         }
     };
-    const fetchPlant = async (plantId: number) => {
+    const getPlant = async (plantId: number) => {
         try {
             const result = await window.api.getPlant(plantId);
             if (result.success) {
@@ -47,7 +47,7 @@ export const useDatabase = () => {
         }
     };
 
-    const fetchPlantWithExams = async (plantId: number) => {
+    const getPlantWithExams = async (plantId: number) => {
         try {
             const result = await window.api.getPlantWithExams(plantId);
             if (result.success) {
@@ -69,8 +69,8 @@ export const useDatabase = () => {
             const result = await window.api.addPlant(plant);
             if (result.success) {
                 setError(null);
-                await fetchPlants();
-                await fetchPlantsWithExams();
+                await getPlants();
+                await getPlantsWithExams();
             } else {
                 setError(result.error || 'Failed to add plant');
             }
@@ -89,8 +89,8 @@ export const useDatabase = () => {
             const result = await window.api.updatePlant(plant);
             if (result.success) {
                 setError(null);
-                await fetchPlants();
-                await fetchPlantsWithExams();
+                await getPlants();
+                await getPlantsWithExams();
                 return result.plant ?? plant;
             } else {
                 setError(result.error || 'Failed to update plant');
@@ -106,8 +106,8 @@ export const useDatabase = () => {
         try {
             const result = await window.api.deletePlant(plantId);
             if (result.success) {
-                await fetchPlants();
-                await fetchPlantsWithExams();
+                await getPlants();
+                await getPlantsWithExams();
             } else {
                 setError(result.error || 'Failed to delete plant');
             }
@@ -116,7 +116,7 @@ export const useDatabase = () => {
         }
     }
 
-    const fetchExams = async () => {
+    const getExams = async () => {
         try {
             const result = await window.api.getExams();
             if (result.success) {
@@ -142,7 +142,7 @@ export const useDatabase = () => {
         }
     };
 
-    const fetchExam = async (examId: number) => {
+    const getExam = async (examId: number) => {
         try {
             const result = await window.api.getExam(examId);
             if (result.success) {
@@ -168,7 +168,7 @@ export const useDatabase = () => {
             const result = await window.api.addExam(exam);
             if (result.success) {
                 setError(null);
-                await fetchExams();
+                await getExams();
             } else {
                 setError(result.error || 'Failed to add exam');
             }
@@ -187,7 +187,7 @@ export const useDatabase = () => {
             const result = await window.api.updateExam(exam);
             if (result.success) {
                 setError(null);
-                await fetchExams();
+                await getExams();
                 return result.exam ?? exam;
             } else {
                 setError(result.error || 'Failed to update exam');
@@ -203,7 +203,7 @@ export const useDatabase = () => {
         try {
             const result = await window.api.deleteExam(examId);
             if (result.success) {
-                await fetchExams();
+                await getExams();
             } else {
                 setError(result.error || 'Failed to delete exam');
             }
@@ -224,7 +224,7 @@ export const useDatabase = () => {
             const result = await window.api.addQuestion(question);
             if (result.success) {
                 setError(null);
-                await fetchQuestions();
+                await getQuestions();
             } else {
                 setError(result.error || 'Failed to add question');
             }
@@ -234,7 +234,7 @@ export const useDatabase = () => {
         }
     };
 
-    const fetchQuestions = async () => {
+    const getQuestions = async () => {
         try {
             const result = await window.api.getQuestions();
             if (result.success) {
@@ -260,10 +260,9 @@ export const useDatabase = () => {
         }
     };
 
-    const getQuestionWithAll = async (questionId: number) => {
+    const getQuestionComplete = async (questionId: number) => {
         try {
             const result = await window.api.getQuestionAll(questionId);
-            console.log(result)
             if (result.success) {
                 return result.question ?? null;
             } else {
@@ -284,7 +283,7 @@ export const useDatabase = () => {
             const result = await window.api.updateQuestion(question);
             if (result.success) {
                 setError(null);
-                await fetchQuestions();
+                await getQuestions();
             } else {
                 setError(result.error || 'Failed to update question');
                 return null;
@@ -299,7 +298,7 @@ export const useDatabase = () => {
         try {
             const result = await window.api.deleteQuestion(questionId);
             if (result.success) {
-                await fetchQuestions();
+                await getQuestions();
             } else {
                 setError(result.error || 'Failed to delete question');
             }
@@ -324,16 +323,16 @@ export const useDatabase = () => {
 
 
     useEffect(() => {
-        fetchPlants();
-        fetchExams();
-        fetchPlantsWithExams();
-        fetchQuestions();
+        getPlants();
+        getExams();
+        getPlantsWithExams();
+        getQuestions();
     }, []);
 
     return {
-        plants, fetchPlant, fetchPlantWithExams, plantsWithExams, addPlant, updatePlant, deletePlant,
-        exams, fetchExam, addExam, updateExam, deleteExam, getExamsByQuestionId,
-        addQuestion, getQuestionById, getQuestionWithAll, questions, updateQuestion, deleteQuestion,
+        plants, getPlant, getPlantWithExams, plantsWithExams, addPlant, updatePlant, deletePlant,
+        exams, getExam, addExam, updateExam, deleteExam, getExamsByQuestionId,
+        addQuestion, getQuestionById, getQuestionComplete, questions, updateQuestion, deleteQuestion,
         getAnswersByQuestionId,
         error
     }

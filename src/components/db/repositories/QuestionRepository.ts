@@ -1,11 +1,9 @@
-// db/repositories/PlantRepository.ts
+// db/repositories/QuestionRepository.ts
 import sqlite3 from 'sqlite3';
 import { ExamRepository } from './ExamRepository';
 
 export class QuestionRepository {
     constructor(private db: sqlite3.Database, private isClosing: () => boolean) { }
-
-    public examRepo: ExamRepository
 
     async add(question: Question): Promise<number> {
         return new Promise((resolve, reject) => {
@@ -13,8 +11,6 @@ export class QuestionRepository {
                 reject(new Error('Database is closing'));
                 return;
             }
-
-            console.log("IN DB WITH", question);
 
             const self = this;
             this.db.serialize(() => {
@@ -176,41 +172,6 @@ export class QuestionRepository {
             });
         });
     }
-
-
-
-
-
-    async getComplete(questionId: number): Promise<Question> {
-        try {
-            // Get all data in parallel for better performance
-            const [questionRow, answers, exams] = await Promise.all([
-                this.getById(questionId),
-                this.getAnswersByQuestionId(questionId),
-                this.examRepo.getByQuestionId(questionId)
-            ]);
-
-            const question: Question = {
-                question_id: questionRow.question_id,
-                question_text: questionRow.question_text,
-                category: questionRow.category,
-                exam_level: questionRow.exam_level,
-                technical_references: questionRow.technical_references,
-                difficulty_level: questionRow.difficulty_level,
-                cognitive_level: questionRow.cognitive_level,
-                objective: questionRow.objective,
-                last_used: questionRow.last_used,
-                answers: answers as [Answer, Answer, Answer, Answer],
-                exams: exams,
-            };
-
-            return question;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-
 
     async update(question: Question): Promise<Question> {
         return new Promise((resolve, reject) => {

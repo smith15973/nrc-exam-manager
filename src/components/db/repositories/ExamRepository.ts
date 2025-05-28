@@ -1,4 +1,4 @@
-// db/repositories/PlantRepository.ts
+// db/repositories/ExamRepository.ts
 import sqlite3 from 'sqlite3';
 
 export class ExamRepository {

@@ -6,6 +6,7 @@ import { schema } from './schema';
 import { PlantRepository } from './repositories/PlantRepository';
 import { ExamRepository } from './repositories/ExamRepository';
 import { QuestionRepository } from './repositories/QuestionRepository';
+import { QuestionService } from './services/QuestionService';
 
 export class Database {
     private db: sqlite3.Database;
@@ -14,7 +15,9 @@ export class Database {
     // Repository instances
     public plants: PlantRepository;
     public exams: ExamRepository;
-    public questions: QuestionRepository
+    public questions: QuestionRepository;
+
+    public questionService: QuestionService;
 
     // Define what changed in each version
     private static readonly MIGRATIONS = {
@@ -64,6 +67,10 @@ export class Database {
 
         // Initialize repositories
         this.plants = new PlantRepository(this.db, () => this.isClosing);
+        this.exams = new ExamRepository(this.db, () => this.isClosing);
+        this.questions = new QuestionRepository(this.db, () => this.isClosing);
+
+        this.questionService = new QuestionService(this.questions, this.exams);
     }
 
     private async getCurrentSchemaVersion(): Promise<number> {
@@ -210,11 +217,16 @@ export class Database {
     }
 
     async getExamsByQuestionId(questionId: number): Promise<Exam[]> {
-        return this.getExamsByQuestionId(questionId);
+        return this.exams.getByQuestionId(questionId);
     }
 
     async getQuestionAll(questionId: number): Promise<Question> {
-        return this.questions.getComplete(questionId);
+        return this.questionService.getCompleteQuestion(questionId);
+    }
+
+    // New method that leverages service layer
+    async getQuestionsWithFullDetails(): Promise<Question[]> {
+        return this.questionService.getQuestionsWithFullDetails();
     }
 
     async updateQuestion(question: Question): Promise<Question> {
@@ -224,8 +236,6 @@ export class Database {
     async deleteQuestion(questionId: number): Promise<void> {
         return this.questions.delete(questionId)
     }
-
-    // ... rest of exam and question methods stay for now
 
     // Check if database is still connected
     isConnected(): boolean {

@@ -16,7 +16,7 @@ export default function PlantsPage() {
             <Typography variant='h4'>Plants</Typography>
             <PlantForm handleSubmit={handleSubmit} />
             <PlantsList plants={plantsWithExams} deletePlant={deletePlant} />
-            {error && <Typography variant='body2' style={{ color: 'red' }}>{error}</Typography>}
+            {/* {error && <Typography variant='body2' style={{ color: 'red' }}>{error}</Typography>} */}
         </>
     )
 };
