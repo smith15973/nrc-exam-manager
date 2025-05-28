@@ -4,6 +4,8 @@ import { app } from 'electron';
 import path from 'path';
 import { schema } from './schema';
 import { PlantRepository } from './repositories/PlantRepository';
+import { ExamRepository } from './repositories/ExamRepository';
+import { QuestionRepository } from './repositories/QuestionRepository';
 
 export class Database {
     private db: sqlite3.Database;
@@ -11,6 +13,8 @@ export class Database {
 
     // Repository instances
     public plants: PlantRepository;
+    public exams: ExamRepository;
+    public questions: QuestionRepository
 
     // Define what changed in each version
     private static readonly MIGRATIONS = {
@@ -166,458 +170,59 @@ export class Database {
         return this.plants.delete(plantId);
     }
 
-    // TODO: Move exam methods to ExamRepository
-
     async addExam(exam: Exam): Promise<number> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing) {
-                reject(new Error('Database is closing'));
-                return;
-            }
-
-            this.db.run(
-                'INSERT INTO exams (name, plant_id) VALUES (?, ?)',
-                [exam.name, exam.plant_id],
-                function (err) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(this.lastID);
-                    }
-                }
-            );
-        });
+        return this.exams.add(exam);
     }
 
     async getExams(): Promise<Exam[]> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing) {
-                reject(new Error('Database is closing'));
-                return;
-            }
-
-            // SQL query to join exams with plants
-            const query = `
-      SELECT 
-        e.*,
-        p.plant_id AS plant_plant_id,
-        p.name AS plant_name
-      FROM exams e
-      LEFT JOIN plants p ON e.plant_id = p.plant_id
-    `;
-
-            this.db.all(query, [], (err, rows) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    // Transform the flat rows into nested objects
-                    const exams = rows.map((row: any) => {
-                        // Extract exam fields
-                        const exam: any = {
-                            exam_id: row.exam_id,
-                            name: row.name,
-                            // Add other exam fields
-                            plant_id: row.plant_id,
-                            // Create nested plant object
-                            plant: row.plant_plant_id ? {
-                                plant_id: row.plant_plant_id,
-                                name: row.plant_name,
-                                // Add other plant fields
-                            } : undefined
-                        };
-                        return exam;
-                    });
-
-                    resolve(exams);
-                }
-            });
-        });
+        return this.exams.getAll();
     }
 
     async getExam(examId: number): Promise<Exam> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing) {
-                reject(new Error('Database is closing'));
-                return;
-            }
-
-            // SQL query to join exams with plants
-            const query = `
-      SELECT 
-        e.*,
-        p.plant_id AS plant_plant_id,
-        p.name AS plant_name
-      FROM exams e
-      LEFT JOIN plants p ON e.plant_id = p.plant_id
-      WHERE exam_id = ?
-    `;
-
-            this.db.all(query, [examId], (err, rows) => {
-                if (err) {
-                    reject(err);
-                } else if (!rows || rows.length === 0) {
-                    reject(new Error('Exam not found'));
-                } else {
-                    // Extract the first row as the exam
-                    const row: any = rows[0];
-                    const exam: any = {
-                        exam_id: row.exam_id,
-                        name: row.name,
-                        // Add other exam fields
-                        plant_id: row.plant_id,
-                        // Create nested plant object
-                        plant: row.plant_plant_id ? {
-                            plant_id: row.plant_plant_id,
-                            name: row.plant_name,
-                            // Add other plant fields
-                        } : null
-                    };
-                    resolve(exam);
-                }
-            });
-        });
+        return this.exams.getById(examId);
     }
 
     async updateExam(exam: Exam): Promise<Exam> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing) {
-                reject(new Error("Database is closing"));
-                return;
-            }
-
-            if (!exam.exam_id) {
-                reject(new Error('Exam ID is required for update'));
-                return;
-            }
-            if (!exam.plant_id) {
-                reject(new Error('Plant ID is required for update'));
-                return;
-            }
-
-            this.db.run(
-                'UPDATE exams SET (name, plant_id) = (?, ?) WHERE exam_id = ?',
-                [exam.name, exam.plant_id, exam.exam_id],
-                function (err) {
-                    if (err) {
-                        reject(err);
-                    } else if (this.changes === 0) {
-                        reject(new Error('Exam not found'));
-                    } else {
-                        resolve(exam);
-                    }
-                }
-            );
-        });
+        return this.exams.update(exam);
     }
 
     async deleteExam(examId: number): Promise<void> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing) {
-                reject(new Error("Database is closing"));
-                return;
-            }
-
-            this.db.run(
-                'DELETE FROM exams WHERE exam_id = ?',
-                [examId],
-                function (err) {
-                    if (err) {
-                        reject(err);
-                    } else if (this.changes === 0) {
-                        reject(new Error('Exam not found'));
-                    } else {
-                        resolve();
-                    }
-                }
-            );
-        });
+        return this.exams.delete(examId)
     }
 
 
     // questions
     async addQuestion(question: Question): Promise<number> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing) {
-                reject(new Error('Database is closing'));
-                return;
-            }
-
-            console.log("IN DB WITH", question);
-
-            const self = this;
-            this.db.serialize(() => {
-                self.db.run('BEGIN TRANSACTION');
-
-                self.db.run(
-                    'INSERT INTO questions (question_text, category, exam_level, technical_references, difficulty_level, cognitive_level, objective, last_used) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                    [
-                        question.question_text,
-                        question.category,
-                        question.exam_level,
-                        question.technical_references,
-                        question.difficulty_level,
-                        question.cognitive_level,
-                        question.objective,
-                        question.last_used
-                    ],
-                    function (err) {
-                        if (err) {
-                            self.db.run('ROLLBACK');
-                            reject(err);
-                            return;
-                        }
-
-                        const questionId = this.lastID;
-                        const insertOperations: Promise<void>[] = [];
-
-                        // Handle exam relationships
-                        if (question.exams?.length) {
-                            const examPromise = new Promise<void>((resolveExam, rejectExam) => {
-                                const placeholders = question.exams!.map(() => '(?, ?)').join(', ');
-                                const values: any[] = [];
-
-                                question.exams!.forEach(exam => {
-                                    values.push(exam.exam_id, questionId);
-                                });
-
-                                self.db.run(
-                                    `INSERT INTO exam_questions (exam_id, question_id) VALUES ${placeholders}`,
-                                    values,
-                                    (examErr) => {
-                                        if (examErr) rejectExam(examErr);
-                                        else resolveExam();
-                                    }
-                                );
-                            });
-                            insertOperations.push(examPromise);
-                        }
-
-                        // handle answers
-                        if (question.answers?.length) {
-                            const answerPromise = new Promise<void>((resolveAnswer, rejectAnswer) => {
-                                const placeholders = question.answers!.map(() => '(?, ?, ?, ?, ?)').join(', ');
-                                const values: any[] = [];
-
-                                question.answers!.forEach(answer => {
-                                    values.push(
-                                        questionId,
-                                        answer.answer_text,
-                                        answer.is_correct ? 1 : 0,
-                                        answer.justification,
-                                        answer.option
-                                    );
-                                });
-
-                                self.db.run(
-                                    `INSERT INTO answers (question_id, answer_text, is_correct, justification, option) VALUES ${placeholders}`,
-                                    values,
-                                    (answerErr) => {
-                                        if (answerErr) rejectAnswer(answerErr);
-                                        else resolveAnswer();
-                                    }
-                                );
-                            });
-                            insertOperations.push(answerPromise);
-                        }
-
-                        Promise.all(insertOperations).then(() => {
-                            self.db.run('COMMIT', (commitErr) => {
-                                if (commitErr) {
-                                    reject(commitErr);
-                                } else {
-                                    resolve(questionId)
-                                }
-                            });
-                        })
-                            .catch((insertErr) => {
-                                self.db.run('ROLLBACK');
-                                reject(insertErr)
-                            });
-                    }
-                );
-            });
-        });
+        return this.questions.add(question);
     }
 
     async getQuestions(): Promise<Question[]> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing) {
-                reject(new Error('Database is closing'));
-                return;
-            }
-
-            this.db.all('SELECT * FROM questions', [], (err, rows: Question[]) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(rows);
-                }
-            });
-        });
+        return this.questions.getAll();
     }
 
     // Individual query functions
     async getQuestionById(questionId: number): Promise<Question> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing) {
-                reject(new Error('Database is closing'));
-                return;
-            }
-
-            const query = 'SELECT * FROM questions WHERE question_id = ?';
-
-            this.db.get(query, [questionId], (err, row: Question) => {
-                if (err) {
-                    reject(err);
-                } else if (!row) {
-                    reject(new Error(`Question with ID ${questionId} not found`));
-                } else {
-                    resolve(row);
-                }
-            });
-        });
+        return this.questions.getById(questionId);
     }
 
     async getAnswersByQuestionId(questionId: number): Promise<Answer[]> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing) {
-                reject(new Error('Database is closing'));
-                return;
-            }
-
-            const query = 'SELECT * FROM answers WHERE question_id = ? ORDER BY answer_id';
-
-            this.db.all(query, [questionId], (err, rows: any[]) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    const answers: Answer[] = rows.map(row => ({
-                        answer_id: row.answer_id,
-                        question_id: row.question_id,
-                        answer_text: row.answer_text,
-                        is_correct: row.is_correct,
-                        option: row.option,
-                        justification: row.justification
-                    }));
-                    resolve(answers);
-                }
-            });
-        });
+        return this.questions.getAnswersByQuestionId(questionId);
     }
 
     async getExamsByQuestionId(questionId: number): Promise<Exam[]> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing) {
-                reject(new Error('Database is closing'));
-                return;
-            }
-
-            const query = `
-      SELECT e.exam_id, e.name, e.plant_id 
-      FROM exams e
-      INNER JOIN exam_questions eq ON e.exam_id = eq.exam_id
-      WHERE eq.question_id = ?
-      ORDER BY e.exam_id
-    `;
-
-            this.db.all(query, [questionId], (err, rows: any[]) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    const exams = rows.map(row => ({
-                        exam_id: row.exam_id,
-                        name: row.name,
-                        plant_id: row.plant_id,
-                    }));
-                    resolve(exams);
-                }
-            });
-        });
+        return this.getExamsByQuestionId(questionId);
     }
-
-
-
 
     async getQuestionAll(questionId: number): Promise<Question> {
-        try {
-            // Get all data in parallel for better performance
-            const [questionRow, answers, exams] = await Promise.all([
-                this.getQuestionById(questionId),
-                this.getAnswersByQuestionId(questionId),
-                this.getExamsByQuestionId(questionId),
-            ]);
-
-            const question: Question = {
-                question_id: questionRow.question_id,
-                question_text: questionRow.question_text,
-                category: questionRow.category,
-                exam_level: questionRow.exam_level,
-                technical_references: questionRow.technical_references,
-                difficulty_level: questionRow.difficulty_level,
-                cognitive_level: questionRow.cognitive_level,
-                objective: questionRow.objective,
-                last_used: questionRow.last_used,
-                answers: answers as [Answer, Answer, Answer, Answer],
-                exams: exams,
-            };
-
-            return question;
-        } catch (error) {
-            throw error;
-        }
+        return this.questions.getComplete(questionId);
     }
 
-
-
     async updateQuestion(question: Question): Promise<Question> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing) {
-                reject(new Error("Database is closing"));
-                return;
-            }
-
-            if (!question.question_id) {
-                reject(new Error('Question ID is required for update'));
-                return;
-            }
-
-            this.db.run(
-                'UPDATE questions SET (question_text) = (?) WHERE question_id = ?',
-                [question.question_text, question.question_id],
-                function (err) {
-                    if (err) {
-                        reject(err);
-                    } else if (this.changes === 0) {
-                        reject(new Error('Question not found'));
-                    } else {
-                        resolve(question);
-                    }
-                }
-            );
-        });
+        return this.questions.update(question);
     }
 
     async deleteQuestion(questionId: number): Promise<void> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing) {
-                reject(new Error("Database is closing"));
-                return;
-            }
-
-            this.db.run(
-                'DELETE FROM questions WHERE question_id = ?',
-                [questionId],
-                function (err) {
-                    if (err) {
-                        reject(err);
-                    } else if (this.changes === 0) {
-                        reject(new Error('Question not found'));
-                    } else {
-                        resolve();
-                    }
-                }
-            );
-        });
+        return this.questions.delete(questionId)
     }
 
     // ... rest of exam and question methods stay for now
