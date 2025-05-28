@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useDatabase } from '../hooks/useDatabase';
+import { useDatabase } from '../../../common/hooks/useDatabase';
 import { Alert, CircularProgress, Typography } from '@mui/material';
-import { defaultExam } from '../db/schema';
+import { defaultExam } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
-import ExamForm from '../exams/ExamForm';
+import ExamForm from '../components/ExamForm';
 
 
 export default function ExamPage() {

@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import { Database } from './components/db'
+import { Database } from '../data/db'
 import * as path from 'path';
 import * as fs from 'fs';
 

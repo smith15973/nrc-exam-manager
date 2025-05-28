@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useDatabase } from '../hooks/useDatabase';
+import { useDatabase } from '../../../common/hooks/useDatabase';
 import { Alert, CircularProgress, Typography } from '@mui/material';
-import { defaultQuestion } from '../db/schema';
+import { defaultQuestion } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
-import QuestionForm from '../questions/QuestionForm';
+import QuestionForm from '../components/QuestionForm';
 
 
 export default function QuestionPage() {

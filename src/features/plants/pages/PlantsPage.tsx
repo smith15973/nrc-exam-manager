@@ -1,6 +1,6 @@
-import PlantForm from '../plants/PlantForm';
-import PlantsList from '../plants/PlantsList';
-import { useDatabase } from '../hooks/useDatabase';
+import PlantForm from '../components/PlantForm';
+import PlantsList from '../components/PlantsList';
+import { useDatabase } from '../../../common/hooks/useDatabase';
 import { Typography } from '@mui/material';
 
 

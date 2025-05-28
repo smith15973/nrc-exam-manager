@@ -1,15 +1,15 @@
 // src/App.tsx
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import PlantPage from './components/pages/PlantPage';
-import DrawerAppBar from './components/common/DrawerAppbar';
-import HomePage from './components/pages/HomePage';
+import PlantPage from '../features/plants/pages/PlantPage';
+import DrawerAppBar from '../common/components/DrawerAppbar';
+import HomePage from '../pages/HomePage';
 import { CssBaseline } from '@mui/material';
-import ExamsPage from './components/pages/ExamsPage';
-import ExamPage from './components/pages/ExamPage';
-import QuestionsPage from './components/pages/QuestionsPage';
-import PlantsPage from './components/pages/PlantsPage';
-import QuestionPage from './components/pages/QuestionPage';
+import ExamsPage from '../features/exams/pages/ExamsPage';
+import ExamPage from '../features/exams/pages/ExamPage';
+import QuestionsPage from '../features/questions/pages/QuestionsPage';
+import PlantsPage from '../features/plants/pages/PlantsPage';
+import QuestionPage from '../features/questions/pages/QuestionPage';
 
 
 

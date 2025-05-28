@@ -1,6 +1,6 @@
-import { useDatabase } from "../hooks/useDatabase";
-import QuestionForm from "../questions/QuestionForm";
-import QuestionsList from "../questions/QuestionsList";
+import { useDatabase } from "../../../common/hooks/useDatabase";
+import QuestionForm from "../components/QuestionForm";
+import QuestionsList from "../components/QuestionsList";
 
 
 

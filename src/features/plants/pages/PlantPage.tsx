@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useDatabase } from '../hooks/useDatabase';
+import { useDatabase } from '../../../common/hooks/useDatabase';
 import { CircularProgress, Typography, Alert } from '@mui/material';
-import { defaultPlant } from '../db/schema';
+import { defaultPlant } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
-import PlantForm from '../plants/PlantForm';
-import ExamsList from '../exams/ExamsList';
-import ExamForm from '../exams/ExamForm';
+import PlantForm from '../components/PlantForm';
+import ExamsList from '../../exams/components/ExamsList';
+import ExamForm from '../../exams/components/ExamForm';
 
 
 export default function PlantPage() {

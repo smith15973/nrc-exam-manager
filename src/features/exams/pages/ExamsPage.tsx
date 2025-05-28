@@ -1,14 +1,14 @@
 
-import ExamForm from '../exams/ExamForm';
-import ExamsList from '../exams/ExamsList';
-import { useDatabase } from '../hooks/useDatabase';
+import ExamForm from '../components/ExamForm';
+import ExamsList from '../components/ExamsList';
+import { useDatabase } from '../../../common/hooks/useDatabase';
 import { Typography } from '@mui/material';
 
 
 export default function PlantsPage() {
     const { exams, addExam, deleteExam, error } = useDatabase();
 
-    const handleSubmit = async (exam:Exam) => {
+    const handleSubmit = async (exam: Exam) => {
         await addExam(exam);
     }
 

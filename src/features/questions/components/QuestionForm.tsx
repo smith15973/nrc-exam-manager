@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { defaultQuestion, questionSchema, defaultAnswer, defaultExam } from '../db/schema';
+import { defaultQuestion, questionSchema, defaultAnswer, defaultExam } from '../../../data/db/schema';
 import { Box, Button, TextField, SxProps } from '@mui/material';
-import { useDatabase } from '../hooks/useDatabase';
-import AnswerForm from '../answers/AnswerForm';
-import MultiExamSelect from '../exams/MultiExamSelect';
-import ErrorPopup from '../common/ErrorPopup';
+import { useDatabase } from '../../../common/hooks/useDatabase';
+import AnswerForm from '../../answers/components/AnswerForm';
+import MultiExamSelect from '../../exams/components/MultiExamSelect';
+import ErrorPopup from '../../../common/components/ErrorPopup';
 
 interface QuestionFormProps {
     question?: Question;
