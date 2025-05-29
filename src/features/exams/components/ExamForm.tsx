@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { defaultExam, examSchema } from '../../../data/db/schema';
-import { Box, Button,  TextField, SxProps } from '@mui/material';
+import { Box, Button, TextField, SxProps } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import PlantSelect from '../../plants/components/PlantSelect';
 
@@ -14,7 +14,10 @@ interface ExamFormProps {
 export default function ExamForm(props: ExamFormProps) {
     const { exam, handleSubmit, plant, sx } = props;
     const [examForm, setExamForm] = useState<Exam>(exam || defaultExam);
-    const { plants } = useDatabase();
+    const [plantList, setPlantList] = useState<Plant[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const { plants, data } = useDatabase();
 
     useEffect(() => {
         if (exam) {
@@ -23,6 +26,25 @@ export default function ExamForm(props: ExamFormProps) {
             setExamForm((prev) => ({ ...prev, plant_id: plant.plant_id }));
         }
     }, [exam, plant]);
+
+    const loadPlants = async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const result = await data({ entity: 'plants', action: 'read' });
+            if (result.success) {
+                setPlantList(result.data || []);
+            } else {
+                setError(result.error || 'Failed to load plants');
+            }
+        } catch (err) {
+            setError('Error loading plants');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleChange = (key: string, value: any) => {
         setExamForm((prev) => ({ ...prev, [key]: value }));
@@ -63,7 +85,7 @@ export default function ExamForm(props: ExamFormProps) {
                         disabled
                     />
                 ) :
-                    <PlantSelect handleChange={handleChange} plant_id={examForm.plant_id} plants={plants.getAll} />
+                    <PlantSelect handleChange={handleChange} plant_id={examForm.plant_id} plants={plantList} />
                 }
             </Box>
 

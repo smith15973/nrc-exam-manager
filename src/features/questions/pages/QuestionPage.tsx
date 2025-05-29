@@ -9,7 +9,7 @@ import QuestionForm from '../components/QuestionForm';
 export default function QuestionPage() {
     const [question, setQuestion] = useState(defaultQuestion);
     const { questionId } = useParams<{ questionId: string }>();
-    const { getQuestionComplete, updateQuestion } = useDatabase();
+    const { data } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -19,11 +19,11 @@ export default function QuestionPage() {
         try {
             setLoading(true);
             setError(null);
-            const fetchedQuestion = await getQuestionComplete(id);
-            if (fetchedQuestion) {
-                setQuestion(fetchedQuestion);
+            const result = await data({ entity: 'questions', action: 'readWithAll', data: id });
+            if (result.success) {
+                setQuestion(result.data);
             } else {
-                setError('Question not found');
+                setError(result.error || 'Question not found');
             }
         } catch (err) {
             setError('Failed to load question');
@@ -32,6 +32,12 @@ export default function QuestionPage() {
             setLoading(false);
         }
     };
+
+    const updateQuestion = async (updatedQuestion: Question) => {
+        const result = await data({ entity: 'questions', action: 'update', data: updatedQuestion })
+        if (result.success) {
+        }
+    }
 
 
     // Only fetch when questionId changes (initial load)

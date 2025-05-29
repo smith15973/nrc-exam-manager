@@ -9,7 +9,7 @@ import ExamForm from '../components/ExamForm';
 export default function ExamPage() {
     const [exam, setExam] = useState(defaultExam);
     const { examId } = useParams<{ examId: string }>();
-    const { getExam, updateExam } = useDatabase();
+    const { exams, data } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -19,11 +19,11 @@ export default function ExamPage() {
         try {
             setLoading(true);
             setError(null);
-            const fetchedExam = await getExam(id);
-            if (fetchedExam) {
-                setExam(fetchedExam);
+            const result = await data({ entity: 'exams', action: 'read', data: id })
+            if (result.success) {
+                setExam(result.data);
             } else {
-                setError('Exam not found');
+                setError(result.error || 'Failed to load exam');
             }
         } catch (err) {
             setError('Failed to load exam');
@@ -47,7 +47,12 @@ export default function ExamPage() {
             setError(null);
 
             // Update the exam
-            await updateExam(updatedExam);
+            const result = await data({ entity: 'exams', action: 'update', data: updatedExam })
+            if (result.success) {
+                // loadExam(parseInt(examId));
+            } else {
+                setError(result.error || 'Failed to load exam');
+            }
 
             // Explicitly refetch to get the updated data with fresh plant info
             if (updatedExam.exam_id) {

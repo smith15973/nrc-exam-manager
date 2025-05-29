@@ -13,7 +13,7 @@ export default function PlantPage() {
     const { plantId } = useParams<{ plantId: string }>();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const {plants} = useDatabase();
+    const { plants, exams, data } = useDatabase();
 
 
     const loadPlantById = async (id: number) => {
@@ -21,7 +21,7 @@ export default function PlantPage() {
         setError(null);
 
         try {
-            const result = await plants.getById(id);
+            const result = await data({ entity: 'plants', action: 'read', data: id })
             if (result.success) {
                 setPlant(result.data);
             } else {
@@ -46,10 +46,13 @@ export default function PlantPage() {
         try {
             setLoading(true);
             setError(null);
-            await updatePlant(updatedPlant);
-            if (updatedPlant.plant_id) {
-                loadPlant(updatedPlant.plant_id)
+            const result = await data({ entity: 'plants', action: 'update', data: updatedPlant })
+            if (result.success) {
+                loadPlantById(updatedPlant.plant_id)
+            } else {
+                setError(result.error || 'Failed to load plant');
             }
+
         } catch (err) {
             setError('Failed to update plant');
             console.error("Failed to update plant:", err);
@@ -61,9 +64,11 @@ export default function PlantPage() {
     const handleDeleteExam = async (examId: number) => {
         try {
             setError(null);
-            await deleteExam(examId)
-            if (examId) {
-                loadPlant(plant.plant_id)
+            const result = await data({ entity: 'exams', action: 'delete', data: examId })
+            if (result.success) {
+                loadPlantById(plant.plant_id)
+            } else {
+                setError(result.error || 'Failed to load plant');
             }
         } catch (err) {
             setError('Failed to delete exam');
@@ -77,11 +82,12 @@ export default function PlantPage() {
             setError(null);
 
             // Update the exam
-            await addExam(newExam);
+            await exams.create(newExam);
+            const result = await data({ entity: 'exams', action: 'create', data: newExam })
 
             // Explicitly refetch to get the updated data with fresh plant info
             if (newExam) {
-                await loadPlant(plant.plant_id);
+                await loadPlantById(plant.plant_id);
             }
         } catch (err) {
             setError('Failed to add exam');

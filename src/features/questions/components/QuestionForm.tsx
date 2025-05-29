@@ -17,13 +17,28 @@ export default function QuestionForm(props: QuestionFormProps) {
     const { question, handleSubmit, exam, sx } = props;
     const [questionForm, setQuestionForm] = useState<Question>(question || defaultQuestion);
     const [questionExams, setQuestionExams] = useState<number[]>([])
-    const { exams } = useDatabase();
+    const [error, setError] = useState<string | null>(null);
+    const [examsList, setExamsList] = useState<Exam[]>([]);
+    const { exams, data } = useDatabase();
 
     useEffect(() => {
         if (question) {
             setQuestionForm(question);
         }
     }, [question, exam]);
+
+    useEffect(() => {
+        loadExams();
+    }, []);
+
+    const loadExams = async () => {
+        const result = await data({ entity: 'exams', action: 'read' })
+        if (result.success) {
+            setExamsList(result.data);
+        } else {
+            setError(result.error || "Cannot load exams");
+        }
+    }
 
 
     useEffect(() => {
@@ -57,7 +72,7 @@ export default function QuestionForm(props: QuestionFormProps) {
         setQuestionExams(newExamList);
 
         // Sync with questionForm.exams
-        const selectedExams = exams.filter(exam => newExamList.includes(exam.exam_id));
+        const selectedExams = examsList.filter(exam => newExamList.includes(exam.exam_id));
         setQuestionForm(prev => ({
             ...prev,
             exams: selectedExams
@@ -98,7 +113,7 @@ export default function QuestionForm(props: QuestionFormProps) {
 
             <MultiExamSelect
                 examList={questionExams}
-                examOptions={exams}
+                examOptions={examsList}
                 handleAddExamClick={handleAddExamClick}
                 onExamsUpdate={handleExamsChange}
             />

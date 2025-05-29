@@ -1,5 +1,5 @@
 // src/main/preload.ts
-import { contextBridge, Data, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 
 const api = {
   // Single data function that handles everything
