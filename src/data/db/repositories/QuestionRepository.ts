@@ -124,6 +124,30 @@ export class QuestionRepository {
         });
     }
 
+    async getByExamId(examId: number): Promise<Question[]> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error('Database is closing'));
+                return;
+            }
+
+            const query = `
+            SELECT q.* 
+            FROM questions q
+            INNER JOIN exam_questions eq ON q.question_id = eq.question_id
+            WHERE eq.exam_id = ?
+        `;
+
+            this.db.all(query, [examId], (err, rows: Question[]) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+    }
+
     // Individual query functions
     async getById(questionId: number): Promise<Question> {
         return new Promise((resolve, reject) => {

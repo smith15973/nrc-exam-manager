@@ -162,6 +162,7 @@ interface Window {
       getComplete: () => Promise<QuestionResponse>;
       getById: (questionId: number) => Promise<QuestionResponse>;
       getByIdComplete: (questionId: number) => Promise<QuestionResponse>;
+      getByExamId: (examId: number) => Promise<QuestionResponse>;
       update: (question: Question) => Promise<QuestionResponse>;
       delete: (questionId: number) => Promise<QuestionResponse>;
 

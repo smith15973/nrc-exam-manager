@@ -5,7 +5,7 @@ import { useDatabase } from '../../../common/hooks/useDatabase';
 import { Typography } from '@mui/material';
 
 
-export default function PlantsPage() {
+export default function ExamsPage() {
     const { exams, addExam, deleteExam, error } = useDatabase();
 
     const handleSubmit = async (exam: Exam) => {

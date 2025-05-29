@@ -4,14 +4,16 @@ import { Alert, CircularProgress, Typography } from '@mui/material';
 import { defaultExam } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
 import ExamForm from '../components/ExamForm';
+import QuestionsList from '../../../features/questions/components/QuestionsList';
 
 
 export default function ExamPage() {
     const [exam, setExam] = useState(defaultExam);
     const { examId } = useParams<{ examId: string }>();
-    const { getExamById, updateExam } = useDatabase();
+    const { getExamById, updateExam, getQuestionsByExamId } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [examQuestions, setExamQuestions] = useState<Question[]>([]);
 
 
     // Single source of truth for loading exam data
@@ -33,11 +35,22 @@ export default function ExamPage() {
         }
     };
 
+    const loadQuestions = async (id: number) => {
+        try {
+            const questions = await getQuestionsByExamId(id);
+            setExamQuestions(questions)
+
+        } catch (err) {
+            setError("Failed to load exam questions")
+        }
+    }
+
 
     // Only fetch when examId changes (initial load)
     useEffect(() => {
         if (examId) {
             loadExam(parseInt(examId));
+            loadQuestions(parseInt(examId));
         }
     }, [examId]);
 
@@ -89,6 +102,7 @@ export default function ExamPage() {
                 </Alert>
             )}
             <p>{JSON.stringify(exam)}</p>
+            <QuestionsList questions={examQuestions} deleteQuestion={() =>{}} />
 
 
         </>

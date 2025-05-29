@@ -242,6 +242,10 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         const questions = await db.questions.getAll();
         return { success: true, questions };
 
+      case 'get-questions-by-exam-id':
+        const examQuestions = await db.questions.getByExamId(data);
+        return { success: true, questions: examQuestions };
+
       case 'get-question-by-id':
         const question = await db.questions.getById(data);
         return { success: true, question };

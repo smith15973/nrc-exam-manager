@@ -8,7 +8,7 @@ export const useQuestions = () => {
 
 
     // quesitons
-    const addQuestion = async (question: Question) => {
+    const addQuestion = async (question: Question): Promise<void> => {
         if (!question.question_text) {
             setError('Please fill in quesiton text');
             return;
@@ -28,62 +28,92 @@ export const useQuestions = () => {
         }
     };
 
-    const getQuestions = async () => {
+    const getQuestions = async (): Promise<Question[]> => {
         try {
             const result = await window.db.questions.get();
-            if (result.success) {
-                setQuestions(result.questions || []);
+            if (result.questions) {
+                setQuestions(result.questions);
+                return result.questions;
             } else {
                 setError(result.error || 'Failed to fetch questions');
+                return [];
             }
         } catch (err) {
             setError("Failed to fetch questions");
-        }
-    };
-    const getQuestionsComplete = async () => {
-        try {
-            const result = await window.db.questions.getComplete();
-            if (result.success) {
-                setQuestions(result.questions || []);
-            } else {
-                setError(result.error || 'Failed to fetch questions');
-            }
-        } catch (err) {
-            setError("Failed to fetch questions");
+            return [];
         }
     };
 
-    const getQuestionById = async (questionId: number) => {
+    const getQuestionsComplete = async (): Promise<Question[]> => {
+        try {
+            const result = await window.db.questions.getComplete();
+            if (result.questions) {
+                setQuestions(result.questions);
+                return result.questions;
+            } else {
+                setError(result.error || 'Failed to fetch questions');
+                return [];
+            }
+        } catch (err) {
+            setError("Failed to fetch questions");
+            return [];
+        }
+    };
+
+    const getQuestionById = async (questionId: number): Promise<Question | undefined> => {
         try {
             const result = await window.db.questions.getById(questionId);
-            if (result.success) {
-                return result.question ?? null;
+            if (result.question) {
+                return result.question;
             } else {
                 setError(result.error || `Failed to get question with id ${questionId}`);
+                return undefined;
             }
         } catch (err) {
             setError(`Failed to get question with id ${questionId}`);
+            return undefined;
         }
     };
 
-    const getQuestionComplete = async (questionId: number) => {
+    const getQuestionComplete = async (questionId: number): Promise<Question> => {
         try {
             const result = await window.db.questions.getByIdComplete(questionId);
             if (result.success) {
-                return result.question ?? null;
+                if (result.question) {
+                    return result.question;
+                } else {
+                    throw new Error('Question not found');
+                }
             } else {
                 setError(result.error || 'Failed to fetch question');
+                throw new Error(result.error || 'Failed to fetch question');
             }
         } catch (err) {
             setError("Failed to fetch question");
+            throw err instanceof Error ? err : new Error("Failed to fetch question");
+        }
+    };
+
+    const getQuestionsByExamId = async (examId: number): Promise<Question[]> => {
+        try {
+            const result = await window.db.questions.getByExamId(examId);
+            if (result.success) {
+                return result.questions;
+            } else {
+                setError(result.error || 'Failed to fetch question');
+                return [];
+            }
+        } catch (err) {
+            setError("Failed to fetch question");
+            return [];
         }
     };
 
 
-    const updateQuestion = async (question: Question) => {
+    const updateQuestion = async (question: Question): Promise<void> => {
         if (!question.question_text) {
             setError('Please fill in all fields');
-            return null;
+            return;
         }
         try {
             const result = await window.db.questions.update(question);
@@ -92,15 +122,15 @@ export const useQuestions = () => {
                 await getQuestions();
             } else {
                 setError(result.error || 'Failed to update question');
-                return null;
+                return;
             }
         } catch (err) {
             setError("Failed to update question");
-            return null;
+            return;
         }
     };
 
-    const deleteQuestion = async (questionId: number) => {
+    const deleteQuestion = async (questionId: number): Promise<void> => {
         try {
             const result = await window.db.questions.delete(questionId);
             if (result.success) {
@@ -113,16 +143,18 @@ export const useQuestions = () => {
         }
     }
 
-    const getAnswersByQuestionId = async (questionId: number) => {
+    const getAnswersByQuestionId = async (questionId: number): Promise<Answer[]> => {
         try {
             const result = await window.db.questions.getAnswersByQuestionId(questionId);
-            if (result.success) {
+            if (result.answers) {
                 return result.answers;
             } else {
                 setError(result.error || `Failed to get answers by questionId: ${questionId}`);
+                return [];
             }
         } catch (err) {
             setError(`Failed to get answers by questionId: ${questionId}`);
+            return [];
         }
     };
 
@@ -134,7 +166,7 @@ export const useQuestions = () => {
 
     return {
         addQuestion, getQuestionById, getQuestionComplete, questions, updateQuestion, deleteQuestion,
-        getAnswersByQuestionId,
+        getAnswersByQuestionId, getQuestionsByExamId,
         error, getQuestionsComplete
     }
 }

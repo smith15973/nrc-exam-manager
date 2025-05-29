@@ -42,6 +42,7 @@ contextBridge.exposeInMainWorld('db', {
     // many
     get: () => dbCall('get-questions'),
     getComplete: () => dbCall("get-questions-complete"),
+    getByExamId: (examId: number) => dbCall("get-questions-by-exam-id", examId),
 
     update: (question: Question) => dbCall('update-question', question),
     delete: (questionId: number) => dbCall('delete-question', questionId),

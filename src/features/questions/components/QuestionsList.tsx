@@ -8,11 +8,10 @@ import { Link } from 'react-router-dom';
 interface QuestionListProps {
     questions: Question[];
     deleteQuestion: (questionId: number) => void;
-    sx?: SxProps;
 }
 
 export default function QuestionsList(props: QuestionListProps) {
-    const { questions, deleteQuestion, sx } = props
+    const { questions, deleteQuestion} = props
     return (
         <List>
             {questions.map((question) => (
