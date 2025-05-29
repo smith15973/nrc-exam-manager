@@ -6,7 +6,7 @@ export class QuestionService {
     constructor(
         private questionRepo: QuestionRepository,
         private examRepo: ExamRepository
-    ) {}
+    ) { }
 
     async getCompleteQuestion(questionId: number): Promise<Question> {
         try {
@@ -38,15 +38,15 @@ export class QuestionService {
     }
 
     // You can add more complex business logic methods here
-    async getQuestionsWithFullDetails(): Promise<Question[]> {
+    async getQuestionsComplete(): Promise<Question[]> {
         try {
             const questions = await this.questionRepo.getAll();
-            
+
             // Get complete details for each question
             const completeQuestions = await Promise.all(
                 questions.map(q => this.getCompleteQuestion(q.question_id!))
             );
-            
+
             return completeQuestions;
         } catch (error) {
             throw error;
@@ -57,8 +57,8 @@ export class QuestionService {
         // This would require a new method in QuestionRepository
         // For now, this is a placeholder showing how services can coordinate
         try {
-            const allQuestions = await this.getQuestionsWithFullDetails();
-            return allQuestions.filter(q => 
+            const allQuestions = await this.getQuestionsComplete();
+            return allQuestions.filter(q =>
                 q.exams?.some(exam => exam.exam_id === examId)
             );
         } catch (error) {

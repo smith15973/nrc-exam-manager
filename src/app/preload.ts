@@ -29,7 +29,7 @@ contextBridge.exposeInMainWorld('api', {
   getQuestionById: (questionId: number) => dbCall('get-question-by-id', questionId),
   getAnswersByQuestionId: (questionId: number) => dbCall('get-answers-by-question-id', questionId),
   getExamsByQuestionId: (questionId: number) => dbCall('get-exams-by-question-id', questionId),
-  getQuestionAll: (questionId: number) => dbCall('get-question-with-all', questionId),
+  getQuestionAll: (questionId: number) => dbCall('get-questions', questionId),
   updateQuestion: (question: Question) => dbCall('update-question', question),
   deleteQuestion: (questionId: number) => dbCall('delete-question', questionId),
 });

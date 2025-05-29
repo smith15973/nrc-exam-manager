@@ -173,7 +173,7 @@ export class QuestionRepository {
         });
     }
 
-    async update(question: Question): Promise<Question> {
+    async update(question: Question): Promise<void> {
         return new Promise((resolve, reject) => {
             if (this.isClosing()) {
                 reject(new Error("Database is closing"));
@@ -194,7 +194,7 @@ export class QuestionRepository {
                     } else if (this.changes === 0) {
                         reject(new Error('Question not found'));
                     } else {
-                        resolve(question);
+                        resolve();
                     }
                 }
             );

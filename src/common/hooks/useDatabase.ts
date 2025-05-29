@@ -188,7 +188,6 @@ export const useDatabase = () => {
             if (result.success) {
                 setError(null);
                 await getExams();
-                return result.exam ?? exam;
             } else {
                 setError(result.error || 'Failed to update exam');
                 return null;

@@ -178,32 +178,31 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
     switch (operation) {
       // Plant operations
       case 'add-plant':
-        // const plantId = await db.addPlant(data);
-        const plantId = await db.addPlant(data);
+        const plantId = await db.plants.add(data);
         return { success: true, plantId };
 
       case 'get-plants':
-        const plants = await db.getPlants();
+        const plants = await db.plants.getAll();
         return { success: true, plants };
 
       case 'get-plants-with-exams':
-        const plantsWithExams = await db.getPlantsWithExams();
+        const plantsWithExams = await db.plants.getAllWithExams();
         return { success: true, plants: plantsWithExams };
 
       case 'get-plant':
-        const plant = await db.getPlant(data);
+        const plant = await db.plants.getById(data)
         return { success: true, plant };
 
       case 'get-plant-with-exams':
-        const plantWithExams = await db.getPlantWithExams(data);
+        const plantWithExams = await db.plants.getByIdWithExams(data);
         return { success: true, plant: plantWithExams };
 
       case 'update-plant':
-        await db.updatePlant(data);
-        return { success: true, plant: data };
+        await db.plants.update(data)
+        return { success: true };
 
       case 'delete-plant':
-        await db.deletePlant(data);
+        await db.plants.delete(data)
         return { success: true };
 
       // Exam operations
@@ -211,56 +210,60 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         if (!data.plant_id) {
           return { success: false, error: "Plant ID is required" };
         }
-        const examId = await db.addExam(data);
+        const examId = await db.exams.add(data)
         return { success: true, examId };
 
       case 'get-exams':
-        const exams = await db.getExams();
+        const exams = await db.exams.getAll();
         return { success: true, exams };
 
       case 'get-exam':
-        const exam = await db.getExam(data);
+        const exam = await db.exams.getById(data);
         return { success: true, exam };
 
+      case 'get-exams-by-question-id':
+        const examsByQuestion = await db.exams.getByQuestionId(data)
+        return { success: true, exams: examsByQuestion };
+
       case 'update-exam':
-        await db.updateExam(data);
-        return { success: true, exam: data };
+        await db.exams.update(data);
+        return { success: true };
 
       case 'delete-exam':
-        await db.deleteExam(data);
+        await db.exams.delete(data);
         return { success: true };
 
       // Question operations
       case 'add-question':
-        const questionId = await db.addQuestion(data);
+        const questionId = await db.questions.add(data);
         return { success: true, questionId };
 
       case 'get-questions':
-        const questions = await db.getQuestions();
+        const questions = await db.questions.getAll();
         return { success: true, questions };
 
       case 'get-question-by-id':
-        const question = await db.getQuestionById(data);
+        const question = await db.questions.getById(data);
         return { success: true, question };
 
       case 'get-answers-by-question-id':
-        const answers = await db.getAnswersByQuestionId(data);
+        const answers = await db.questions.getAnswersByQuestionId(data);
         return { success: true, answers };
 
-      case 'get-exams-by-question-id':
-        const examsByQuestion = await db.getExamsByQuestionId(data);
-        return { success: true, exams: examsByQuestion };
-
-      case 'get-question-with-all':
-        const questionWithAll = await db.getQuestionAll(data);
+      case 'get-question-complete':
+        const questionWithAll = await db.questionService.getCompleteQuestion(data);
         return { success: true, question: questionWithAll };
 
+      case 'get-questions-complete':
+        const questionsComplete = await db.questionService.getQuestionsComplete();
+        return { success: true, questions: questionsComplete };
+
       case 'update-question':
-        await db.updateQuestion(data);
-        return { success: true, question: data };
+        await db.questions.update(data);
+        return { success: true };
 
       case 'delete-question':
-        await db.deleteQuestion(data);
+        await db.questions.delete(data);
         return { success: true };
 
       default:

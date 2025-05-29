@@ -160,7 +160,7 @@ export class PlantRepository {
     });
   }
 
-  async update(plant: Plant): Promise<Plant> {
+  async update(plant: Plant): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.isClosing()) {
         reject(new Error("Database is closing"));
@@ -181,7 +181,7 @@ export class PlantRepository {
           } else if (this.changes === 0) {
             reject(new Error('Plant not found'));
           } else {
-            resolve(plant);
+            resolve();
           }
         }
       );

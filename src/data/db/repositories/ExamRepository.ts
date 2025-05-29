@@ -144,7 +144,7 @@ export class ExamRepository {
         });
     }
 
-    async update(exam: Exam): Promise<Exam> {
+    async update(exam: Exam): Promise<void> {
         return new Promise((resolve, reject) => {
             if (this.isClosing()) {
                 reject(new Error("Database is closing"));
@@ -169,7 +169,7 @@ export class ExamRepository {
                     } else if (this.changes === 0) {
                         reject(new Error('Exam not found'));
                     } else {
-                        resolve(exam);
+                        resolve();
                     }
                 }
             );
