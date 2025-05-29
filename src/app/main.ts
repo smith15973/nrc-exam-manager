@@ -166,257 +166,106 @@ app.on('activate', () => {
 });
 
 
-// handle plants
-ipcMain.handle('add-plant', async (_event, plant: Plant) => {
+// Unified database handler
+ipcMain.handle('db-operation', async (_event, { operation, data }) => {
   try {
-    if (!db) {
-      db = new Database(); // Reopen if needed
-    }
-    const plantId = await db.addPlant(plant);
-    return { success: true, plantId };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('get-plants', async () => {
-  try {
-    if (!db) {
-      db = new Database(); // Reopen if needed
-    }
-    const plants = await db.getPlants();
-    return { success: true, plants };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('get-plants-with-exams', async () => {
-  try {
-    if (!db) {
-      db = new Database(); // Reopen if needed
-    }
-    const plants = await db.getPlantsWithExams();
-    return { success: true, plants };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('get-plant', async (_event, plantId: number) => {
-  try {
-    if (!db) {
-      db = new Database();
-    }
-    const plant = await db.getPlant(plantId);
-    return { success: true, plant };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('get-plant-with-exams', async (_event, plantId: number) => {
-  try {
-    if (!db) {
-      db = new Database(); // Reopen if needed
-    }
-    const plant = await db.getPlantWithExams(plantId);
-    return { success: true, plant };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('update-plant', async (_event, plant: Plant) => {
-  try {
-    if (!db) {
-      db = new Database();
-    }
-    await db.updatePlant(plant);
-    return { success: true, plant };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('delete-plant', async (_event, plantId: number) => {
-  try {
-    if (!db) {
-      db = new Database();
-    }
-    await db.deletePlant(plantId);
-    return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-
-// handle exams
-ipcMain.handle('add-exam', async (_event, exam: Exam) => {
-
-  // Validate required fields
-  if (!exam.plant_id) {
-    return { success: false, error: "Plant ID is required" };
-  }
-
-  try {
-    if (!db) {
-      db = new Database(); // Reopen if needed
-    }
-    const examId = await db.addExam(exam);
-    return { success: true, examId };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('get-exams', async () => {
-  try {
-    if (!db) {
-      db = new Database(); // Reopen if needed
-    }
-    const exams = await db.getExams();
-    return { success: true, exams };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('get-exam', async (_event, examId: number) => {
-  try {
-    if (!db) {
-      db = new Database();
-    }
-    const exam = await db.getExam(examId);
-    return { success: true, exam };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('update-exam', async (_event, exam: Exam) => {
-  try {
-    if (!db) {
-      db = new Database();
-    }
-    await db.updateExam(exam);
-    return { success: true, exam };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('delete-exam', async (_event, examId: number) => {
-  try {
-    if (!db) {
-      db = new Database();
-    }
-    await db.deleteExam(examId);
-    return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-
-// handle questions
-ipcMain.handle('add-question', async (_event, question: Question) => {
-
-  try {
-    if (!db) {
-      db = new Database(); // Reopen if needed
-    }
-    const questionId = await db.addQuestion(question);
-    return { success: true, questionId };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('get-questions', async () => {
-  try {
-    if (!db) {
-      db = new Database(); // Reopen if needed
-    }
-    const questions = await db.getQuestions();
-    return { success: true, questions };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('get-question-by-id', async (_event, questionId: number) => {
-  try {
+    // Ensure database is initialized
     if (!db) {
       db = new Database();
     }
 
-    const question = await db.getQuestionById(questionId);
-    return { success: true, question };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
+    // Route to appropriate database method
+    switch (operation) {
+      // Plant operations
+      case 'add-plant':
+        // const plantId = await db.addPlant(data);
+        const plantId = await db.addPlant(data);
+        return { success: true, plantId };
 
-ipcMain.handle('get-answers-by-question-id', async (_event, questionId: number) => {
-  try {
-    if (!db) {
-      db = new Database();
+      case 'get-plants':
+        const plants = await db.getPlants();
+        return { success: true, plants };
+
+      case 'get-plants-with-exams':
+        const plantsWithExams = await db.getPlantsWithExams();
+        return { success: true, plants: plantsWithExams };
+
+      case 'get-plant':
+        const plant = await db.getPlant(data);
+        return { success: true, plant };
+
+      case 'get-plant-with-exams':
+        const plantWithExams = await db.getPlantWithExams(data);
+        return { success: true, plant: plantWithExams };
+
+      case 'update-plant':
+        await db.updatePlant(data);
+        return { success: true, plant: data };
+
+      case 'delete-plant':
+        await db.deletePlant(data);
+        return { success: true };
+
+      // Exam operations
+      case 'add-exam':
+        if (!data.plant_id) {
+          return { success: false, error: "Plant ID is required" };
+        }
+        const examId = await db.addExam(data);
+        return { success: true, examId };
+
+      case 'get-exams':
+        const exams = await db.getExams();
+        return { success: true, exams };
+
+      case 'get-exam':
+        const exam = await db.getExam(data);
+        return { success: true, exam };
+
+      case 'update-exam':
+        await db.updateExam(data);
+        return { success: true, exam: data };
+
+      case 'delete-exam':
+        await db.deleteExam(data);
+        return { success: true };
+
+      // Question operations
+      case 'add-question':
+        const questionId = await db.addQuestion(data);
+        return { success: true, questionId };
+
+      case 'get-questions':
+        const questions = await db.getQuestions();
+        return { success: true, questions };
+
+      case 'get-question-by-id':
+        const question = await db.getQuestionById(data);
+        return { success: true, question };
+
+      case 'get-answers-by-question-id':
+        const answers = await db.getAnswersByQuestionId(data);
+        return { success: true, answers };
+
+      case 'get-exams-by-question-id':
+        const examsByQuestion = await db.getExamsByQuestionId(data);
+        return { success: true, exams: examsByQuestion };
+
+      case 'get-question-with-all':
+        const questionWithAll = await db.getQuestionAll(data);
+        return { success: true, question: questionWithAll };
+
+      case 'update-question':
+        await db.updateQuestion(data);
+        return { success: true, question: data };
+
+      case 'delete-question':
+        await db.deleteQuestion(data);
+        return { success: true };
+
+      default:
+        return { success: false, error: `Unknown operation: ${operation}` };
     }
-
-    const answers = await db.getAnswersByQuestionId(questionId);
-    return { success: true, answers };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('get-exams-by-question-id', async (_event, questionId: number) => {
-  try {
-    if (!db) {
-      db = new Database();
-    }
-
-    const exams = await db.getExamsByQuestionId(questionId);
-    return { success: true, exams };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('get-question-with-all', async (_event, questionId: number) => {
-  try {
-    if (!db) {
-      db = new Database();
-    }
-
-    const question = await db.getQuestionAll(questionId);
-    return { success: true, question };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('update-question', async (_event, question: Question) => {
-  try {
-    if (!db) {
-      db = new Database();
-    }
-    await db.updateQuestion(question);
-    return { success: true, question };
-  } catch (err: any) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('delete-question', async (_event, questionId: number) => {
-  try {
-    if (!db) {
-      db = new Database();
-    }
-    await db.deleteQuestion(questionId);
-    return { success: true };
   } catch (err: any) {
     return { success: false, error: err.message };
   }
