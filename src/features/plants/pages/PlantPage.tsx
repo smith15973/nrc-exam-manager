@@ -11,7 +11,7 @@ import ExamForm from '../../exams/components/ExamForm';
 export default function PlantPage() {
     const [plant, setPlant] = useState(defaultPlant);
     const { plantId } = useParams<{ plantId: string }>();
-    const { getPlantWithExams, updatePlant } = useDatabase();
+    const { getPlantByIdWithExams, updatePlant } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { deleteExam, addExam } = useDatabase();
@@ -22,7 +22,7 @@ export default function PlantPage() {
         try {
             setLoading(true);
             setError(null);
-            const fetchedPlant = await getPlantWithExams(id);
+            const fetchedPlant = await getPlantByIdWithExams(id);
             if (fetchedPlant) {
                 setPlant(fetchedPlant);
             } else {

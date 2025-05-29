@@ -9,7 +9,7 @@ import ExamForm from '../components/ExamForm';
 export default function ExamPage() {
     const [exam, setExam] = useState(defaultExam);
     const { examId } = useParams<{ examId: string }>();
-    const { getExam, updateExam } = useDatabase();
+    const { getExamById, updateExam } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -19,7 +19,7 @@ export default function ExamPage() {
         try {
             setLoading(true);
             setError(null);
-            const fetchedExam = await getExam(id);
+            const fetchedExam = await getExamById(id);
             if (fetchedExam) {
                 setExam(fetchedExam);
             } else {

@@ -141,9 +141,9 @@ interface Window {
       // plant operations
       add: (plant: Plant) => Promise<PlantResponse>;
       get: () => Promise<PlantResponse>;
+      getWithExams: () => Promise<PlantResponse>;
       getById: (plantId: number) => Promise<PlantResponse>;
       getByIdWithExams: (plantId: number) => Promise<PlantResponse>;
-      getWithExams: () => Promise<PlantResponse>;
       update: (plant: Plant) => Promise<PlantResponse>;
       delete: (plantId: number) => Promise<PlantResponse>;
     }
