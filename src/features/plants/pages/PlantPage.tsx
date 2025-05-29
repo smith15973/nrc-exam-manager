@@ -111,7 +111,7 @@ export default function PlantPage() {
                 </Alert>
             )}
 
-            <PlantForm plant={plant} handleSubmit={handleSubmit} sx={{ pb: 2 }} />
+            <PlantForm plant={plant} handleSubmit={handleSubmit} />
 
             {loading && plant.plant_id && (
                 <Alert severity="info" sx={{ mt: 2 }}>
