@@ -27,25 +27,25 @@ export default function AnswerForm(props: AnswerFormProps) {
     }, [answerForm]);
 
     return (
-        <Box >
-            <FormGroup sx={{ display: 'flex' }}>
-                <TextField
-                    fullWidth
-                    multiline
-                    rows={3}
-                    label={`Answer ${answerForm.option}`}
-                    value={answerForm.answer_text}
-                    onChange={(e) => handleChange("answer_text", e.currentTarget.value)}
-                />
-
-
-                <FormControlLabel
-                    control={
-                        <Switch checked={answerForm.is_correct === 1} onChange={(e) => handleChange('is_correct', e.currentTarget.checked ? 1 : 0)} />
-                    }
-                    label="Correct"
-                />
-            </FormGroup>
-        </Box>
+        <FormGroup sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', pb:2 }}>
+            <TextField
+                sx={{ flex: 1 }}
+                multiline
+                rows={3}
+                label={`Answer ${answerForm.option}`}
+                value={answerForm.answer_text}
+                onChange={(e) => handleChange("answer_text", e.currentTarget.value)}
+            />
+            <FormControlLabel
+                control={
+                    <Switch
+                        checked={answerForm.is_correct === 1}
+                        onChange={(e) => handleChange('is_correct', e.currentTarget.checked ? 1 : 0)}
+                    />
+                }
+                label="Correct"
+                sx={{ marginLeft: 2 }}
+            />
+        </FormGroup>
     )
 }

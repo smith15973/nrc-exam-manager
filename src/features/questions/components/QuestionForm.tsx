@@ -5,18 +5,19 @@ import { useDatabase } from '../../../common/hooks/useDatabase';
 import AnswerForm from '../../answers/components/AnswerForm';
 import MultiExamSelect from '../../exams/components/MultiExamSelect';
 import ErrorPopup from '../../../common/components/ErrorPopup';
+import { FormDialog } from '../../../common/components/FormDialog';
 
 interface QuestionFormProps {
     question?: Question;
     exam?: Exam;
     handleSubmit: (question: Question) => void;
-    sx?: SxProps
 }
 
 export default function QuestionForm(props: QuestionFormProps) {
-    const { question, handleSubmit, exam, sx } = props;
+    const { question, handleSubmit, exam } = props;
     const [questionForm, setQuestionForm] = useState<Question>(question || defaultQuestion);
     const [questionExams, setQuestionExams] = useState<number[]>([])
+    const [open, setOpen] = useState(false);
     const { exams } = useDatabase();
 
     useEffect(() => {
@@ -25,12 +26,10 @@ export default function QuestionForm(props: QuestionFormProps) {
         }
     }, [question, exam]);
 
-
     useEffect(() => {
         const examIds = questionForm.exams?.map(exam => exam.exam_id).filter((id): id is number => id !== undefined) || [];
         setQuestionExams(examIds);
     }, [questionForm])
-
 
     const handleChange = (key: string, value: any) => {
         setQuestionForm((prev) => ({ ...prev, [key]: value }));
@@ -74,53 +73,85 @@ export default function QuestionForm(props: QuestionFormProps) {
     const onSubmit = () => {
         handleSubmit(questionForm)
         setQuestionForm(defaultQuestion)
+        setOpen(false);
     }
 
-    return (
-        <Box sx={sx}>
-            {questionSchema.map((field) => {
-                // Skip plant_id as we'll handle it separately with a Select
-                if (field.key === 'plant_id') return null;
+    const validateForm = () => {
+        return !questionForm.question_text
+    }
 
-                return (
-                    <Box sx={{ pb: 2 }} key={field.key}>
-                        <TextField
-                            fullWidth
-                            type={field.type}
-                            value={(questionForm as any)[field.key] || ''}
-                            onChange={(e) => handleChange(field.key, e.target.value)}
-                            label={field.label}
-                            required={field.required}
+    // Responsive container styles
+    const containerSx: SxProps = {
+        display: 'grid',
+        gridTemplateColumns: {
+            xs: '1fr',           // Single column on extra small screens
+            sm: '1fr',           // Single column on small screens
+            md: '1fr 1fr',       // Two equal columns on medium+ screens
+        },
+        gap: 2,
+        '@media (max-width: 900px)': {
+            gridTemplateColumns: '1fr', // Stack when width gets too small
+        }
+    };
+
+    return (
+        <>
+            <FormDialog
+                open={open}
+                title={`${question ? 'Update' : 'Add'} Question`}
+                submitText={`${question ? 'Update' : 'Add'} Question`}
+                onSubmit={onSubmit}
+                onClose={() => setOpen(false)}
+                validate={validateForm}
+                maxWidth='lg'
+                fullWidth={true}
+            >
+                <Box sx={containerSx}>
+                    {/* Question Form Section */}
+                    <Box>
+                        {questionSchema.map((field) => {
+                            // Skip plant_id as we'll handle it separately with a Select
+                            if (field.key === 'plant_id') return null;
+
+                            return (
+                                <Box sx={{ pb: 2 }} key={field.key}>
+                                    <TextField
+                                        fullWidth
+                                        type={field.type}
+                                        value={(questionForm as any)[field.key] || ''}
+                                        onChange={(e) => handleChange(field.key, e.target.value)}
+                                        label={field.label}
+                                        required={field.required}
+                                    />
+                                </Box>
+                            );
+                        })}
+
+                        <MultiExamSelect
+                            examList={questionExams}
+                            examOptions={exams}
+                            handleAddExamClick={handleAddExamClick}
+                            onExamsUpdate={handleExamsChange}
                         />
                     </Box>
-                );
-            })}
 
-            <MultiExamSelect
-                examList={questionExams}
-                examOptions={exams}
-                handleAddExamClick={handleAddExamClick}
-                onExamsUpdate={handleExamsChange}
-            />
-
-            <Box>
-                {questionForm.answers?.map((answer, idx) => {
-                    return (
-                        <AnswerForm updateQuestionForm={handleAnswerChange} answer={answer} key={idx} />
-                    )
-                })}
-            </Box>
-
+                    {/* Answers Section */}
+                    <Box>
+                        {questionForm.answers?.map((answer, idx) => {
+                            return (
+                                <AnswerForm updateQuestionForm={handleAnswerChange} answer={answer} key={idx} />
+                            )
+                        })}
+                    </Box>
+                </Box>
+            </FormDialog>
 
             <Button
                 variant="contained"
-                onClick={onSubmit}
-                disabled={!questionForm.question_text}
+                onClick={() => setOpen(true)}
             >
                 {question ? 'Update' : 'Add'} Question
             </Button>
-
-            <ErrorPopup />
-        </Box>
+        </>
     );
 }
