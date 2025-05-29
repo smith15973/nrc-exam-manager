@@ -11,7 +11,7 @@ export const useDatabase = () => {
 
     const getPlants = async () => {
         try {
-            const result = await window.api.getPlants();
+            const result = await window.db.plants.get();
             if (result.success) {
                 setPlants(result.plants || []);
             } else {
@@ -24,7 +24,7 @@ export const useDatabase = () => {
 
     const getPlantsWithExams = async () => {
         try {
-            const result = await window.api.getPlantsWithExams();
+            const result = await window.db.plants.getWithExams();
             if (result.success) {
                 setPlantsWithExams(result.plants || [])
             } else {
@@ -36,7 +36,7 @@ export const useDatabase = () => {
     };
     const getPlant = async (plantId: number) => {
         try {
-            const result = await window.api.getPlant(plantId);
+            const result = await window.db.plants.getById(plantId);
             if (result.success) {
                 return result.plant ?? null;
             } else {
@@ -49,7 +49,7 @@ export const useDatabase = () => {
 
     const getPlantWithExams = async (plantId: number) => {
         try {
-            const result = await window.api.getPlantWithExams(plantId);
+            const result = await window.db.plants.getByIdWithExams(plantId);
             if (result.success) {
                 return result.plant ?? null;
             } else {
@@ -66,7 +66,7 @@ export const useDatabase = () => {
             return;
         }
         try {
-            const result = await window.api.addPlant(plant);
+            const result = await window.db.plants.add(plant);
             if (result.success) {
                 setError(null);
                 await getPlants();
@@ -86,7 +86,7 @@ export const useDatabase = () => {
             return null;
         }
         try {
-            const result = await window.api.updatePlant(plant);
+            const result = await window.db.plants.update(plant);
             if (result.success) {
                 setError(null);
                 await getPlants();
@@ -104,7 +104,7 @@ export const useDatabase = () => {
 
     const deletePlant = async (plantId: number) => {
         try {
-            const result = await window.api.deletePlant(plantId);
+            const result = await window.db.plants.delete(plantId);
             if (result.success) {
                 await getPlants();
                 await getPlantsWithExams();
@@ -118,7 +118,7 @@ export const useDatabase = () => {
 
     const getExams = async () => {
         try {
-            const result = await window.api.getExams();
+            const result = await window.db.exams.get();
             if (result.success) {
                 setExams(result.exams || []);
             } else {
@@ -131,7 +131,7 @@ export const useDatabase = () => {
 
     const getExamsByQuestionId = async (questionId: number) => {
         try {
-            const result = await window.api.getExamsByQuestionId(questionId)
+            const result = await window.db.exams.getByQuestionId(questionId);
             if (result.success) {
                 return result.exams;
             } else {
@@ -144,7 +144,7 @@ export const useDatabase = () => {
 
     const getExam = async (examId: number) => {
         try {
-            const result = await window.api.getExam(examId);
+            const result = await window.db.exams.getById(examId);
             if (result.success) {
                 return result.exam ?? null;
             } else {
@@ -165,7 +165,7 @@ export const useDatabase = () => {
             return;
         }
         try {
-            const result = await window.api.addExam(exam);
+            const result = await window.db.exams.add(exam);
             if (result.success) {
                 setError(null);
                 await getExams();
@@ -184,7 +184,7 @@ export const useDatabase = () => {
             return null;
         }
         try {
-            const result = await window.api.updateExam(exam);
+            const result = await window.db.exams.update(exam);
             if (result.success) {
                 setError(null);
                 await getExams();
@@ -200,7 +200,7 @@ export const useDatabase = () => {
 
     const deleteExam = async (examId: number) => {
         try {
-            const result = await window.api.deleteExam(examId);
+            const result = await window.db.exams.delete(examId);
             if (result.success) {
                 await getExams();
             } else {
@@ -220,7 +220,7 @@ export const useDatabase = () => {
         }
 
         try {
-            const result = await window.api.addQuestion(question);
+            const result = await window.db.questions.add(question);
             if (result.success) {
                 setError(null);
                 await getQuestions();
@@ -235,7 +235,7 @@ export const useDatabase = () => {
 
     const getQuestions = async () => {
         try {
-            const result = await window.api.getQuestions();
+            const result = await window.db.questions.get();
             if (result.success) {
                 setQuestions(result.questions || []);
             } else {
@@ -248,7 +248,7 @@ export const useDatabase = () => {
 
     const getQuestionById = async (questionId: number) => {
         try {
-            const result = await window.api.getQuestionById(questionId);
+            const result = await window.db.questions.getById(questionId);
             if (result.success) {
                 return result.question ?? null;
             } else {
@@ -261,7 +261,7 @@ export const useDatabase = () => {
 
     const getQuestionComplete = async (questionId: number) => {
         try {
-            const result = await window.api.getQuestionAll(questionId);
+            const result = await window.db.questions.getByIdComplete(questionId);
             if (result.success) {
                 return result.question ?? null;
             } else {
@@ -279,7 +279,7 @@ export const useDatabase = () => {
             return null;
         }
         try {
-            const result = await window.api.updateQuestion(question);
+            const result = await window.db.questions.update(question);
             if (result.success) {
                 setError(null);
                 await getQuestions();
@@ -295,7 +295,7 @@ export const useDatabase = () => {
 
     const deleteQuestion = async (questionId: number) => {
         try {
-            const result = await window.api.deleteQuestion(questionId);
+            const result = await window.db.questions.delete(questionId);
             if (result.success) {
                 await getQuestions();
             } else {
@@ -308,7 +308,7 @@ export const useDatabase = () => {
 
     const getAnswersByQuestionId = async (questionId: number) => {
         try {
-            const result = await window.api.getAnswersByQuestionId(questionId)
+            const result = await window.db.questions.getAnswersByQuestionId(questionId);
             if (result.success) {
                 return result.answers;
             } else {

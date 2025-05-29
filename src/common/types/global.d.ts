@@ -136,33 +136,36 @@ interface QuestionSystemNumberResponse extends ApiResponse {
 }
 
 interface Window {
-  api: {
-    // plant operations
-    addPlant: (plant: Plant) => Promise<PlantResponse>;
-    getPlants: () => Promise<PlantResponse>;
-    getPlant: (plantId: number) => Promise<PlantResponse>;
-    getPlantWithExams: (plantId: number) => Promise<PlantResponse>;
-    getPlantsWithExams: () => Promise<PlantResponse>;
-    updatePlant: (plant: Plant) => Promise<PlantResponse>;
-    deletePlant: (plantId: number) => Promise<PlantResponse>;
+  db: {
+    plants: {
+      // plant operations
+      add: (plant: Plant) => Promise<PlantResponse>;
+      get: () => Promise<PlantResponse>;
+      getById: (plantId: number) => Promise<PlantResponse>;
+      getByIdWithExams: (plantId: number) => Promise<PlantResponse>;
+      getWithExams: () => Promise<PlantResponse>;
+      update: (plant: Plant) => Promise<PlantResponse>;
+      delete: (plantId: number) => Promise<PlantResponse>;
+    }
+    exams: {
+      // exam operations
+      add: (exam: Exam) => Promise<ExamResponse>;
+      get: () => Promise<ExamResponse>;
+      getById: (examId: number) => Promise<ExamResponse>;
+      getByQuestionId: (questionId: number) => Promise<ExamResponse>;
+      update: (exam: Exam) => Promise<ExamResponse>;
+      delete: (examId: number) => Promise<ExamResponse>;
+    },
+    questions: {
+      add: (question: Question) => Promise<QuestionResponse>;
+      get: () => Promise<QuestionResponse>;
+      getComplete: () => Promise<QuestionResponse>;
+      getById: (questionId: number) => Promise<QuestionResponse>;
+      getByIdComplete: (questionId: number) => Promise<QuestionResponse>;
+      update: (question: Question) => Promise<QuestionResponse>;
+      delete: (questionId: number) => Promise<QuestionResponse>;
 
-    // exam operations
-    addExam: (exam: Exam) => Promise<ExamResponse>;
-    getExams: () => Promise<ExamResponse>;
-    getExam: (examId: number) => Promise<ExamResponse>;
-    updateExam: (exam: Exam) => Promise<ExamResponse>;
-    deleteExam: (examId: number) => Promise<ExamResponse>;
-    getExamsByQuestionId: (questionId: number) => Promise<ExamResponse>;
-
-    // question operations
-    addQuestion: (question: Question) => Promise<QuestionResponse>;
-    getQuestions: () => Promise<QuestionResponse>;
-    getQuestionById: (questionId: number) => Promise<QuestionResponse>;
-    
-    getQuestionAll: (questionId: number) => Promise<QuestionResponse>;
-    updateQuestion: (question: Question) => Promise<QuestionResponse>;
-    deleteQuestion: (questionId: number) => Promise<QuestionResponse>;
-
-    getAnswersByQuestionId: (questionId: number) => Promise<AnswerResponse>;
+      getAnswersByQuestionId: (questionId: number) => Promise<AnswerResponse>;
+    }
   };
 }
