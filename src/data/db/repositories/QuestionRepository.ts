@@ -1,6 +1,5 @@
 // db/repositories/QuestionRepository.ts
 import sqlite3 from 'sqlite3';
-import { ExamRepository } from './ExamRepository';
 
 export class QuestionRepository {
     constructor(private db: sqlite3.Database, private isClosing: () => boolean) { }
@@ -88,6 +87,50 @@ export class QuestionRepository {
                             insertOperations.push(answerPromise);
                         }
 
+                        // Handle ka relationships
+                        if (question.ka_numbers?.length) {
+                            const kaPromise = new Promise<void>((resolveKa, rejectKa) => {
+                                const placeholders = question.ka_numbers!.map(() => '(?, ?, ?)').join(', ');
+                                const values: any[] = [];
+
+                                question.ka_numbers!.forEach(ka => {
+                                    values.push(ka.ka_number, ka.ka_statement, ka.ka_importance);
+                                });
+
+                                self.db.run(
+                                    `INSERT INTO question_ka_numbers (ka_number, ka_statement, ka_importance) VALUES ${placeholders}`,
+                                    values,
+                                    (kaErr) => {
+                                        if (kaErr) rejectKa(kaErr);
+                                        else resolveKa();
+                                    }
+                                );
+                            });
+                            insertOperations.push(kaPromise);
+                        }
+
+                        // Handle system relationships
+                        if (question.system_numbers?.length) {
+                            const systemPromise = new Promise<void>((resolveSystem, rejectSystem) => {
+                                const placeholders = question.system_numbers!.map(() => '(?, ?)').join(', ');
+                                const values: any[] = [];
+
+                                question.system_numbers!.forEach(system => {
+                                    values.push(system.system_number, system.system_description);
+                                });
+
+                                self.db.run(
+                                    `INSERT INTO question_system_numbers (system_number, system_number_description) VALUES ${placeholders}`,
+                                    values,
+                                    (sysErr) => {
+                                        if (sysErr) rejectSystem(sysErr);
+                                        else resolveSystem();
+                                    }
+                                );
+                            });
+                            insertOperations.push(systemPromise);
+                        }
+
                         Promise.all(insertOperations).then(() => {
                             self.db.run('COMMIT', (commitErr) => {
                                 if (commitErr) {
@@ -170,33 +213,6 @@ export class QuestionRepository {
         });
     }
 
-    async getAnswersByQuestionId(questionId: number): Promise<Answer[]> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing()) {
-                reject(new Error('Database is closing'));
-                return;
-            }
-
-            const query = 'SELECT * FROM answers WHERE question_id = ? ORDER BY answer_id';
-
-            this.db.all(query, [questionId], (err, rows: any[]) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    const answers: Answer[] = rows.map(row => ({
-                        answer_id: row.answer_id,
-                        question_id: row.question_id,
-                        answer_text: row.answer_text,
-                        is_correct: row.is_correct,
-                        option: row.option,
-                        justification: row.justification
-                    }));
-                    resolve(answers);
-                }
-            });
-        });
-    }
-
     async update(question: Question): Promise<void> {
         return new Promise((resolve, reject) => {
             if (this.isClosing()) {
@@ -245,6 +261,82 @@ export class QuestionRepository {
                     }
                 }
             );
+        });
+    }
+
+    async getAnswersByQuestionId(questionId: number): Promise<Answer[]> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error('Database is closing'));
+                return;
+            }
+
+            const query = 'SELECT * FROM answers WHERE question_id = ? ORDER BY answer_id';
+
+            this.db.all(query, [questionId], (err, rows: any[]) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const answers: Answer[] = rows.map(row => ({
+                        answer_id: row.answer_id,
+                        question_id: row.question_id,
+                        answer_text: row.answer_text,
+                        is_correct: row.is_correct,
+                        option: row.option,
+                        justification: row.justification
+                    }));
+                    resolve(answers);
+                }
+            });
+        });
+    }
+
+    async getKANumbersByQuestionId(questionId: number): Promise<QuestionKaNumber[]> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error('Database is closing'));
+                return;
+            }
+
+            const query = 'SELECT * FROM question_ka_numbers WHERE question_id = ? ORDER BY ka_number';
+
+            this.db.all(query, [questionId], (err, rows: any[]) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const ka_numbers: QuestionKaNumber[] = rows.map(row => ({
+                        ka_number: row.ka_number,
+                        question_id: row.question_id,
+                        ka_importance: row.ka_importance,
+                        ka_statement: row.ka_statement,
+                    }));
+                    resolve(ka_numbers);
+                }
+            });
+        });
+    }
+
+    async getSystemNumbersByQuestionId(questionId: number): Promise<QuestionSystemNumber[]> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error('Database is closing'));
+                return;
+            }
+
+            const query = 'SELECT * FROM question_system_numbers WHERE question_id = ? ORDER BY system_number';
+
+            this.db.all(query, [questionId], (err, rows: any[]) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const sys_numbers: QuestionSystemNumber[] = rows.map(row => ({
+                        system_number: row.system_number,
+                        question_id: row.question_id,
+                        system_description: row.system_description,
+                    }));
+                    resolve(sys_numbers);
+                }
+            });
         });
     }
 

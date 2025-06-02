@@ -89,17 +89,31 @@ export default function QuestionPage() {
                     Updating question...
                 </Alert>
             )}
-            <Box>
-                Sys #'s
-                <Box>System</Box>
-            </Box>
 
             <Box>
-                KA #'s:
-                <Box>Statement</Box>
-                <Box>Importance</Box>
+                {question.system_numbers?.map(system => {
+                    return (
+                        <Box>
+                            <Box>Sys# {system.system_number}</Box>
+                            <Box>System Description: {system.system_description}</Box>
+                        </Box>
+                    )
+                })}
             </Box>
-            
+
+
+            <Box>
+                {question.ka_numbers?.map(ka => {
+                    return (
+                        <Box>
+                            <Box>KA# {ka.ka_number}</Box>
+                            <Box>KA Statement: {ka.ka_statement}</Box>
+                            <Box>KA Importance: {ka.ka_importance}</Box>
+                        </Box>
+                    )
+                })}
+            </Box>
+
             <Box>Category: {question.category}</Box>
             <Box>Exam Level: {question.exam_level}</Box>
             <Box>Technical References: {question.technical_references}</Box>
@@ -114,7 +128,7 @@ export default function QuestionPage() {
                     </Box>
                 )
             })}</Box>
-            {/* <p>{JSON.stringify(question)}</p> */}
+            <p>{JSON.stringify(question)}</p>
 
 
         </>
