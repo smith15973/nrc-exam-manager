@@ -31,9 +31,9 @@ export const useQuestions = () => {
     const getQuestions = async (): Promise<Question[]> => {
         try {
             const result = await window.db.questions.get();
-            if (result.questions) {
-                setQuestions(result.questions);
-                return result.questions;
+            if (result.success) {
+                setQuestions(result.questions || []);
+                return result.questions || [];
             } else {
                 setError(result.error || 'Failed to fetch questions');
                 return [];
@@ -47,9 +47,9 @@ export const useQuestions = () => {
     const getQuestionsComplete = async (): Promise<Question[]> => {
         try {
             const result = await window.db.questions.getComplete();
-            if (result.questions) {
-                setQuestions(result.questions);
-                return result.questions;
+            if (result.success) {
+                setQuestions(result.questions || []);
+                return result.questions || [];
             } else {
                 setError(result.error || 'Failed to fetch questions');
                 return [];
@@ -60,37 +60,34 @@ export const useQuestions = () => {
         }
     };
 
-    const getQuestionById = async (questionId: number): Promise<Question | undefined> => {
+    const getQuestionById = async (questionId: number): Promise<Question | null> => {
         try {
             const result = await window.db.questions.getById(questionId);
-            if (result.question) {
-                return result.question;
+            if (result.success) {
+                return result.question || null;
             } else {
                 setError(result.error || `Failed to get question with id ${questionId}`);
-                return undefined;
+                return null;
             }
         } catch (err) {
             setError(`Failed to get question with id ${questionId}`);
-            return undefined;
+            return null;
         }
     };
 
-    const getQuestionComplete = async (questionId: number): Promise<Question> => {
+    const getQuestionComplete = async (questionId: number): Promise<Question | null> => {
         try {
             const result = await window.db.questions.getByIdComplete(questionId);
             if (result.success) {
-                if (result.question) {
-                    return result.question;
-                } else {
-                    throw new Error('Question not found');
-                }
+                return result.question || null;
+
             } else {
                 setError(result.error || 'Failed to fetch question');
-                throw new Error(result.error || 'Failed to fetch question');
+                return null;
             }
         } catch (err) {
             setError("Failed to fetch question");
-            throw err instanceof Error ? err : new Error("Failed to fetch question");
+            return null;
         }
     };
 
@@ -98,7 +95,7 @@ export const useQuestions = () => {
         try {
             const result = await window.db.questions.getByExamId(examId);
             if (result.success) {
-                return result.questions;
+                return result.questions || [];
             } else {
                 setError(result.error || 'Failed to fetch question');
                 return [];
@@ -146,8 +143,8 @@ export const useQuestions = () => {
     const getAnswersByQuestionId = async (questionId: number): Promise<Answer[]> => {
         try {
             const result = await window.db.questions.getAnswersByQuestionId(questionId);
-            if (result.answers) {
-                return result.answers;
+            if (result.success) {
+                return result.answers || [];
             } else {
                 setError(result.error || `Failed to get answers by questionId: ${questionId}`);
                 return [];

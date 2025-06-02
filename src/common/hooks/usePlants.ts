@@ -7,7 +7,7 @@ export const usePlants = () => {
     const [plantsWithExams, setPlantsWithExams] = useState<Plant[]>([]);
     const [error, setError] = useState<string | null>(null);
 
-    const addPlant = async (plant: Plant) => {
+    const addPlant = async (plant: Plant): Promise<void> => {
         if (!plant.name) {
             setError('Please fill in all fields');
             return;
@@ -27,63 +27,73 @@ export const usePlants = () => {
         }
     };
 
-    const getPlants = async () => {
+    const getPlants = async (): Promise<Plant[]> => {
         try {
             const result = await window.db.plants.get();
             if (result.success) {
                 setPlants(result.plants || []);
+                return result.plants || [];
             } else {
                 setError(result.error || 'Failed to fetch plants');
+                return [];
             }
         } catch (err) {
             setError("Failed to fetch plants");
+            return [];
         }
     };
 
-    const getPlantsWithExams = async () => {
+    const getPlantsWithExams = async (): Promise<Plant[]> => {
         try {
             const result = await window.db.plants.getWithExams();
             if (result.success) {
                 setPlantsWithExams(result.plants || [])
+                return result.plants || [];
             } else {
                 setError(result.error || 'Failed to fetch plants with exams');
+                return [];
             }
         } catch (err) {
             setError("Failed to fetch plants with exams");
+            return [];
         }
     };
-    const getPlantById = async (plantId: number) => {
+    const getPlantById = async (plantId: number): Promise<Plant | null> => {
         try {
             const result = await window.db.plants.getById(plantId);
             if (result.success) {
-                return result.plant ?? null;
+                return result.plant || null;
             } else {
                 setError(result.error || 'Failed to fetch plant');
+                return null;
             }
         } catch (err) {
             setError("Failed to fetch plant");
+            return null;
         }
     };
 
-    const getPlantByIdWithExams = async (plantId: number) => {
+    const getPlantByIdWithExams = async (plantId: number): Promise<Plant | null> => {
         try {
             const result = await window.db.plants.getByIdWithExams(plantId);
             if (result.success) {
-                return result.plant ?? null;
+                return result.plant || null;
             } else {
                 setError(result.error || 'Failed to fetch plants with exams');
+                return null;
             }
         } catch (err) {
             setError("Failed to fetch plants with exams");
+            return null;
         }
     };
 
 
 
-    const updatePlant = async (plant: Plant) => {
+    const updatePlant = async (plant: Plant): Promise<void> => {
         if (!plant.name) {
             setError('Please fill in all fields');
-            return null;
+            return
         }
         try {
             const result = await window.db.plants.update(plant);
@@ -91,18 +101,18 @@ export const usePlants = () => {
                 setError(null);
                 await getPlants();
                 await getPlantsWithExams();
-                return result.plant ?? plant;
+                return
             } else {
                 setError(result.error || 'Failed to update plant');
-                return null;
+                return;
             }
         } catch (err) {
             setError("Failed to update plant");
-            return null;
+            return;
         }
     };
 
-    const deletePlant = async (plantId: number) => {
+    const deletePlant = async (plantId: number): Promise<void> => {
         try {
             const result = await window.db.plants.delete(plantId);
             if (result.success) {

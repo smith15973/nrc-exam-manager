@@ -6,7 +6,7 @@ export const useExams = () => {
     const [exams, setExams] = useState<Exam[]>([]);
     const [error, setError] = useState<string | null>(null);
 
-    const addExam = async (exam: Exam) => {
+    const addExam = async (exam: Exam): Promise<void> => {
         if (!exam.name) {
             setError('Please fill in exam name');
             return;
@@ -30,49 +30,56 @@ export const useExams = () => {
     };
 
 
-    const getExams = async () => {
+    const getExams = async (): Promise<Exam[]> => {
         try {
             const result = await window.db.exams.get();
             if (result.success) {
                 setExams(result.exams || []);
+                return result.exams || [];
             } else {
                 setError(result.error || 'Failed to fetch exams');
+                return [];
             }
         } catch (err) {
             setError("Failed to fetch exams");
+            return [];
         }
     };
 
-    const getExamById = async (examId: number) => {
+    const getExamById = async (examId: number): Promise<Exam | null> => {
         try {
             const result = await window.db.exams.getById(examId);
             if (result.success) {
-                return result.exam ?? null;
+                return result.exam || null;
             } else {
                 setError(result.error || 'Failed to fetch exam');
+                return null;
             }
         } catch (err) {
             setError("Failed to fetch exam");
+            return null;
         }
     };
 
-    const getExamsByQuestionId = async (questionId: number) => {
+    const getExamsByQuestionId = async (questionId: number): Promise<Exam[]> => {
         try {
             const result = await window.db.exams.getByQuestionId(questionId);
             if (result.success) {
-                return result.exams;
+                return result.exams || [];
             } else {
                 setError(result.error || `Failed to get exams with questionId ${questionId}`);
+                return [];
             }
         } catch (err) {
             setError(`Failed to get exams with questionId ${questionId}`);
+            return [];
         }
     };
 
-    const updateExam = async (exam: Exam) => {
+    const updateExam = async (exam: Exam): Promise<void> => {
         if (!exam.name) {
             setError('Please fill in all fields');
-            return null;
+            return;
         }
         try {
             const result = await window.db.exams.update(exam);
@@ -81,15 +88,15 @@ export const useExams = () => {
                 await getExams();
             } else {
                 setError(result.error || 'Failed to update exam');
-                return null;
+                return;
             }
         } catch (err) {
             setError("Failed to update exam");
-            return null;
+            return;
         }
     };
 
-    const deleteExam = async (examId: number) => {
+    const deleteExam = async (examId: number): Promise<void> => {
         try {
             const result = await window.db.exams.delete(examId);
             if (result.success) {
