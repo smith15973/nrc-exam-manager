@@ -52,11 +52,11 @@ export default function PlantForm({ plant, handleSubmit }: PlantFormProps) {
     return (
         <>
             <Button variant="contained" onClick={() => setOpen(true)}>
-                {plant ? 'Update' : 'Add'} Plant
+                {plant ? 'Edit' : 'Add'} Plant
             </Button>
             <FormDialog
                 open={open}
-                title={`${plant ? 'Update' : 'Add'} Plant`}
+                title={`${plant ? 'Edit' : 'Add'} Plant`}
                 submitText={`${plant ? 'Update' : 'Add'} Plant`}
                 onSubmit={onSubmit}
                 onClose={() => setOpen(false)}

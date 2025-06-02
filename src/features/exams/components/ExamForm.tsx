@@ -88,7 +88,7 @@ export default function ExamForm(props: ExamFormProps) {
         <>
             <FormDialog
                 open={open}
-                title={`${exam ? 'Update' : 'Add'} Exam`}
+                title={`${exam ? 'Edit' : 'Add'} Exam`}
                 submitText={`${exam ? 'Update' : 'Add'} Exam`}
                 onSubmit={onSubmit}
                 onClose={handleClose}
@@ -103,7 +103,7 @@ export default function ExamForm(props: ExamFormProps) {
                 variant='contained'
                 onClick={handleClickOpen}
             >
-                {exam ? 'Update' : 'Add'} Exam
+                {exam ? 'Edit' : 'Add'} Exam
             </Button>
         </>
     );

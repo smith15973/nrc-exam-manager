@@ -98,7 +98,7 @@ export default function QuestionForm(props: QuestionFormProps) {
         <>
             <FormDialog
                 open={open}
-                title={`${question ? 'Update' : 'Add'} Question`}
+                title={`${question ? 'Edit' : 'Add'} Question`}
                 submitText={`${question ? 'Update' : 'Add'} Question`}
                 onSubmit={onSubmit}
                 onClose={() => setOpen(false)}
@@ -150,7 +150,7 @@ export default function QuestionForm(props: QuestionFormProps) {
                 variant="contained"
                 onClick={() => setOpen(true)}
             >
-                {question ? 'Update' : 'Add'} Question
+                {question ? 'Edit' : 'Add'} Question
             </Button>
         </>
     );

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDatabase } from '../../../common/hooks/useDatabase';
-import { Alert, CircularProgress, Typography } from '@mui/material';
+import { Alert, CircularProgress, Typography, Box } from '@mui/material';
 import { defaultQuestion } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
 import QuestionForm from '../components/QuestionForm';
@@ -73,6 +73,7 @@ export default function QuestionPage() {
 
     return (
         <>
+            <QuestionForm question={question} handleSubmit={handleSubmit} />
             <Typography variant='h4' sx={{ pb: 2 }}>Question: {question.question_text}</Typography>
 
             {error && (
@@ -81,14 +82,39 @@ export default function QuestionPage() {
                 </Alert>
             )}
 
-            <QuestionForm question={question} handleSubmit={handleSubmit} />
+
 
             {loading && question.question_id && (
                 <Alert severity="info" sx={{ mt: 2 }}>
                     Updating question...
                 </Alert>
             )}
-            <p>{JSON.stringify(question)}</p>
+            <Box>
+                Sys #'s
+                <Box>System</Box>
+            </Box>
+
+            <Box>
+                KA #'s:
+                <Box>Statement</Box>
+                <Box>Importance</Box>
+            </Box>
+            
+            <Box>Category: {question.category}</Box>
+            <Box>Exam Level: {question.exam_level}</Box>
+            <Box>Technical References: {question.technical_references}</Box>
+            <Box>Difficutly Level: {question.difficulty_level}</Box>
+            <Box>Cognitive Level: {question.cognitive_level}</Box>
+            <Box>Objective: {question.objective}</Box>
+            <Box>Last Used: {question.last_used}</Box>
+            <Box>{question.answers?.map(answer => {
+                return (
+                    <Box key={answer.option} sx={{ backgroundColor: answer.is_correct ? 'green' : '' }}>
+                        {answer.option}: {answer.answer_text}
+                    </Box>
+                )
+            })}</Box>
+            {/* <p>{JSON.stringify(question)}</p> */}
 
 
         </>
