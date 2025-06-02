@@ -2,23 +2,27 @@
 import { usePlants } from './usePlants';
 import { useExams } from './useExams';
 import { useQuestions } from './useQuestions';
+import { useSystems } from './useSystems';
 
 export const useDatabase = () => {
     const plantsHook = usePlants();
     const examsHook = useExams();
     const questionsHook = useQuestions();
+    const systemsHook = useSystems();
 
     return {
         // Spread all functions and state from each hook
         ...plantsHook,
         ...examsHook,
         ...questionsHook,
+        ...systemsHook,
 
         // If you want to namespace errors to avoid conflicts:
         errors: {
             plants: plantsHook.error,
             exams: examsHook.error,
-            questions: questionsHook.error
+            questions: questionsHook.error,
+            systems: systemsHook.error
         }
     };
 };

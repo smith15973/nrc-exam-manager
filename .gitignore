@@ -90,3 +90,4 @@ typings/
 
 # Electron-Forge
 out/
+src/data/nrc_exam_questions_database.db

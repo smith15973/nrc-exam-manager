@@ -7,6 +7,7 @@ import { PlantRepository } from './repositories/PlantRepository';
 import { ExamRepository } from './repositories/ExamRepository';
 import { QuestionRepository } from './repositories/QuestionRepository';
 import { QuestionService } from './services/QuestionService';
+import { SystemRepository } from './repositories/SystemRepository';
 
 export class Database {
     private db: sqlite3.Database;
@@ -16,6 +17,7 @@ export class Database {
     public plants: PlantRepository;
     public exams: ExamRepository;
     public questions: QuestionRepository;
+    public systems: SystemRepository;
 
     public questionService: QuestionService;
 
@@ -48,7 +50,8 @@ export class Database {
     private readonly currentSchemaVersion = Math.max(...Object.keys(Database.MIGRATIONS).map(Number));
 
     constructor() {
-        const dbPath = path.join(app.getPath('userData'), 'nrc_exam_questions_database.db');
+        // const dbPath = path.join(app.getPath('userData'), 'nrc_exam_questions_database.db');
+        const dbPath = '/Users/noah/Desktop/Projects/Davis_Besse_2025/nrc-exam-manager/src/data/nrc_exam_questions_database.db';
         console.log('Database location:', dbPath);
         console.log('Target schema version:', this.currentSchemaVersion);
 

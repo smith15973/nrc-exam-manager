@@ -83,12 +83,9 @@ interface QuestionKaNumber {
   question?: Question;
 }
 
-interface QuestionSystemNumber {
-  question_id: number;
-  system_number: string;
-  system_description: string | null;
-  // Optional relationship properties
-  question?: Question;
+interface System {
+  number: string;
+  name: string;
 }
 
 interface ApiResponse {
@@ -130,9 +127,9 @@ interface QuestionKaNumberResponse extends ApiResponse {
   questionKaNumbers?: QuestionKaNumber[];
 }
 
-interface QuestionSystemNumberResponse extends ApiResponse {
-  questionSystemNumber?: QuestionSystemNumber;
-  questionSystemNumbers?: QuestionSystemNumber[];
+interface SystemResponse extends ApiResponse {
+  system?: System;
+  systems?: System[];
 }
 
 interface Window {
@@ -167,6 +164,17 @@ interface Window {
       delete: (questionId: number) => Promise<QuestionResponse>;
 
       getAnswersByQuestionId: (questionId: number) => Promise<AnswerResponse>;
+    },
+    systems: {
+      add: (system: System) => Promise<SystemResponse>;
+      get: (params?: DBSearchParams) => Promise<SystemResponse>;
+      getMany: (params?: DBSearchParams) => Promise<SystemResponse>;
+      update: (system: System) => Promise<SystemResponse>;
+      delete: (systemNum: string) => Promise<SystemResponse>;
     }
   };
+}
+
+interface DBSearchParams {
+  [key: string]: any;
 }

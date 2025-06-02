@@ -316,28 +316,4 @@ export class QuestionRepository {
         });
     }
 
-    async getSystemNumbersByQuestionId(questionId: number): Promise<QuestionSystemNumber[]> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing()) {
-                reject(new Error('Database is closing'));
-                return;
-            }
-
-            const query = 'SELECT * FROM question_system_numbers WHERE question_id = ? ORDER BY system_number';
-
-            this.db.all(query, [questionId], (err, rows: any[]) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    const sys_numbers: QuestionSystemNumber[] = rows.map(row => ({
-                        system_number: row.system_number,
-                        question_id: row.question_id,
-                        system_description: row.system_description,
-                    }));
-                    resolve(sys_numbers);
-                }
-            });
-        });
-    }
-
 }

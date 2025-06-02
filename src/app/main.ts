@@ -270,6 +270,22 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         await db.questions.delete(data);
         return { success: true };
 
+      case 'add_system':
+        await db.systems.add(data);
+        return { success: true }
+      case 'get_system':
+        await db.systems.get(data);
+        return { success: true }
+      case 'get_systems':
+        await db.systems.getMany(data);
+        return { success: true }
+      case 'update_system':
+        await db.systems.update(data);
+        return { success: true }
+      case 'delete_system':
+        await db.systems.delete(data);
+        return { success: true }
+
       default:
         return { success: false, error: `Unknown operation: ${operation}` };
     }

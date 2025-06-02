@@ -57,13 +57,10 @@ export const schema = {
       'FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE',
     ],
   },
-  question_system_numbers: {
+  systems: {
     columns: [
-      'question_id INTEGER NOT NULL',
-      'system_number TEXT NOT NULL',
-      'system_description TEXT',
-      'PRIMARY KEY (question_id, system_number)',
-      'FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE',
+      'number TEXT PRIMARY KEY',
+      'name TEXT NOT NULL',
     ],
   },
   schema_version: {
@@ -96,7 +93,7 @@ export const questionSchema = generateSchema(schema.questions);
 export const examQuestionSchema = generateSchema(schema.exam_questions);
 export const answerSchema = generateSchema(schema.answers);
 export const questionKaNumberSchema = generateSchema(schema.question_ka_numbers);
-export const questionSystemNumberSchema = generateSchema(schema.question_system_numbers);
+export const systemSchema = generateSchema(schema.systems);
 
 
 // Default plant object
@@ -157,9 +154,8 @@ export const defaultQuestionKaNumber: QuestionKaNumber = {
   ka_importance: null,
 }
 
-export const defaultQuestionSystemNumber: QuestionSystemNumber = {
-  question_id: 0,
-  system_number: '',
-  system_description: null,
+export const defaultSystem: System = {
+  number: '',
+  name: '',
 }
 

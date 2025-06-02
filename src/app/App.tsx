@@ -10,6 +10,8 @@ import ExamPage from '../features/exams/pages/ExamPage';
 import QuestionsPage from '../features/questions/pages/QuestionsPage';
 import PlantsPage from '../features/plants/pages/PlantsPage';
 import QuestionPage from '../features/questions/pages/QuestionPage';
+import SystemPage from '../features/systems/pages/SystemPage';
+import SystemsPage from '../features/systems/pages/SystemsPage';
 
 
 
@@ -26,6 +28,8 @@ const App = () => {
                 <Route path='/exams/:examId' element={<ExamPage />} />
                 <Route path='/questions' element={<QuestionsPage />} />
                 <Route path='/questions/:questionId' element={<QuestionPage />} />
+                <Route path='/systems' element={<SystemsPage />} />
+                <Route path='/systems/:systemNum' element={<SystemPage />} />
                 <Route path="*" element={<HomePage />} />
             </Routes>
         </HashRouter>

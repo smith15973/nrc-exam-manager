@@ -27,7 +27,8 @@ const navItems = [
   { label: 'Home', link: '/' },
   { label: 'Question Search', link: '/questions' },
   { label: 'Plants', link: '/plants' },
-  { label: 'Exams', link: '/exams' }
+  { label: 'Exams', link: '/exams' },
+  { label: 'Systems', link: '/systems' },
 ];
 
 export default function DrawerAppBar(props: Props) {

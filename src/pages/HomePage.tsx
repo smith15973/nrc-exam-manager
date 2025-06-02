@@ -15,6 +15,9 @@ export default function HomePage() {
             <Box>
                 <Link to={"/questions"}>Questions</Link>
             </Box>
+            <Box>
+                <Link to={"/systems"}>Systems</Link>
+            </Box>
 
         </>
     )
