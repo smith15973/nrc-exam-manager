@@ -10,7 +10,16 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "postinstall": "electron-rebuild"
+    "postinstall": "electron-rebuild",
+    "generate:migration": "ts-node src/data/db/generateMigration.ts",
+    "db:status": "ts-node src/data/db/cli.ts status",
+    "db:migrate": "ts-node src/data/db/cli.ts migrate",
+    "db:rollback": "ts-node src/data/db/cli.ts rollback",
+    "db:reset": "ts-node src/data/db/cli.ts reset",
+    "db:seed": "ts-node src/data/db/cli.ts seed",
+    "db:fresh": "ts-node src/data/db/cli.ts fresh",
+    "db:info": "ts-node src/data/db/cli.ts info",
+    "db:validate": "ts-node src/data/db/cli.ts validate"
   },
   "keywords": [],
   "author": {

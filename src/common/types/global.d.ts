@@ -135,6 +135,13 @@ interface QuestionSystemNumberResponse extends ApiResponse {
   questionSystemNumbers?: QuestionSystemNumber[];
 }
 
+interface Migration {
+  version: number;
+  description: string;
+  up: (db: sqlite3.Database) => Promise<void>;
+  down?: (db: sqlite3.Database) => Promise<void>; // Optional rollback
+}
+
 interface Window {
   db: {
     plants: {
