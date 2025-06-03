@@ -145,7 +145,7 @@ export class SystemRepository {
       }
 
       const query = `
-      SELECT s.number, s.name,
+      SELECT s.number, s.name
       FROM systems s
       INNER JOIN question_systems qs ON s.number = qs.system_number
       WHERE qs.question_id = ?
