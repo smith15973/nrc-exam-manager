@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { defaultSystem, systemSchema } from '../../../data/db/schema';
-import { Box, Button, TextField } from '@mui/material';
+import { Alert, Box, Button, TextField } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import PlantSelect from '../../plants/components/PlantSelect';
 import { FormDialog } from '../../../common/components/FormDialog';
@@ -14,6 +14,7 @@ export default function SystemForm(props: SystemFormProps) {
     const { system, handleSubmit } = props;
     const [systemForm, setSystemForm] = useState<System>(system || defaultSystem);
     const [open, setOpen] = useState(false);
+    const { errors } = useDatabase();
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -84,6 +85,12 @@ export default function SystemForm(props: SystemFormProps) {
             >
                 {system ? 'Edit' : 'Add'} System
             </Button>
+
+            {errors.systems ? (
+            <Alert severity="error" sx={{ mb: 2 }}>
+                {errors.systems}
+            </Alert>
+            ) : null}
         </>
     );
 }

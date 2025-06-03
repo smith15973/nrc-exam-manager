@@ -270,19 +270,19 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         await db.questions.delete(data);
         return { success: true };
 
-      case 'add_system':
+      case 'add-system':
         await db.systems.add(data);
         return { success: true }
-      case 'get_system':
-        await db.systems.get(data);
-        return { success: true }
-      case 'get_systems':
-        await db.systems.getMany(data);
-        return { success: true }
-      case 'update_system':
+      case 'get-system':
+        const system = await db.systems.get(data);
+        return { success: true, system }
+      case 'get-systems':
+        const systems = await db.systems.getMany(data);
+        return { success: true, systems }
+      case 'update-system':
         await db.systems.update(data);
         return { success: true }
-      case 'delete_system':
+      case 'delete-system':
         await db.systems.delete(data);
         return { success: true }
 

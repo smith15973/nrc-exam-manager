@@ -3,11 +3,12 @@ import { useDatabase } from '../../../common/hooks/useDatabase';
 import { Typography } from '@mui/material';
 import SystemForm from '../components/SystemForm';
 import { useEffect, useState } from 'react';
+import SystemsList from '../components/SystemsList';
 
 
 export default function SystemsPage() {
     const [systems, setSystems] = useState<System[]>([]);
-    const { addSystem, getSystems } = useDatabase();
+    const { addSystem, getSystems, deleteSystem } = useDatabase();
 
     const loadSystems = async () => {
         const fetchedSystems = await getSystems();
@@ -28,7 +29,7 @@ export default function SystemsPage() {
         <>
             <Typography variant='h4'>Systems</Typography>
             <SystemForm handleSubmit={handleSubmit} />
-            {systems}
+            <SystemsList systems={systems} deleteSystem={deleteSystem} />
 
 
         </>

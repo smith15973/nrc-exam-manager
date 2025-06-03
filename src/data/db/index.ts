@@ -1,7 +1,5 @@
 // db/index.ts
 import sqlite3 from 'sqlite3';
-import { app } from 'electron';
-import path from 'path';
 import { schema } from './schema';
 import { PlantRepository } from './repositories/PlantRepository';
 import { ExamRepository } from './repositories/ExamRepository';
@@ -72,6 +70,7 @@ export class Database {
         this.plants = new PlantRepository(this.db, () => this.isClosing);
         this.exams = new ExamRepository(this.db, () => this.isClosing);
         this.questions = new QuestionRepository(this.db, () => this.isClosing);
+        this.systems = new SystemRepository(this.db, () => this.isClosing);
 
         this.questionService = new QuestionService(this.questions, this.exams);
     }
