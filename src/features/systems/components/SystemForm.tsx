@@ -16,6 +16,12 @@ export default function SystemForm(props: SystemFormProps) {
     const [open, setOpen] = useState(false);
     const { errors } = useDatabase();
 
+    useEffect(() => {
+        if (system) {
+            setSystemForm(system);
+        }
+    }, [system]);
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -38,18 +44,21 @@ export default function SystemForm(props: SystemFormProps) {
         return !systemForm.name || !systemForm.number
     }
 
+    console.log("form", systemForm)
+
     const formContent = (
         <>
-            <Box sx={{ pt: 2 }}>
-                <TextField
-                    fullWidth
-                    type={'text'}
-                    value={(systemForm as any)['number'] || ''}
-                    onChange={(e) => handleChange('number', e.target.value)}
-                    label={"System Number"}
-                    required={true}
-                />
-            </Box>
+            {!system ?
+                <Box sx={{ pt: 2 }}>
+                    <TextField
+                        fullWidth
+                        type={'text'}
+                        value={(systemForm as any)['number'] || ''}
+                        onChange={(e) => handleChange('number', e.target.value)}
+                        label={"System Number"}
+                        required={true}
+                    />
+                </Box> : null}
             <Box sx={{ pt: 2 }}>
                 <TextField
                     fullWidth
@@ -87,9 +96,9 @@ export default function SystemForm(props: SystemFormProps) {
             </Button>
 
             {errors.systems ? (
-            <Alert severity="error" sx={{ mb: 2 }}>
-                {errors.systems}
-            </Alert>
+                <Alert severity="error" sx={{ mb: 2 }}>
+                    {errors.systems}
+                </Alert>
             ) : null}
         </>
     );

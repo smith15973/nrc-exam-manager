@@ -40,8 +40,8 @@ export default function SystemPage() {
     return (
         <>
             <Typography variant='h4'>System: {system.number} {system.name}</Typography>
-
             <SystemForm system={system} handleSubmit={handleSubmit} />
+            
 
 
         </>
