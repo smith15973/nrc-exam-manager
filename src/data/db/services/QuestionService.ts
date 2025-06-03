@@ -1,21 +1,26 @@
 // db/services/QuestionService.ts
 import { QuestionRepository } from '../repositories/QuestionRepository';
 import { ExamRepository } from '../repositories/ExamRepository';
+import { SystemRepository } from '../repositories/SystemRepository';
+import { KaRepository } from '../repositories/KaRepository';
 
 export class QuestionService {
     constructor(
         private questionRepo: QuestionRepository,
-        private examRepo: ExamRepository
+        private examRepo: ExamRepository,
+        private systemRepo: SystemRepository,
+        private kaRepo: KaRepository,
     ) { }
 
     async getCompleteQuestion(questionId: number): Promise<Question> {
         try {
             // Get all data in parallel for better performance
-            const [questionRow, answers, exams, kaNumbers] = await Promise.all([
+            const [questionRow, answers, exams, kas, systems] = await Promise.all([
                 this.questionRepo.getById(questionId),
                 this.questionRepo.getAnswersByQuestionId(questionId),
                 this.examRepo.getByQuestionId(questionId),
-                this.questionRepo.getKANumbersByQuestionId(questionId),
+                this.kaRepo.getByQuestionId(questionId),
+                this.systemRepo.getByQuestionId(questionId),
             ]);
 
             const question: Question = {
@@ -29,7 +34,8 @@ export class QuestionService {
                 objective: questionRow.objective,
                 last_used: questionRow.last_used,
                 answers: answers as [Answer, Answer, Answer, Answer],
-                ka_numbers: kaNumbers,
+                kas: kas,
+                systems: systems,
                 exams: exams,
             };
 

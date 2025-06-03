@@ -286,6 +286,22 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         await db.systems.delete(data);
         return { success: true }
 
+      case 'add-ka':
+        await db.kas.add(data);
+        return { success: true }
+      case 'get-ka':
+        const ka = await db.kas.get(data);
+        return { success: true, ka }
+      case 'get-kas':
+        const kas = await db.kas.getMany(data);
+        return { success: true, kas }
+      case 'update-ka':
+        await db.kas.update(data);
+        return { success: true }
+      case 'delete-ka':
+        await db.kas.delete(data);
+        return { success: true }
+
       default:
         return { success: false, error: `Unknown operation: ${operation}` };
     }

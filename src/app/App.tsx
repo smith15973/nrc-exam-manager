@@ -12,6 +12,8 @@ import PlantsPage from '../features/plants/pages/PlantsPage';
 import QuestionPage from '../features/questions/pages/QuestionPage';
 import SystemPage from '../features/systems/pages/SystemPage';
 import SystemsPage from '../features/systems/pages/SystemsPage';
+import KasPage from '../features/kas/pages/KasPage';
+import KaPage from '../features/kas/pages/KaPage';
 
 
 
@@ -30,6 +32,8 @@ const App = () => {
                 <Route path='/questions/:questionId' element={<QuestionPage />} />
                 <Route path='/systems' element={<SystemsPage />} />
                 <Route path='/systems/:systemNum' element={<SystemPage />} />
+                <Route path='/kas' element={<KasPage />} />
+                <Route path='/kas/:kaNum' element={<KaPage />} />
                 <Route path="*" element={<HomePage />} />
             </Routes>
         </HashRouter>

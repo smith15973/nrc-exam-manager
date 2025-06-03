@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { defaultQuestion, questionSchema, defaultAnswer, defaultExam, defaultSystem } from '../../../data/db/schema';
+import { defaultQuestion, questionSchema, defaultAnswer, defaultExam, defaultSystem, defaultKa } from '../../../data/db/schema';
 import { Box, Button, TextField, SxProps } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import AnswerForm from '../../answers/components/AnswerForm';
 import MultiExamSelect from '../../exams/components/MultiExamSelect';
-import ErrorPopup from '../../../common/components/ErrorPopup';
 import { FormDialog } from '../../../common/components/FormDialog';
 import MultiSystemSelect from '../../systems/components/MultiSystemSelect';
+import MultiKaSelect from '../../kas/components/MultiKaSelect'
 
 interface QuestionFormProps {
     question?: Question;
@@ -19,8 +19,9 @@ export default function QuestionForm(props: QuestionFormProps) {
     const [questionForm, setQuestionForm] = useState<Question>(question || defaultQuestion);
     const [questionExams, setQuestionExams] = useState<number[]>([])
     const [questionSystems, setQuestionSystems] = useState<string[]>([])
+    const [questionKas, setQuestionKas] = useState<string[]>([])
     const [open, setOpen] = useState(false);
-    const { exams, systems } = useDatabase();
+    const { exams, systems, kas } = useDatabase();
 
     useEffect(() => {
         if (question) {
@@ -33,6 +34,8 @@ export default function QuestionForm(props: QuestionFormProps) {
         setQuestionExams(examIds);
         const systemNums = questionForm.systems?.map(system => system.number).filter((num): num is string => num !== undefined) || [];
         setQuestionSystems(systemNums);
+        const kaNums = questionForm.kas?.map(ka => ka.ka_number).filter((num): num is string => num !== undefined) || [];
+        setQuestionKas(kaNums);
     }, [questionForm])
 
     const handleChange = (key: string, value: any) => {
@@ -90,7 +93,24 @@ export default function QuestionForm(props: QuestionFormProps) {
             ...prev,
             systems: [...(prev.systems || []), defaultSystem]
         }));
-        console.log(questionForm.systems)
+    }
+
+    const handleKasChange = (newKasList: string[]) => {
+        setQuestionKas(newKasList);
+
+        // Sync with questionForm.exams
+        const selectedKas = kas.filter(ka => newKasList.includes(ka.ka_number));
+        setQuestionForm(prev => ({
+            ...prev,
+            kas: selectedKas
+        }));
+    }
+
+    const handleAddKaClick = () => {
+        setQuestionForm(prev => ({
+            ...prev,
+            kas: [...(prev.kas || []), defaultKa]
+        }));
     }
 
     const onSubmit = () => {
@@ -161,6 +181,12 @@ export default function QuestionForm(props: QuestionFormProps) {
                             systemOptions={systems}
                             handleAddSystemClick={handleAddSystemClick}
                             onSystemsUpdate={handleSystemsChange}
+                        />
+                        <MultiKaSelect
+                            kaList={questionKas}
+                            kaOptions={kas}
+                            handleAddKaClick={handleAddKaClick}
+                            onKasUpdate={handleKasChange}
                         />
                     </Box>
 

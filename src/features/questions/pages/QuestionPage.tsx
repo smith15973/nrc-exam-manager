@@ -103,12 +103,11 @@ export default function QuestionPage() {
 
 
             <Box>
-                {question.ka_numbers?.map(ka => {
+                {question.kas?.map(ka => {
                     return (
                         <Box>
                             <Box>KA# {ka.ka_number}</Box>
-                            <Box>KA Statement: {ka.ka_statement}</Box>
-                            <Box>KA Importance: {ka.ka_importance}</Box>
+                            <Box>KA Name: {ka.ka_description}</Box>
                         </Box>
                     )
                 })}

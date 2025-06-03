@@ -88,20 +88,20 @@ export class QuestionRepository {
                         }
 
                         // Handle ka relationships
-                        if (question.ka_numbers?.length) {
+                        if (question.kas?.length) {
                             const kaPromise = new Promise<void>((resolveKa, rejectKa) => {
-                                const placeholders = question.ka_numbers!.map(() => '(?, ?, ?)').join(', ');
+                                const placeholders = question.kas!.map(() => '(?, ?)').join(', ');
                                 const values: any[] = [];
 
-                                question.ka_numbers!.forEach(ka => {
-                                    values.push(ka.ka_number, ka.ka_statement, ka.ka_importance);
+                                question.kas!.forEach(ka => {
+                                    values.push(questionId, ka.ka_number);
                                 });
 
                                 self.db.run(
-                                    `INSERT INTO question_ka_numbers (ka_number, ka_statement, ka_importance) VALUES ${placeholders}`,
+                                    `INSERT INTO question_kas (question_id, ka_number) VALUES ${placeholders}`,
                                     values,
-                                    (kaErr) => {
-                                        if (kaErr) rejectKa(kaErr);
+                                    (systemErr) => {
+                                        if (systemErr) rejectKa(systemErr);
                                         else resolveKa();
                                     }
                                 );
@@ -286,31 +286,6 @@ export class QuestionRepository {
                         justification: row.justification
                     }));
                     resolve(answers);
-                }
-            });
-        });
-    }
-
-    async getKANumbersByQuestionId(questionId: number): Promise<QuestionKaNumber[]> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing()) {
-                reject(new Error('Database is closing'));
-                return;
-            }
-
-            const query = 'SELECT * FROM question_ka_numbers WHERE question_id = ? ORDER BY ka_number';
-
-            this.db.all(query, [questionId], (err, rows: any[]) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    const ka_numbers: QuestionKaNumber[] = rows.map(row => ({
-                        ka_number: row.ka_number,
-                        question_id: row.question_id,
-                        ka_importance: row.ka_importance,
-                        ka_statement: row.ka_statement,
-                    }));
-                    resolve(ka_numbers);
                 }
             });
         });

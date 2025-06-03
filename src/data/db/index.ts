@@ -6,6 +6,7 @@ import { ExamRepository } from './repositories/ExamRepository';
 import { QuestionRepository } from './repositories/QuestionRepository';
 import { QuestionService } from './services/QuestionService';
 import { SystemRepository } from './repositories/SystemRepository';
+import { KaRepository } from './repositories/KaRepository';
 
 export class Database {
     private db: sqlite3.Database;
@@ -16,6 +17,7 @@ export class Database {
     public exams: ExamRepository;
     public questions: QuestionRepository;
     public systems: SystemRepository;
+    public kas: KaRepository;
 
     public questionService: QuestionService;
 
@@ -31,37 +33,81 @@ export class Database {
                 });
             }
         },
-        2: {
-            description: 'Add option column to answers table',
-            up: (db: sqlite3.Database) => {
-                // Add the option column that you added to your schema
-                db.run('ALTER TABLE answers ADD COLUMN option TEXT', (err) => {
-                    if (err && !err.message.includes('duplicate column name')) {
-                        throw err;
-                    }
-                });
-            }
-        },
+        // 2: {
+        //     description: 'Add option column to answers table',
+        //     up: (db: sqlite3.Database) => {
+        //         // Add the option column that you added to your schema
+        //         db.run('ALTER TABLE answers ADD COLUMN option TEXT', (err) => {
+        //             if (err && !err.message.includes('duplicate column name')) {
+        //                 throw err;
+        //             }
+        //         });
+        //     }
+        // },
 
-        3: {
-            description: 'Add question_systems table to database',
-            up: (db: sqlite3.Database) => {
-                const sql = `
-            CREATE TABLE IF NOT EXISTS question_systems (
-                question_id INTEGER NOT NULL,
-                system_number TEXT NOT NULL,
-                PRIMARY KEY (question_id, system_number),
-                FOREIGN KEY (system_number) REFERENCES systems(number) ON DELETE CASCADE,
-                FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE
-            )
-        `;
-                db.run(sql, (err) => {
-                    if (err && !err.message.includes('duplicate column name')) {
-                        throw err;
-                    }
-                });
-            }
-        }
+        // 3: {
+        //     description: 'Add question_systems table to database',
+        //     up: (db: sqlite3.Database) => {
+        //         const sql = `
+        //     CREATE TABLE IF NOT EXISTS question_systems (
+        //         question_id INTEGER NOT NULL,
+        //         system_number TEXT NOT NULL,
+        //         PRIMARY KEY (question_id, system_number),
+        //         FOREIGN KEY (system_number) REFERENCES systems(number) ON DELETE CASCADE,
+        //         FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE
+        //     )
+        // `;
+        //         db.run(sql, (err) => {
+        //             if (err && !err.message.includes('duplicate column name')) {
+        //                 throw err;
+        //             }
+        //         });
+        //     }
+        // },
+        // 4: {
+        //     description: 'Add kas table to database',
+        //     up: (db: sqlite3.Database) => {
+        //         const sql = `
+        //     CREATE TABLE IF NOT EXISTS kas (
+        //         'ka_number TEXT PRIMARY KEY',
+        //         'ka_description TEXT',
+        //         'system_number TEXT',
+        //         'FOREIGN KEY (system_number) REFERENCES systems(system_number) ON DELETE CASCADE',
+        //     )
+        // `;
+        //         db.run(sql, (err) => {
+        //             if (err && !err.message.includes('duplicate column name')) {
+        //                 throw err;
+        //             }
+        //         });
+        //     }
+        // },
+        // 5: {
+        //     description: 'Drop question_ka_numbers and create question_kas table',
+        //     up: (db: sqlite3.Database) => {
+        //         // Drop the question_ka_numbers table
+        //         db.run('DROP TABLE IF EXISTS question_ka_numbers', (err) => {
+        //             if (err) {
+        //                 throw err;
+        //             }
+        //         });
+
+        //         // Create the question_kas table
+        //         const sql = `
+        //         CREATE TABLE IF NOT EXISTS question_kas (
+        //             question_id INTEGER NOT NULL,
+        //             ka_number TEXT NOT NULL,
+        //             PRIMARY KEY (question_id, ka_number),
+        //             FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE
+        //         )
+        //     `;
+        //         db.run(sql, (err) => {
+        //             if (err && !err.message.includes('table question_kas already exists')) {
+        //                 throw err;
+        //             }
+        //         });
+        //     }
+        // }
     } as const;
 
     // Current version is the highest migration number
@@ -91,8 +137,9 @@ export class Database {
         this.exams = new ExamRepository(this.db, () => this.isClosing);
         this.questions = new QuestionRepository(this.db, () => this.isClosing);
         this.systems = new SystemRepository(this.db, () => this.isClosing);
+        this.kas = new KaRepository(this.db, () => this.isClosing);
 
-        this.questionService = new QuestionService(this.questions, this.exams);
+        this.questionService = new QuestionService(this.questions, this.exams, this.systems, this.kas);
     }
 
     private async getCurrentSchemaVersion(): Promise<number> {

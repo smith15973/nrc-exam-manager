@@ -28,7 +28,7 @@ interface Question {
   // Optional relationship properties
   answers?: [Answer, Answer, Answer, Answer];
   exams?: Exam[];
-  ka_numbers?: QuestionKaNumber[];
+  kas?: Ka[];
   systems?: System[];
 }
 
@@ -74,13 +74,9 @@ interface Answer {
   question?: Question;
 }
 
-interface QuestionKaNumber {
-  question_id: number;
+interface Ka {
   ka_number: string;
-  ka_statement: string | null;
-  ka_importance: string | null;
-  // Optional relationship properties
-  question?: Question;
+  ka_description: string;
 }
 
 interface System {
@@ -122,9 +118,9 @@ interface ExamQuestionResponse extends ApiResponse {
   examQuestions?: ExamQuestion[];
 }
 
-interface QuestionKaNumberResponse extends ApiResponse {
-  questionKaNumber?: QuestionKaNumber;
-  questionKaNumbers?: QuestionKaNumber[];
+interface KaResponse extends ApiResponse {
+  ka?: Ka;
+  kas?: Ka[];
 }
 
 interface SystemResponse extends ApiResponse {
@@ -171,6 +167,13 @@ interface Window {
       getMany: (params?: DBSearchParams) => Promise<SystemResponse>;
       update: (system: System) => Promise<SystemResponse>;
       delete: (systemNum: string) => Promise<SystemResponse>;
+    },
+    kas: {
+      add: (ka: Ka) => Promise<KaResponse>;
+      get: (params?: DBSearchParams) => Promise<KaResponse>;
+      getMany: (params?: DBSearchParams) => Promise<KaResponse>;
+      update: (ka: Ka) => Promise<KaResponse>;
+      delete: (kaNum: string) => Promise<KaResponse>;
     }
   };
 }

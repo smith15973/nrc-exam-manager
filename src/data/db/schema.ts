@@ -47,12 +47,16 @@ export const schema = {
       'FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE',
     ],
   },
-  question_ka_numbers: {
+  kas: {
+    columns: [
+      'ka_number TEXT PRIMARY KEY',
+      'ka_description TEXT',
+    ]
+  },
+  question_kas: {
     columns: [
       'question_id INTEGER NOT NULL',
       'ka_number TEXT NOT NULL',
-      'ka_statement TEXT',
-      'ka_importance TEXT',
       'PRIMARY KEY (question_id, ka_number)',
       'FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE',
     ],
@@ -101,7 +105,7 @@ export const examSchema = generateSchema(schema.exams);
 export const questionSchema = generateSchema(schema.questions);
 export const examQuestionSchema = generateSchema(schema.exam_questions);
 export const answerSchema = generateSchema(schema.answers);
-export const questionKaNumberSchema = generateSchema(schema.question_ka_numbers);
+export const questionKaNumberSchema = generateSchema(schema.kas);
 export const systemSchema = generateSchema(schema.systems);
 
 
@@ -136,7 +140,7 @@ export const defaultQuestion: Question = {
     { answer_id: 0, question_id: 0, answer_text: '', is_correct: 0, option: 'C', justification: null },
     { answer_id: 0, question_id: 0, answer_text: '', is_correct: 0, option: 'D', justification: null },
   ],
-  ka_numbers: [],
+  kas: [],
   systems: [],
   exams: [],
 }
@@ -156,11 +160,9 @@ export const defaultAnswer: Answer = {
   justification: null,
 }
 
-export const defaultQuestionKaNumber: QuestionKaNumber = {
-  question_id: 0,
+export const defaultKa: Ka = {
   ka_number: '',
-  ka_statement: null,
-  ka_importance: null,
+  ka_description: ''
 }
 
 export const defaultSystem: System = {
