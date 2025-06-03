@@ -91,11 +91,11 @@ export default function QuestionPage() {
             )}
 
             <Box>
-                {question.system_numbers?.map(system => {
+                {question.systems?.map(system => {
                     return (
                         <Box>
-                            <Box>Sys# {system.system_number}</Box>
-                            <Box>System Description: {system.system_description}</Box>
+                            <Box>Sys# {system.number}</Box>
+                            <Box>System Name: {system.name}</Box>
                         </Box>
                     )
                 })}

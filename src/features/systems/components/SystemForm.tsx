@@ -44,8 +44,6 @@ export default function SystemForm(props: SystemFormProps) {
         return !systemForm.name || !systemForm.number
     }
 
-    console.log("form", systemForm)
-
     const formContent = (
         <>
             {!system ?

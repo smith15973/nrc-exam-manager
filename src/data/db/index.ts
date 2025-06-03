@@ -42,6 +42,26 @@ export class Database {
                 });
             }
         },
+
+        3: {
+            description: 'Add question_systems table to database',
+            up: (db: sqlite3.Database) => {
+                const sql = `
+            CREATE TABLE IF NOT EXISTS question_systems (
+                question_id INTEGER NOT NULL,
+                system_number TEXT NOT NULL,
+                PRIMARY KEY (question_id, system_number),
+                FOREIGN KEY (system_number) REFERENCES systems(number) ON DELETE CASCADE,
+                FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE
+            )
+        `;
+                db.run(sql, (err) => {
+                    if (err && !err.message.includes('duplicate column name')) {
+                        throw err;
+                    }
+                });
+            }
+        }
     } as const;
 
     // Current version is the highest migration number

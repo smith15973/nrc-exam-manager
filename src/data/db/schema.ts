@@ -63,6 +63,15 @@ export const schema = {
       'name TEXT NOT NULL',
     ],
   },
+  question_systems: {
+    columns: [
+      'question_id INTEGER NOT NULL',
+      'system_number TEXT NOT NULL',
+      'PRIMARY KEY (question_id, system_number)',
+      'FOREIGN KEY (system_number) REFERENCES systems(number) ON DELETE CASCADE',
+      'FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE',
+    ],
+  },
   schema_version: {
     columns: [
       'version INTEGER PRIMARY KEY',
@@ -128,7 +137,7 @@ export const defaultQuestion: Question = {
     { answer_id: 0, question_id: 0, answer_text: '', is_correct: 0, option: 'D', justification: null },
   ],
   ka_numbers: [],
-  system_numbers: [],
+  systems: [],
   exams: [],
 }
 

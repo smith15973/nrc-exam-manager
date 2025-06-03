@@ -29,7 +29,7 @@ interface Question {
   answers?: [Answer, Answer, Answer, Answer];
   exams?: Exam[];
   ka_numbers?: QuestionKaNumber[];
-  system_numbers?: QuestionSystemNumber[];
+  systems?: System[];
 }
 
 interface QuestionAll {

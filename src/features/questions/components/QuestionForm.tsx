@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { defaultQuestion, questionSchema, defaultAnswer, defaultExam } from '../../../data/db/schema';
+import { defaultQuestion, questionSchema, defaultAnswer, defaultExam, defaultSystem } from '../../../data/db/schema';
 import { Box, Button, TextField, SxProps } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import AnswerForm from '../../answers/components/AnswerForm';
 import MultiExamSelect from '../../exams/components/MultiExamSelect';
 import ErrorPopup from '../../../common/components/ErrorPopup';
 import { FormDialog } from '../../../common/components/FormDialog';
+import MultiSystemSelect from '../../systems/components/MultiSystemSelect';
 
 interface QuestionFormProps {
     question?: Question;
@@ -17,8 +18,9 @@ export default function QuestionForm(props: QuestionFormProps) {
     const { question, handleSubmit, exam } = props;
     const [questionForm, setQuestionForm] = useState<Question>(question || defaultQuestion);
     const [questionExams, setQuestionExams] = useState<number[]>([])
+    const [questionSystems, setQuestionSystems] = useState<string[]>([])
     const [open, setOpen] = useState(false);
-    const { exams } = useDatabase();
+    const { exams, systems } = useDatabase();
 
     useEffect(() => {
         if (question) {
@@ -29,6 +31,8 @@ export default function QuestionForm(props: QuestionFormProps) {
     useEffect(() => {
         const examIds = questionForm.exams?.map(exam => exam.exam_id).filter((id): id is number => id !== undefined) || [];
         setQuestionExams(examIds);
+        const systemNums = questionForm.systems?.map(system => system.number).filter((num): num is string => num !== undefined) || [];
+        setQuestionSystems(systemNums);
     }, [questionForm])
 
     const handleChange = (key: string, value: any) => {
@@ -68,6 +72,25 @@ export default function QuestionForm(props: QuestionFormProps) {
             ...prev,
             exams: [...(prev.exams || []), defaultExam]
         }));
+    }
+
+    const handleSystemsChange = (newSystemsList: string[]) => {
+        setQuestionSystems(newSystemsList);
+
+        // Sync with questionForm.exams
+        const selectedSystems = systems.filter(system => newSystemsList.includes(system.number));
+        setQuestionForm(prev => ({
+            ...prev,
+            systems: selectedSystems
+        }));
+    }
+
+    const handleAddSystemClick = () => {
+        setQuestionForm(prev => ({
+            ...prev,
+            systems: [...(prev.systems || []), defaultSystem]
+        }));
+        console.log(questionForm.systems)
     }
 
     const onSubmit = () => {
@@ -132,6 +155,12 @@ export default function QuestionForm(props: QuestionFormProps) {
                             examOptions={exams}
                             handleAddExamClick={handleAddExamClick}
                             onExamsUpdate={handleExamsChange}
+                        />
+                        <MultiSystemSelect
+                            systemList={questionSystems}
+                            systemOptions={systems}
+                            handleAddSystemClick={handleAddSystemClick}
+                            onSystemsUpdate={handleSystemsChange}
                         />
                     </Box>
 

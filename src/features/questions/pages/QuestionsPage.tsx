@@ -11,6 +11,7 @@ export default function QuestionsPage() {
     const { questions, addQuestion, deleteQuestion, error } = useDatabase();
 
     const handleSubmit = async (question: Question) => {
+        console.log(question)
         await addQuestion(question);
     }
 

@@ -110,20 +110,20 @@ export class QuestionRepository {
                         }
 
                         // Handle system relationships
-                        if (question.system_numbers?.length) {
+                        if (question.systems?.length) {
                             const systemPromise = new Promise<void>((resolveSystem, rejectSystem) => {
-                                const placeholders = question.system_numbers!.map(() => '(?, ?)').join(', ');
+                                const placeholders = question.systems!.map(() => '(?, ?)').join(', ');
                                 const values: any[] = [];
 
-                                question.system_numbers!.forEach(system => {
-                                    values.push(system.system_number, system.system_description);
+                                question.systems!.forEach(system => {
+                                    values.push(questionId, system.number);
                                 });
 
                                 self.db.run(
-                                    `INSERT INTO question_system_numbers (system_number, system_number_description) VALUES ${placeholders}`,
+                                    `INSERT INTO question_systems (question_id, system_number) VALUES ${placeholders}`,
                                     values,
-                                    (sysErr) => {
-                                        if (sysErr) rejectSystem(sysErr);
+                                    (systemErr) => {
+                                        if (systemErr) rejectSystem(systemErr);
                                         else resolveSystem();
                                     }
                                 );
