@@ -156,21 +156,27 @@ export default function QuestionForm(props: QuestionFormProps) {
                             );
                         })}
 
-                        <CheckExams
-                            examOptions={exams}
-                            handleChange={handleExamCheckChange}
-                            selectedIdList={selectedExams}
-                        />
-                        <CheckSystems
-                            systemOptions={systems}
-                            handleChange={handleSystemCheckChange}
-                            selectedIdList={selectedSystems}
-                        />
-                        <CheckKas
-                            kaOptions={kas}
-                            handleChange={handleKaCheckChange}
-                            selectedIdList={selectedKas}
-                        />
+                        <Box sx={{ pb: 2 }} >
+                            <CheckExams
+                                examOptions={exams}
+                                handleChange={handleExamCheckChange}
+                                selectedIdList={selectedExams}
+                            />
+                        </Box>
+                        <Box sx={{ pb: 2 }} >
+                            <CheckSystems
+                                systemOptions={systems}
+                                handleChange={handleSystemCheckChange}
+                                selectedIdList={selectedSystems}
+                            />
+                        </Box>
+                        <Box sx={{ pb: 2 }} >
+                            <CheckKas
+                                kaOptions={kas}
+                                handleChange={handleKaCheckChange}
+                                selectedIdList={selectedKas}
+                            />
+                        </Box>
                     </Box>
 
                     {/* Answers Section */}
