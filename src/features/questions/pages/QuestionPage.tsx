@@ -93,7 +93,7 @@ export default function QuestionPage() {
             <Box>
                 {question.systems?.map(system => {
                     return (
-                        <Box>
+                        <Box key={system.number}>
                             <Box>Sys# {system.number}</Box>
                             <Box>System Name: {system.name}</Box>
                         </Box>

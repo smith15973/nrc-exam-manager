@@ -7,6 +7,7 @@ import MultiExamSelect from '../../exams/components/MultiExamSelect';
 import { FormDialog } from '../../../common/components/FormDialog';
 import MultiSystemSelect from '../../systems/components/MultiSystemSelect';
 import MultiKaSelect from '../../kas/components/MultiKaSelect'
+import CheckExams from '../../exams/components/CheckExams';
 
 interface QuestionFormProps {
     question?: Question;
@@ -17,9 +18,9 @@ interface QuestionFormProps {
 export default function QuestionForm(props: QuestionFormProps) {
     const { question, handleSubmit, exam } = props;
     const [questionForm, setQuestionForm] = useState<Question>(question || defaultQuestion);
-    const [questionExams, setQuestionExams] = useState<number[]>([])
-    const [questionSystems, setQuestionSystems] = useState<string[]>([])
-    const [questionKas, setQuestionKas] = useState<string[]>([])
+    const [selectedExams, setSelectedExams] = useState<number[]>([])
+    const [selectedSystems, setSelectedSystems] = useState<string[]>([])
+    const [selectedKas, setSelectedKas] = useState<string[]>([])
     const [open, setOpen] = useState(false);
     const { exams, systems, kas } = useDatabase();
 
@@ -30,13 +31,16 @@ export default function QuestionForm(props: QuestionFormProps) {
     }, [question, exam]);
 
     useEffect(() => {
-        const examIds = questionForm.exams?.map(exam => exam.exam_id).filter((id): id is number => id !== undefined) || [];
-        setQuestionExams(examIds);
         const systemNums = questionForm.systems?.map(system => system.number).filter((num): num is string => num !== undefined) || [];
-        setQuestionSystems(systemNums);
+        setSelectedSystems(systemNums);
         const kaNums = questionForm.kas?.map(ka => ka.ka_number).filter((num): num is string => num !== undefined) || [];
-        setQuestionKas(kaNums);
+        setSelectedKas(kaNums);
     }, [questionForm])
+
+    useEffect(() => {
+        const examIds = questionForm.exams?.map(exam => exam.exam_id).filter((id): id is number => id !== undefined) || [];
+        setSelectedExams(examIds);
+    }, [questionForm.exams]);
 
     const handleChange = (key: string, value: any) => {
         setQuestionForm((prev) => ({ ...prev, [key]: value }));
@@ -59,26 +63,35 @@ export default function QuestionForm(props: QuestionFormProps) {
         });
     };
 
-    const handleExamsChange = (newExamList: number[]) => {
-        setQuestionExams(newExamList);
+    const handleExamCheckChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const examId = Number(event.currentTarget.name);
+        const isChecked = event.currentTarget.checked;
 
-        // Sync with questionForm.exams
-        const selectedExams = exams.filter(exam => newExamList.includes(exam.exam_id));
-        setQuestionForm(prev => ({
-            ...prev,
-            exams: selectedExams
-        }));
-    }
+        setQuestionForm(prev => {
+            let updatedExams;
 
-    const handleAddExamClick = () => {
-        setQuestionForm(prev => ({
-            ...prev,
-            exams: [...(prev.exams || []), defaultExam]
-        }));
-    }
+            if (isChecked) {
+                // Add the exam if it's not already in the list
+                const examToAdd = exams.find(exam => exam.exam_id === examId);
+                if (examToAdd && !prev.exams?.find(exam => exam.exam_id === examId)) {
+                    updatedExams = [...(prev.exams || []), examToAdd];
+                } else {
+                    updatedExams = prev.exams || [];
+                }
+            } else {
+                // Remove the exam from the list
+                updatedExams = (prev.exams || []).filter(exam => exam.exam_id !== examId);
+            }
+
+            return {
+                ...prev,
+                exams: updatedExams
+            };
+        });
+    };
 
     const handleSystemsChange = (newSystemsList: string[]) => {
-        setQuestionSystems(newSystemsList);
+        setSelectedSystems(newSystemsList);
 
         // Sync with questionForm.exams
         const selectedSystems = systems.filter(system => newSystemsList.includes(system.number));
@@ -96,7 +109,7 @@ export default function QuestionForm(props: QuestionFormProps) {
     }
 
     const handleKasChange = (newKasList: string[]) => {
-        setQuestionKas(newKasList);
+        setSelectedKas(newKasList);
 
         // Sync with questionForm.exams
         const selectedKas = kas.filter(ka => newKasList.includes(ka.ka_number));
@@ -170,23 +183,22 @@ export default function QuestionForm(props: QuestionFormProps) {
                             );
                         })}
 
-                        <MultiExamSelect
-                            examList={questionExams}
-                            examOptions={exams}
-                            handleAddExamClick={handleAddExamClick}
-                            onExamsUpdate={handleExamsChange}
-                        />
                         <MultiSystemSelect
-                            systemList={questionSystems}
+                            systemList={selectedSystems}
                             systemOptions={systems}
                             handleAddSystemClick={handleAddSystemClick}
                             onSystemsUpdate={handleSystemsChange}
                         />
                         <MultiKaSelect
-                            kaList={questionKas}
+                            kaList={selectedKas}
                             kaOptions={kas}
                             handleAddKaClick={handleAddKaClick}
                             onKasUpdate={handleKasChange}
+                        />
+                        <CheckExams
+                            examOptions={exams}
+                            handleChange={handleExamCheckChange}
+                            selectedIdList={selectedExams}
                         />
                     </Box>
 

@@ -101,7 +101,7 @@ export default function ExamPage() {
                     Updating exam...
                 </Alert>
             )}
-            <p>{JSON.stringify(exam)}</p>
+            
             <QuestionsList questions={examQuestions} deleteQuestion={() =>{}} />
 
 
