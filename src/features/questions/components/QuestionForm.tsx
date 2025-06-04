@@ -114,17 +114,18 @@ export default function QuestionForm(props: QuestionFormProps) {
 
     const validateForm = () => {
         // Require question text
-        if (!questionForm.question_text) {console.log("Question Text Needed"); return false;}
+        if (!questionForm.question_text) { return false; }
         // Ensure exactly one answer is marked correct
         const correctCount = questionForm.answers?.filter(a => a.is_correct).length || 0;
-        if (correctCount !== 1) {console.log("Correct Count Needed"); return false;}
+        if (correctCount !== 1) { return false; }
         // Ensure all answers have non-empty text
-        if (!questionForm.answers?.every(a => a.answer_text && a.answer_text.trim() !== '')) {console.log("Answers Text Needed"); return false;}
+        if (!questionForm.answers?.every(a => a.answer_text && a.answer_text.trim() !== '')) { return false; }
         return true;
     };
 
     // Responsive container styles
     const containerSx: SxProps = {
+        pt: 2,
         display: 'grid',
         gridTemplateColumns: {
             xs: '1fr',           // Single column on extra small screens
