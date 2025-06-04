@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import { defaultQuestion, questionSchema, defaultAnswer, defaultKa } from '../../../data/db/schema';
+import { defaultQuestion, questionSchema, defaultAnswer } from '../../../data/db/schema';
 import { Box, Button, TextField, SxProps } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import AnswerForm from '../../answers/components/AnswerForm';
 import { FormDialog } from '../../../common/components/FormDialog';
-import MultiKaSelect from '../../kas/components/MultiKaSelect'
 import CheckExams from '../../exams/components/CheckExams';
 import CheckSystems from '../../systems/components/CheckSystems';
 import CheckKas from '../../kas/components/CheckKas';
@@ -145,24 +144,6 @@ export default function QuestionForm(props: QuestionFormProps) {
         });
     };
 
-    // const handleKasChange = (newKasList: string[]) => {
-    //     setSelectedKas(newKasList);
-
-    //     // Sync with questionForm.exams
-    //     const selectedKas = kas.filter(ka => newKasList.includes(ka.ka_number));
-    //     setQuestionForm(prev => ({
-    //         ...prev,
-    //         kas: selectedKas
-    //     }));
-    // }
-
-    // const handleAddKaClick = () => {
-    //     setQuestionForm(prev => ({
-    //         ...prev,
-    //         kas: [...(prev.kas || []), defaultKa]
-    //     }));
-    // }
-
     const onSubmit = () => {
         handleSubmit(questionForm)
         setQuestionForm(defaultQuestion)
@@ -220,12 +201,6 @@ export default function QuestionForm(props: QuestionFormProps) {
                             );
                         })}
 
-                        {/* <MultiKaSelect
-                            kaList={selectedKas}
-                            kaOptions={kas}
-                            handleAddKaClick={handleAddKaClick}
-                            onKasUpdate={handleKasChange}
-                        /> */}
                         <CheckExams
                             examOptions={exams}
                             handleChange={handleExamCheckChange}
