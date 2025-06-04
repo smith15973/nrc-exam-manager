@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { useDatabase } from "../../../common/hooks/useDatabase";
 import QuestionForm from "../components/QuestionForm";
 import QuestionsList from "../components/QuestionsList";
+import QuestionsTable from "../components/QuestionsTable";
 
 
 
@@ -8,17 +10,44 @@ import QuestionsList from "../components/QuestionsList";
 
 
 export default function QuestionsPage() {
-    const { questions, addQuestion, deleteQuestion, error } = useDatabase();
+    const { addQuestion, deleteQuestion, getQuestionsComplete } = useDatabase();
+    const [questions, setQuestions] = useState<Question[]>([]);
+    const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [error, setError] = useState<string | null>(null);
+
+
+    useEffect(() => {
+        loadQuestions();
+    }, []);
+
+    const loadQuestions = async () => {
+        try {
+            const questions = await getQuestionsComplete();
+            setQuestions(questions)
+
+        } catch (err) {
+            setError("Failed to load exam questions")
+        }
+    }
 
     const handleSubmit = async (question: Question) => {
         await addQuestion(question);
+        loadQuestions();
+    }
+
+    const onSelectionChange = (newSelectedIds: number[]) => {
+        setSelectedIds(newSelectedIds)
     }
 
     return (
         <>
-            <h1>Questions Page</h1>
             <QuestionForm handleSubmit={handleSubmit} />
-            <QuestionsList questions={questions} deleteQuestion={deleteQuestion} />
+            <QuestionsTable
+                questions={questions}
+                checkable
+                selectedIds={selectedIds}
+                onSelectionChange={onSelectionChange}
+            />
         </>
     )
 }
