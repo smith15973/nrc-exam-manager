@@ -44,23 +44,30 @@ export default function QuestionForm(props: QuestionFormProps) {
         setSelectedKas(kaNums);
     }, [questionForm.kas])
 
+
     const handleChange = (key: string, value: any) => {
         setQuestionForm((prev) => ({ ...prev, [key]: value }));
     };
 
-    const handleAnswerChange = (newAnswer: Answer) => {
+    const handleAnswerChange = (newAnswer: Answer, index: number) => {
         setQuestionForm((prev) => {
             // Ensure answers is always a 4-element tuple
             let answers: [Answer, Answer, Answer, Answer];
             if (prev.answers && prev.answers.length === 4) {
                 answers = [...prev.answers] as [Answer, Answer, Answer, Answer];
             } else {
-                answers = [defaultAnswer, defaultAnswer, defaultAnswer, defaultAnswer]
+                answers = [defaultAnswer, defaultAnswer, defaultAnswer, defaultAnswer];
             }
-            const index = answers.findIndex((ans) => ans.option === newAnswer.option);
-            if (index !== -1) {
+
+            // If newAnswer is marked correct, set all others to is_correct: false
+            if (newAnswer.is_correct) {
+                answers = answers.map((ans, i) =>
+                    i === index ? { ...newAnswer } : { ...ans, is_correct: false }
+                ) as [Answer, Answer, Answer, Answer];
+            } else {
                 answers[index] = { ...newAnswer };
             }
+
             return { ...prev, answers };
         });
     };
@@ -106,8 +113,15 @@ export default function QuestionForm(props: QuestionFormProps) {
     }
 
     const validateForm = () => {
-        return !questionForm.question_text
-    }
+        // Require question text
+        if (!questionForm.question_text) {console.log("Question Text Needed"); return false;}
+        // Ensure exactly one answer is marked correct
+        const correctCount = questionForm.answers?.filter(a => a.is_correct).length || 0;
+        if (correctCount !== 1) {console.log("Correct Count Needed"); return false;}
+        // Ensure all answers have non-empty text
+        if (!questionForm.answers?.every(a => a.answer_text && a.answer_text.trim() !== '')) {console.log("Answers Text Needed"); return false;}
+        return true;
+    };
 
     // Responsive container styles
     const containerSx: SxProps = {
@@ -183,7 +197,11 @@ export default function QuestionForm(props: QuestionFormProps) {
                     <Box>
                         {questionForm.answers?.map((answer, idx) => {
                             return (
-                                <AnswerForm updateQuestionForm={handleAnswerChange} answer={answer} key={idx} />
+                                <AnswerForm
+                                    updateQuestionForm={(newAnswer) => handleAnswerChange(newAnswer, idx)}
+                                    answer={answer}
+                                    key={idx}
+                                />
                             )
                         })}
                     </Box>

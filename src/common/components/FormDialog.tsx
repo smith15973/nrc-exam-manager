@@ -28,7 +28,7 @@ export function FormDialog(props: FormDialogProps) {
             <DialogContent>{children}</DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Cancel</Button>
-                <Button disabled={validate ? validate() : false} onClick={onSubmit}>{submitText}</Button>
+                <Button disabled={validate ? !validate() : false} onClick={onSubmit}>{submitText}</Button>
             </DialogActions>
         </Dialog>
     );

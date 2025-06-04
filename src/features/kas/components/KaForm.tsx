@@ -40,7 +40,7 @@ export default function KaForm(props: KaFormProps) {
     }
 
     const validateForm = () => {
-        return !kaForm.ka_number || !kaForm.ka_description
+        return !!kaForm.ka_number && !!kaForm.ka_description
     }
 
     const formContent = (

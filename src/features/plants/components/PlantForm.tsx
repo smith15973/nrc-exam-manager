@@ -46,7 +46,7 @@ export default function PlantForm({ plant, handleSubmit }: PlantFormProps) {
     );
 
     const validateForm = () => {
-        return !plantForm.name
+        return !!plantForm.name
     }
 
     return (

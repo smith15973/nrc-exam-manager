@@ -44,7 +44,7 @@ export default function ExamForm(props: ExamFormProps) {
     }
 
     const validateForm = () => {
-        return !examForm.name || examForm.plant_id === 0
+        return !!examForm.name && examForm.plant_id !== 0
     }
 
     const formContent = (
