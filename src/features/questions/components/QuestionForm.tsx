@@ -7,6 +7,7 @@ import { FormDialog } from '../../../common/components/FormDialog';
 import MultiKaSelect from '../../kas/components/MultiKaSelect'
 import CheckExams from '../../exams/components/CheckExams';
 import CheckSystems from '../../systems/components/CheckSystems';
+import CheckKas from '../../kas/components/CheckKas';
 
 interface QuestionFormProps {
     question?: Question;
@@ -117,24 +118,50 @@ export default function QuestionForm(props: QuestionFormProps) {
             };
         });
     };
+    const handleKaCheckChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const kaNum = String(event.currentTarget.name);
+        const isChecked = event.currentTarget.checked;
 
-    const handleKasChange = (newKasList: string[]) => {
-        setSelectedKas(newKasList);
+        setQuestionForm(prev => {
+            let updatedKas;
 
-        // Sync with questionForm.exams
-        const selectedKas = kas.filter(ka => newKasList.includes(ka.ka_number));
-        setQuestionForm(prev => ({
-            ...prev,
-            kas: selectedKas
-        }));
-    }
+            if (isChecked) {
+                // Add the exam if it's not already in the list
+                const kaToAdd = kas.find(ka => ka.ka_number === kaNum);
+                if (kaToAdd && !prev.kas?.find(ka => ka.ka_number === kaNum)) {
+                    updatedKas = [...(prev.kas || []), kaToAdd];
+                } else {
+                    updatedKas = prev.kas || [];
+                }
+            } else {
+                // Remove the exam from the list
+                updatedKas = (prev.kas || []).filter(ka => ka.ka_number !== kaNum);
+            }
 
-    const handleAddKaClick = () => {
-        setQuestionForm(prev => ({
-            ...prev,
-            kas: [...(prev.kas || []), defaultKa]
-        }));
-    }
+            return {
+                ...prev,
+                kas: updatedKas
+            };
+        });
+    };
+
+    // const handleKasChange = (newKasList: string[]) => {
+    //     setSelectedKas(newKasList);
+
+    //     // Sync with questionForm.exams
+    //     const selectedKas = kas.filter(ka => newKasList.includes(ka.ka_number));
+    //     setQuestionForm(prev => ({
+    //         ...prev,
+    //         kas: selectedKas
+    //     }));
+    // }
+
+    // const handleAddKaClick = () => {
+    //     setQuestionForm(prev => ({
+    //         ...prev,
+    //         kas: [...(prev.kas || []), defaultKa]
+    //     }));
+    // }
 
     const onSubmit = () => {
         handleSubmit(questionForm)
@@ -193,12 +220,12 @@ export default function QuestionForm(props: QuestionFormProps) {
                             );
                         })}
 
-                        <MultiKaSelect
+                        {/* <MultiKaSelect
                             kaList={selectedKas}
                             kaOptions={kas}
                             handleAddKaClick={handleAddKaClick}
                             onKasUpdate={handleKasChange}
-                        />
+                        /> */}
                         <CheckExams
                             examOptions={exams}
                             handleChange={handleExamCheckChange}
@@ -208,6 +235,11 @@ export default function QuestionForm(props: QuestionFormProps) {
                             systemOptions={systems}
                             handleChange={handleSystemCheckChange}
                             selectedIdList={selectedSystems}
+                        />
+                        <CheckKas
+                            kaOptions={kas}
+                            handleChange={handleKaCheckChange}
+                            selectedIdList={selectedKas}
                         />
                     </Box>
 
