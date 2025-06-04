@@ -65,84 +65,39 @@ export default function QuestionForm(props: QuestionFormProps) {
         });
     };
 
-    const handleExamCheckChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const examId = Number(event.currentTarget.name);
-        const isChecked = event.currentTarget.checked;
+    const createSimpleCheckHandler = function <T>(
+        collection: T[],
+        keyField: keyof T,
+        formField: keyof Question
+    ) {
+        return (event: React.ChangeEvent<HTMLInputElement>) => {
+            const itemKey = event.currentTarget.name;
+            const isChecked = event.currentTarget.checked;
 
-        setQuestionForm(prev => {
-            let updatedExams;
+            setQuestionForm(prev => {
+                const currentItems = (prev[formField] as unknown as T[]) || [];
+                let updatedItems;
 
-            if (isChecked) {
-                // Add the exam if it's not already in the list
-                const examToAdd = exams.find(exam => exam.exam_id === examId);
-                if (examToAdd && !prev.exams?.find(exam => exam.exam_id === examId)) {
-                    updatedExams = [...(prev.exams || []), examToAdd];
+                if (isChecked) {
+                    const itemToAdd = collection.find(item => String((item as T)[keyField]) === itemKey);
+                    if (itemToAdd && !currentItems.find(item => String(item[keyField]) === itemKey)) {
+                        updatedItems = [...currentItems, itemToAdd];
+                    } else {
+                        updatedItems = currentItems;
+                    }
                 } else {
-                    updatedExams = prev.exams || [];
+                    updatedItems = currentItems.filter(item => String(item[keyField]) !== itemKey);
                 }
-            } else {
-                // Remove the exam from the list
-                updatedExams = (prev.exams || []).filter(exam => exam.exam_id !== examId);
-            }
-
-            return {
-                ...prev,
-                exams: updatedExams
-            };
-        });
+                return {
+                    ...prev,
+                    [formField]: updatedItems
+                };
+            });
+        };
     };
-    const handleSystemCheckChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const systemNum = String(event.currentTarget.name);
-        const isChecked = event.currentTarget.checked;
-
-        setQuestionForm(prev => {
-            let updatedSystems;
-
-            if (isChecked) {
-                // Add the exam if it's not already in the list
-                const systemToAdd = systems.find(system => system.number === systemNum);
-                if (systemToAdd && !prev.systems?.find(system => system.number === systemNum)) {
-                    updatedSystems = [...(prev.systems || []), systemToAdd];
-                } else {
-                    updatedSystems = prev.systems || [];
-                }
-            } else {
-                // Remove the exam from the list
-                updatedSystems = (prev.systems || []).filter(system => system.number !== systemNum);
-            }
-
-            return {
-                ...prev,
-                systems: updatedSystems
-            };
-        });
-    };
-    const handleKaCheckChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const kaNum = String(event.currentTarget.name);
-        const isChecked = event.currentTarget.checked;
-
-        setQuestionForm(prev => {
-            let updatedKas;
-
-            if (isChecked) {
-                // Add the exam if it's not already in the list
-                const kaToAdd = kas.find(ka => ka.ka_number === kaNum);
-                if (kaToAdd && !prev.kas?.find(ka => ka.ka_number === kaNum)) {
-                    updatedKas = [...(prev.kas || []), kaToAdd];
-                } else {
-                    updatedKas = prev.kas || [];
-                }
-            } else {
-                // Remove the exam from the list
-                updatedKas = (prev.kas || []).filter(ka => ka.ka_number !== kaNum);
-            }
-
-            return {
-                ...prev,
-                kas: updatedKas
-            };
-        });
-    };
+    const handleExamCheckChange = createSimpleCheckHandler(exams, 'exam_id', 'exams');
+    const handleSystemCheckChange = createSimpleCheckHandler(systems, 'number', 'systems');
+    const handleKaCheckChange = createSimpleCheckHandler(kas, 'ka_number', 'kas');
 
     const onSubmit = () => {
         handleSubmit(questionForm)
