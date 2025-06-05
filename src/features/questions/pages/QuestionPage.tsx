@@ -5,12 +5,13 @@ import { defaultQuestion } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
 import QuestionForm from '../components/QuestionForm';
 import DeleteQuestion from '../components/DeleteQuestion';
+import ConfirmDelete from '../../../common/components/ConfirmDelete';
 
 
 export default function QuestionPage() {
     const [question, setQuestion] = useState(defaultQuestion);
     const { questionId } = useParams<{ questionId: string }>();
-    const { getQuestionComplete, updateQuestion } = useDatabase();
+    const { getQuestionComplete, updateQuestion, deleteQuestion } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -74,11 +75,15 @@ export default function QuestionPage() {
 
     return (
         <>
-        <Box display={'flex'} justifyContent={'space-between'}>
-            <QuestionForm question={question} handleSubmit={handleSubmit} />
-            <DeleteQuestion questionId={question.question_id} />
-        </Box>
-            
+            <Box display={'flex'} justifyContent={'space-between'}>
+                <QuestionForm question={question} handleSubmit={handleSubmit} />
+                <ConfirmDelete
+                    message='Are you sure you want to delete this question? This will remove it from all exam associations! This action cannot be undone!'
+                    onConfirmDelete={() => deleteQuestion(question.question_id)}
+                    redirectPath="/questions"
+                />
+            </Box>
+
             <Typography variant='h4' sx={{ pb: 2 }}>Question: {question.question_text}</Typography>
 
             {error && (
