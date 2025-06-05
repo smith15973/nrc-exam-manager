@@ -4,6 +4,7 @@ import { Alert, CircularProgress, Typography, Box } from '@mui/material';
 import { defaultQuestion } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
 import QuestionForm from '../components/QuestionForm';
+import DeleteQuestion from '../components/DeleteQuestion';
 
 
 export default function QuestionPage() {
@@ -73,7 +74,11 @@ export default function QuestionPage() {
 
     return (
         <>
+        <Box display={'flex'} justifyContent={'space-between'}>
             <QuestionForm question={question} handleSubmit={handleSubmit} />
+            <DeleteQuestion questionId={question.question_id} />
+        </Box>
+            
             <Typography variant='h4' sx={{ pb: 2 }}>Question: {question.question_text}</Typography>
 
             {error && (
