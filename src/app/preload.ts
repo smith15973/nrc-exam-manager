@@ -5,6 +5,10 @@ import { contextBridge, ipcRenderer } from 'electron';
 const dbCall = (operation: string, data?: any) => {
   return ipcRenderer.invoke('db-operation', { operation, data });
 };
+// Helper function to make file calls
+const filesCall = (operation: string, data?: any) => {
+  return ipcRenderer.invoke('files-operation', { operation, data });
+};
 
 contextBridge.exposeInMainWorld('db', {
   plants: {
@@ -64,3 +68,11 @@ contextBridge.exposeInMainWorld('db', {
     delete: (kaNum: number) => dbCall('delete-ka', kaNum),
   }
 });
+
+contextBridge.exposeInMainWorld('files', {
+  import:{
+    json: () => filesCall('import-json'),
+    csv: () => filesCall('import-csv'),
+    xlsx: () => filesCall('import-xlsx'),
+  }
+})

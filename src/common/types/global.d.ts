@@ -154,6 +154,14 @@ interface Window {
       delete: (kaNum: string) => Promise<KaResponse>;
     }
   };
+
+  files: {
+    import: {
+      json: () => Promise<any[]>
+      csv: () => Promise<any[]>
+      xlsx: () => Promise<any[]>
+    }
+  }
 }
 
 interface DBSearchParams {
