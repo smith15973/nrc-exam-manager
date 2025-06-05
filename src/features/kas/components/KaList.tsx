@@ -2,6 +2,7 @@
 import { IconButton, List, ListItem, Box, ListItemButton, ListItemAvatar, Avatar, SxProps } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
+import ConfirmDelete from '../../../common/components/ConfirmDelete';
 
 
 
@@ -21,7 +22,20 @@ export default function KasList(props: KaListProps) {
                         key={ka.ka_number}
                         secondaryAction={
                             <IconButton edge='end' aria-label='delete'>
-                                <DeleteIcon onClick={() => deleteKa(ka.ka_number)} />
+                                <ConfirmDelete
+                                    message='Are you sure you want to delete this KA? This action cannot be undone!'
+                                    onConfirmDelete={() => deleteKa(ka.ka_number)}
+                                    button={({ onClick, disabled }) => (
+                                        <DeleteIcon
+                                            onClick={onClick}
+                                            style={{
+                                                cursor: disabled ? 'not-allowed' : 'pointer',
+                                                opacity: disabled ? 0.5 : 1
+                                            }}
+                                        />
+                                    )}
+                                />
+
                             </IconButton>
                         }
                         divider

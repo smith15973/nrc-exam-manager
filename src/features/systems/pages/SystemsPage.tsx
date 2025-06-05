@@ -25,6 +25,11 @@ export default function SystemsPage() {
 
     }
 
+    const handleDelete = async (sysNum: string) => {
+        await deleteSystem(sysNum);
+        loadSystems();
+    }
+
     return (
         <>
             <Typography variant='h4'>Systems</Typography>

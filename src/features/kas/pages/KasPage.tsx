@@ -25,11 +25,16 @@ export default function KasPage() {
 
     }
 
+    const handleDelete = async (kaNum: string) => {
+        await deleteKa(kaNum);
+        loadKas();
+    }
+
     return (
         <>
             <Typography variant='h4'>Kas</Typography>
             <KaForm handleSubmit={handleSubmit} />
-            <KasList kas={kas} deleteKa={deleteKa} />
+            <KasList kas={kas} deleteKa={handleDelete} />
 
 
         </>

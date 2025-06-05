@@ -2,6 +2,7 @@
 import { IconButton, List, ListItem, ListItemButton, SxProps } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
+import ConfirmDelete from '../../../common/components/ConfirmDelete'
 
 
 
@@ -20,7 +21,20 @@ export default function ExamsList(props: ExamListProps) {
                     key={exam.exam_id}
                     secondaryAction={
                         <IconButton edge='end' aria-label='delete'>
-                            <DeleteIcon onClick={() => deleteExam(exam.exam_id!)} />
+                            <ConfirmDelete
+                                message='Are you sure you want to delete this exam? This action cannot be undone!'
+                                onConfirmDelete={() => deleteExam(exam.exam_id!)}
+                                button={({ onClick, disabled }) => (
+                                    <DeleteIcon
+                                        onClick={onClick}
+                                        style={{
+                                            cursor: disabled ? 'not-allowed' : 'pointer',
+                                            opacity: disabled ? 0.5 : 1
+                                        }}
+                                    />
+                                )}
+                            />
+
                         </IconButton>
                     }
                     divider
