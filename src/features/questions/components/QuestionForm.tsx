@@ -154,8 +154,8 @@ export default function QuestionForm(props: QuestionFormProps) {
                     {/* Question Form Section */}
                     <Box>
                         {questionSchema.map((field) => {
-                            // Skip plant_id as we'll handle it separately with a Select
-                            if (field.key === 'plant_id') return null;
+                            // Skip last_used as we'll handle it separately with a date select
+                            if (field.key === 'last_used') return null;
 
                             return (
                                 <Box sx={{ pb: 2 }} key={field.key}>
@@ -166,10 +166,24 @@ export default function QuestionForm(props: QuestionFormProps) {
                                         onChange={(e) => handleChange(field.key, e.target.value)}
                                         label={field.label}
                                         required={field.required}
+                                        rows={field.key === 'question_text' ? 5 : undefined}
+                                        multiline={field.key === 'question_text' ? true : undefined}
                                     />
                                 </Box>
                             );
                         })}
+
+                        <Box sx={{ pb: 2 }} >
+                            <TextField
+                                fullWidth
+                                type={'date'}
+                                value={questionForm.last_used || ''}
+                                onChange={(e) => handleChange('last_used', e.target.value)}
+                                label={'Last Used'}
+                                required={false}
+                                InputLabelProps={{ shrink: true }}
+                            />
+                        </Box>
 
                         <Box sx={{ pb: 2 }} >
                             <CheckExams

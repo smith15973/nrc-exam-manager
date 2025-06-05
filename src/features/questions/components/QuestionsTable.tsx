@@ -7,7 +7,8 @@ const columns: GridColDef<Question>[] = [
     {
         field: 'question_text',
         headerName: 'Question',
-        width: 150,
+        width: 500,
+        minWidth: 250
     },
     {
         field: 'systems',
@@ -75,6 +76,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
                 getRowId={(row) => row.question_id}
                 rows={questions}
                 columns={columns}
+                getRowHeight={() => 'auto'}
                 // initialState={{
                 //     pagination: {
                 //         paginationModel: {
@@ -82,7 +84,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
                 //         },
                 //     },
                 // }}
-                pageSizeOptions={[5]}
+                // pageSizeOptions={[5]}
                 checkboxSelection={checkable}
                 disableRowSelectionOnClick
                 rowSelectionModel={selectedModel}
