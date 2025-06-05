@@ -216,7 +216,7 @@ export class QuestionRepository {
     async update(question: Question): Promise<void> {
         return new Promise((resolve, reject) => {
             if (this.isClosing()) {
-                reject(new Error("Database is closing"));
+                reject(new Error('Database is closing'));
                 return;
             }
 
@@ -225,19 +225,203 @@ export class QuestionRepository {
                 return;
             }
 
-            this.db.run(
-                'UPDATE questions SET (question_text) = (?) WHERE question_id = ?',
-                [question.question_text, question.question_id],
-                function (err) {
-                    if (err) {
-                        reject(err);
-                    } else if (this.changes === 0) {
-                        reject(new Error('Question not found'));
-                    } else {
-                        resolve();
+            const self = this;
+            this.db.serialize(() => {
+                self.db.run('BEGIN TRANSACTION');
+
+                // First, update the main question record
+                self.db.run(
+                    'UPDATE questions SET question_text = ?, category = ?, exam_level = ?, technical_references = ?, difficulty_level = ?, cognitive_level = ?, objective = ?, last_used = ? WHERE question_id = ?',
+                    [
+                        question.question_text,
+                        question.category,
+                        question.exam_level,
+                        question.technical_references,
+                        question.difficulty_level,
+                        question.cognitive_level,
+                        question.objective,
+                        question.last_used,
+                        question.question_id
+                    ],
+                    function (err) {
+                        if (err) {
+                            self.db.run('ROLLBACK');
+                            reject(err);
+                            return;
+                        }
+
+                        if (this.changes === 0) {
+                            self.db.run('ROLLBACK');
+                            reject(new Error('Question not found'));
+                            return;
+                        }
+
+                        // Delete existing relationships before inserting new ones
+                        const deleteOperations: Promise<void>[] = [
+                            // Delete existing exam relationships
+                            new Promise<void>((resolveDelete, rejectDelete) => {
+                                self.db.run(
+                                    'DELETE FROM exam_questions WHERE question_id = ?',
+                                    [question.question_id],
+                                    (deleteErr) => {
+                                        if (deleteErr) rejectDelete(deleteErr);
+                                        else resolveDelete();
+                                    }
+                                );
+                            }),
+                            // Delete existing answers
+                            new Promise<void>((resolveDelete, rejectDelete) => {
+                                self.db.run(
+                                    'DELETE FROM answers WHERE question_id = ?',
+                                    [question.question_id],
+                                    (deleteErr) => {
+                                        if (deleteErr) rejectDelete(deleteErr);
+                                        else resolveDelete();
+                                    }
+                                );
+                            }),
+                            // Delete existing ka relationships
+                            new Promise<void>((resolveDelete, rejectDelete) => {
+                                self.db.run(
+                                    'DELETE FROM question_kas WHERE question_id = ?',
+                                    [question.question_id],
+                                    (deleteErr) => {
+                                        if (deleteErr) rejectDelete(deleteErr);
+                                        else resolveDelete();
+                                    }
+                                );
+                            }),
+                            // Delete existing system relationships
+                            new Promise<void>((resolveDelete, rejectDelete) => {
+                                self.db.run(
+                                    'DELETE FROM question_systems WHERE question_id = ?',
+                                    [question.question_id],
+                                    (deleteErr) => {
+                                        if (deleteErr) rejectDelete(deleteErr);
+                                        else resolveDelete();
+                                    }
+                                );
+                            })
+                        ];
+
+                        Promise.all(deleteOperations).then(() => {
+                            // Now insert the new relationships
+                            const insertOperations: Promise<void>[] = [];
+
+                            // Handle exam relationships
+                            if (question.exams?.length) {
+                                const examPromise = new Promise<void>((resolveExam, rejectExam) => {
+                                    const placeholders = question.exams!.map(() => '(?, ?)').join(', ');
+                                    const values: any[] = [];
+
+                                    question.exams!.forEach(exam => {
+                                        values.push(exam.exam_id, question.question_id);
+                                    });
+
+                                    self.db.run(
+                                        `INSERT INTO exam_questions (exam_id, question_id) VALUES ${placeholders}`,
+                                        values,
+                                        (examErr) => {
+                                            if (examErr) rejectExam(examErr);
+                                            else resolveExam();
+                                        }
+                                    );
+                                });
+                                insertOperations.push(examPromise);
+                            }
+
+                            // Handle answers
+                            if (question.answers?.length) {
+                                const answerPromise = new Promise<void>((resolveAnswer, rejectAnswer) => {
+                                    const placeholders = question.answers!.map(() => '(?, ?, ?, ?, ?)').join(', ');
+                                    const values: any[] = [];
+
+                                    question.answers!.forEach(answer => {
+                                        values.push(
+                                            question.question_id,
+                                            answer.answer_text,
+                                            answer.is_correct ? 1 : 0,
+                                            answer.justification,
+                                            answer.option
+                                        );
+                                    });
+
+                                    self.db.run(
+                                        `INSERT INTO answers (question_id, answer_text, is_correct, justification, option) VALUES ${placeholders}`,
+                                        values,
+                                        (answerErr) => {
+                                            if (answerErr) rejectAnswer(answerErr);
+                                            else resolveAnswer();
+                                        }
+                                    );
+                                });
+                                insertOperations.push(answerPromise);
+                            }
+
+                            // Handle ka relationships
+                            if (question.kas?.length) {
+                                const kaPromise = new Promise<void>((resolveKa, rejectKa) => {
+                                    const placeholders = question.kas!.map(() => '(?, ?)').join(', ');
+                                    const values: any[] = [];
+
+                                    question.kas!.forEach(ka => {
+                                        values.push(question.question_id, ka.ka_number);
+                                    });
+
+                                    self.db.run(
+                                        `INSERT INTO question_kas (question_id, ka_number) VALUES ${placeholders}`,
+                                        values,
+                                        (kaErr) => {
+                                            if (kaErr) rejectKa(kaErr);
+                                            else resolveKa();
+                                        }
+                                    );
+                                });
+                                insertOperations.push(kaPromise);
+                            }
+
+                            // Handle system relationships
+                            if (question.systems?.length) {
+                                const systemPromise = new Promise<void>((resolveSystem, rejectSystem) => {
+                                    const placeholders = question.systems!.map(() => '(?, ?)').join(', ');
+                                    const values: any[] = [];
+
+                                    question.systems!.forEach(system => {
+                                        values.push(question.question_id, system.number);
+                                    });
+
+                                    self.db.run(
+                                        `INSERT INTO question_systems (question_id, system_number) VALUES ${placeholders}`,
+                                        values,
+                                        (systemErr) => {
+                                            if (systemErr) rejectSystem(systemErr);
+                                            else resolveSystem();
+                                        }
+                                    );
+                                });
+                                insertOperations.push(systemPromise);
+                            }
+
+                            Promise.all(insertOperations).then(() => {
+                                self.db.run('COMMIT', (commitErr) => {
+                                    if (commitErr) {
+                                        reject(commitErr);
+                                    } else {
+                                        resolve();
+                                    }
+                                });
+                            }).catch((insertErr) => {
+                                self.db.run('ROLLBACK');
+                                reject(insertErr);
+                            });
+
+                        }).catch((deleteErr) => {
+                            self.db.run('ROLLBACK');
+                            reject(deleteErr);
+                        });
                     }
-                }
-            );
+                );
+            });
         });
     }
 
