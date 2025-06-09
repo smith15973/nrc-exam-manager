@@ -25,7 +25,7 @@ export class SystemRepository {
     });
   }
 
-  async getMany(params: DBSearchParams): Promise<System[]> {
+  async getMany(params?: DBSearchParams): Promise<System[]> {
     return new Promise((resolve, reject) => {
       if (this.isClosing()) {
         reject(new Error('Database is closing'));

@@ -5,6 +5,7 @@ import { defaultExam } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
 import ExamForm from '../components/ExamForm';
 import QuestionsList from '../../../features/questions/components/QuestionsList';
+import ImportViewer from '../../../features/questions/components/ImportViewer';
 
 
 export default function ExamPage() {
@@ -91,16 +92,9 @@ export default function ExamPage() {
         console.log(result);
     }
 
-    const handleImport = async () => {
-        const result = await window.files.import.questions();
-        console.log(result);
-
-        
-    }
-
-
     return (
         <>
+            
             <Typography sx={{ pb: 2 }} variant='h4'>Exam: {exam.name} - {exam.plant?.name}</Typography>
 
             {error && (
@@ -111,7 +105,8 @@ export default function ExamPage() {
 
             <ExamForm exam={exam} handleSubmit={handleSubmit} />
             <Button onClick={handleExport}>Export Exam</Button>
-            <Button onClick={handleImport}>Import Questions</Button>
+
+            <ImportViewer />
 
             {loading && exam.exam_id && (
                 <Alert severity="info" sx={{ mt: 2 }}>

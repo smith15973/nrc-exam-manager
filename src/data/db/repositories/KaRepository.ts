@@ -25,7 +25,7 @@ export class KaRepository {
     });
   }
 
-  async getMany(params: DBSearchParams): Promise<Ka[]> {
+  async getMany(params?: DBSearchParams): Promise<Ka[]> {
     return new Promise((resolve, reject) => {
       if (this.isClosing()) {
         reject(new Error('Database is closing'));

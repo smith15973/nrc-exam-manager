@@ -106,6 +106,16 @@ interface SystemResponse extends ApiResponse {
   systems?: System[];
 }
 
+interface QuestionsImportResponse extends ApiResponse {
+  questions: Question[];
+  stats: {
+    errors: string[];
+    invalid: number;
+    valid: number;
+    total: number;
+  }
+}
+
 interface Window {
   db: {
     plants: {
@@ -157,7 +167,7 @@ interface Window {
 
   files: {
     import: {
-      questions: () => Promise<any>
+      questions: () => Promise<QuestionsImportResponse>
     },
     export: {
       questions: (questionIds: number[]) => Promise<any>

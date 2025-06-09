@@ -320,9 +320,13 @@ export class ImportRepository {
     return null;
   }
 
-  // Method to validate a complete Question object
-  private validateQuestion(question: Question): { isValid: boolean; errors: string[] } {
+  private async validateQuestion(question: Question): Promise<{ isValid: boolean; errors: string[] }> {
     const errors: string[] = [];
+
+    // Get all valid reference data
+    const exams = await this.db.exams.getAll();
+    const kas = await this.db.kas.getMany();
+    const systems = await this.db.systems.getMany();
 
     // Check required fields
     if (!question.question_text || question.question_text.trim() === '') {
@@ -340,16 +344,81 @@ export class ImportRepository {
         errors.push('Question must have at least one correct answer');
       }
 
+      // Check for multiple correct answers (assuming only one should be correct)
+      if (correctAnswers.length > 1) {
+        errors.push('Question should have only one correct answer');
+      }
+
       question.answers.forEach((answer, index) => {
         if (!answer.answer_text || answer.answer_text.trim() === '') {
           errors.push(`Answer ${index + 1} text is required`);
         }
       });
+    } else {
+      errors.push('Question must have answers');
     }
 
     // Validate difficulty level range
-    if (question.difficulty_level !== null && (question.difficulty_level < 1 || question.difficulty_level > 5)) {
-      errors.push('Difficulty level must be between 1 and 5');
+    if (question.difficulty_level !== null && question.difficulty_level !== undefined) {
+      if (question.difficulty_level < 1 || question.difficulty_level > 5) {
+        errors.push('Difficulty level must be between 1 and 5');
+      }
+    }
+
+    // Validate exam references
+    if (question.exams && question.exams.length > 0) {
+      const validExamIds = exams.map(exam => exam.exam_id);
+      question.exams.forEach(examRef => {
+        if (examRef.exam_id && !validExamIds.includes(examRef.exam_id)) {
+          errors.push(`Referenced exam with ID ${examRef.exam_id} does not exist`);
+        }
+      });
+    }
+
+    // Validate KA (Knowledge Area) references
+    if (question.kas && question.kas.length > 0) {
+      const validKaNumbers = kas.map(ka => ka.ka_number);
+      question.kas.forEach(kaRef => {
+        if (kaRef.ka_number && !validKaNumbers.includes(kaRef.ka_number)) {
+          errors.push(`Referenced KA with number ${kaRef.ka_number} does not exist`);
+        }
+      });
+    }
+
+    // Validate system references  
+    if (question.systems && question.systems.length > 0) {
+      const validSystemNumbers = systems.map(system => system.number);
+      question.systems.forEach(systemRef => {
+        if (systemRef.number && !validSystemNumbers.includes(systemRef.number)) {
+          errors.push(`Referenced system with number ${systemRef.number} does not exist`);
+        }
+      });
+    }
+
+    // Validate date format if last_used is provided
+    if (question.last_used) {
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!dateRegex.test(question.last_used)) {
+        errors.push('Last used date must be in YYYY-MM-DD format');
+      } else {
+        const date = new Date(question.last_used);
+        if (isNaN(date.getTime())) {
+          errors.push('Last used date is not a valid date');
+        }
+      }
+    }
+
+    // Additional business logic validations
+    if (question.question_text && question.question_text.length > 1000) {
+      errors.push('Question text is too long (maximum 1000 characters)');
+    }
+
+    if (question.answers) {
+      question.answers.forEach((answer, index) => {
+        if (answer.answer_text && answer.answer_text.length > 500) {
+          errors.push(`Answer ${index + 1} text is too long (maximum 500 characters)`);
+        }
+      });
     }
 
     return {
@@ -381,7 +450,7 @@ export class ImportRepository {
         try {
           const question = this.transformToQuestion(item);
           if (question) {
-            const validation = this.validateQuestion(question);
+            const validation = await this.validateQuestion(question);
             if (validation.isValid) {
               questions.push(question);
               validQuestions++;
