@@ -5,9 +5,14 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as Papa from 'papaparse';
 import * as XLSX from 'xlsx';
+import { Database } from '../database';
 
 export class ImportExportRepository {
-  constructor() { }
+  private db: Database;
+
+  constructor(db: Database) {
+    this.db = db;
+  }
 
   // File Dialog Helpers
   async saveFileDialog(defaultName: string, filters: Electron.FileFilter[]): Promise<string | null> {
@@ -104,5 +109,31 @@ export class ImportExportRepository {
 
     }
   }
-  
+
+  async exportExamJson(examId: number, defaultFileName?: string): Promise<{ success: boolean; error?: string; filePath?: string }> {
+    try {
+      // Get exam data
+      const exam = await this.db.exams.getById(examId);
+      exam.questions = await this.db.questionService.getQuestionsByExam(examId);
+
+      // Show save dialog
+      const fileName = defaultFileName || `exam_${exam.name}_${new Date().toISOString().split('T')[0]}.json`;
+      const filePath = await this.saveFileDialog(fileName, [
+        { name: 'JSON Files', extensions: ['json'] },
+        { name: 'All Files', extensions: ['*'] }
+      ]);
+
+      if (!filePath) {
+        return { success: false, error: 'Export cancelled by user' };
+      }
+
+      // Write file
+      fs.writeFileSync(filePath, JSON.stringify(exam, null, 2), 'utf-8');
+
+      return { success: true, filePath };
+    } catch (error) {
+      return { success: false, error: `Failed to export exam: ${(error as Error).message}` };
+    }
+  }
+
 }

@@ -160,6 +160,9 @@ interface Window {
       json: () => Promise<any[]>
       csv: () => Promise<any[]>
       xlsx: () => Promise<any[]>
+    },
+    export: {
+      examJson: (examId: number) => Promise<any>
     }
   }
 }

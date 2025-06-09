@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDatabase } from '../../../common/hooks/useDatabase';
-import { Alert, CircularProgress, Typography } from '@mui/material';
+import { Alert, Button, CircularProgress, Typography } from '@mui/material';
 import { defaultExam } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
 import ExamForm from '../components/ExamForm';
@@ -83,6 +83,11 @@ export default function ExamPage() {
         );
     }
 
+    const handleExport = async () => {
+        const result = await window.files.export.examJson(exam.exam_id);
+        console.log(result);
+    }
+
 
     return (
         <>
@@ -95,14 +100,15 @@ export default function ExamPage() {
             )}
 
             <ExamForm exam={exam} handleSubmit={handleSubmit} />
+            <Button onClick={handleExport}>Export Exam</Button>
 
             {loading && exam.exam_id && (
                 <Alert severity="info" sx={{ mt: 2 }}>
                     Updating exam...
                 </Alert>
             )}
-            
-            <QuestionsList questions={examQuestions} deleteQuestion={() =>{}} />
+
+            <QuestionsList questions={examQuestions} deleteQuestion={() => { }} />
 
 
         </>

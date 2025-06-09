@@ -120,7 +120,7 @@ const createWindow = (): void => {
   }
 
   if (!ieManger) {
-    ieManger = new ImportExportRepository();
+    ieManger = new ImportExportRepository(db);
     console.log('File Manager initialized');
   }
 
@@ -202,8 +202,13 @@ app.on('activate', () => {
 // Import handlers
 ipcMain.handle('files-operation', async (_event, { operation, data }) => {
 
+  // Ensure database is initialized
+  if (!db) {
+    db = new Database();
+  }
+
   if (!ieManger) {
-    ieManger = new ImportExportRepository();
+    ieManger = new ImportExportRepository(db);
   }
 
   switch (operation) {
@@ -217,6 +222,10 @@ ipcMain.handle('files-operation', async (_event, { operation, data }) => {
 
     case 'import-xlsx': {
       return ieManger.importXLSX();
+    }
+
+    case 'export-exam-json': {
+      return ieManger.exportExamJson(data)
     }
 
     default:
