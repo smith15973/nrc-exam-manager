@@ -157,9 +157,7 @@ interface Window {
 
   files: {
     import: {
-      json: () => Promise<any[]>
-      csv: () => Promise<any[]>
-      xlsx: () => Promise<any[]>
+      questions: () => Promise<any>
     },
     export: {
       examJson: (examId: number) => Promise<any>

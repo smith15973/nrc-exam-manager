@@ -57,6 +57,7 @@
     "@mui/x-data-grid": "^8.5.0",
     "@toolpad/core": "^0.15.0",
     "electron-squirrel-startup": "^1.0.1",
+    "papaparse": "^5.5.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.0",

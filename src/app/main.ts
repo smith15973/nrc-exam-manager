@@ -212,16 +212,8 @@ ipcMain.handle('files-operation', async (_event, { operation, data }) => {
   }
 
   switch (operation) {
-    case 'import-json': {
-      return ieManger.importJson();
-    }
-
-    case 'import-csv': {
-      return ieManger.importCSV();
-    }
-
-    case 'import-xlsx': {
-      return ieManger.importXLSX();
+    case 'import-questions': {
+      return ieManger.importQuestions();
     }
 
     case 'export-exam-json': {

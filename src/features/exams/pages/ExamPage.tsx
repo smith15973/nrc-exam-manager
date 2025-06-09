@@ -88,6 +88,11 @@ export default function ExamPage() {
         console.log(result);
     }
 
+    const handleImport = async () => {
+        const result = await window.files.import.questions();
+        console.log(result);
+    }
+
 
     return (
         <>
@@ -101,6 +106,7 @@ export default function ExamPage() {
 
             <ExamForm exam={exam} handleSubmit={handleSubmit} />
             <Button onClick={handleExport}>Export Exam</Button>
+            <Button onClick={handleImport}>Import Questions</Button>
 
             {loading && exam.exam_id && (
                 <Alert severity="info" sx={{ mt: 2 }}>
