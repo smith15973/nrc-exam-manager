@@ -84,13 +84,18 @@ export default function ExamPage() {
     }
 
     const handleExport = async () => {
-        const result = await window.files.export.examJson(exam.exam_id);
+
+        const questionIds = examQuestions.map(question => question.question_id) ?? [];
+        console.log(questionIds)
+        const result = await window.files.export.questions(questionIds);
         console.log(result);
     }
 
     const handleImport = async () => {
         const result = await window.files.import.questions();
         console.log(result);
+
+        
     }
 
 

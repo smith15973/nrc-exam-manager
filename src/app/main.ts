@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as Papa from 'papaparse';
 import * as XLSX from 'xlsx';
-import { ImportExportRepository } from '../data/db/repositories/ImportExportRepository';
+import { ImportRepository } from '../data/db/repositories/ImportRepository';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -16,7 +16,7 @@ interface WindowState {
   width: number;
   height: number;
 }
-let ieManger: ImportExportRepository | null = null;
+let ieManger: ImportRepository | null = null;
 let mainWindow: BrowserWindow | null = null;
 let db: Database | null = null;
 let isShuttingDown = false;
@@ -120,7 +120,7 @@ const createWindow = (): void => {
   }
 
   if (!ieManger) {
-    ieManger = new ImportExportRepository(db);
+    ieManger = new ImportRepository(db);
     console.log('File Manager initialized');
   }
 
@@ -208,7 +208,7 @@ ipcMain.handle('files-operation', async (_event, { operation, data }) => {
   }
 
   if (!ieManger) {
-    ieManger = new ImportExportRepository(db);
+    ieManger = new ImportRepository(db);
   }
 
   switch (operation) {
@@ -216,8 +216,8 @@ ipcMain.handle('files-operation', async (_event, { operation, data }) => {
       return ieManger.importQuestions();
     }
 
-    case 'export-exam-json': {
-      return ieManger.exportExamJson(data)
+    case 'export-questions': {
+      return ieManger.exportQuestions(data)
     }
 
     default:
@@ -302,7 +302,7 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         return { success: true, questionId };
 
       case 'get-questions':
-        const questions = await db.questions.getAll();
+        const questions = await db.questions.getMany();
         return { success: true, questions };
 
       case 'get-questions-by-exam-id':

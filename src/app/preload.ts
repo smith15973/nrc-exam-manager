@@ -74,6 +74,6 @@ contextBridge.exposeInMainWorld('files', {
     questions: () => filesCall('import-questions'),
   },
   export: {
-    examJson: (examId: number) => filesCall('export-exam-json', examId),
+    questions: (questionIds: number[]) => filesCall('export-questions', questionIds),
   }
 })

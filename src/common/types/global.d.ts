@@ -129,8 +129,8 @@ interface Window {
     },
     questions: {
       add: (question: Question) => Promise<QuestionResponse>;
-      get: () => Promise<QuestionResponse>;
-      getComplete: () => Promise<QuestionResponse>;
+      get: (params?) => Promise<QuestionResponse>;
+      getComplete: (params?) => Promise<QuestionResponse>;
       getById: (questionId: number) => Promise<QuestionResponse>;
       getByIdComplete: (questionId: number) => Promise<QuestionResponse>;
       getByExamId: (examId: number) => Promise<QuestionResponse>;
@@ -160,7 +160,7 @@ interface Window {
       questions: () => Promise<any>
     },
     export: {
-      examJson: (examId: number) => Promise<any>
+      questions: (questionIds: number[]) => Promise<any>
     }
   }
 }

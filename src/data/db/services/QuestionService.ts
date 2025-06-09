@@ -48,7 +48,7 @@ export class QuestionService {
     // You can add more complex business logic methods here
     async getQuestionsComplete(): Promise<Question[]> {
         try {
-            const questions = await this.questionRepo.getAll();
+            const questions = await this.questionRepo.getMany();
 
             // Get complete details for each question
             const completeQuestions = await Promise.all(
