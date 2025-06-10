@@ -8,7 +8,11 @@ import CheckSystems from '../../systems/components/CheckSystems';
 import CheckKas from '../../kas/components/CheckKas';
 import { FormDialog } from '../../../common/components/FormDialog';
 
-export default function ImportViewer() {
+interface ImportViewerProps {
+    onSubmit: (questions: Question[]) => void
+}
+
+export default function ImportViewer({ onSubmit }: ImportViewerProps) {
     const [open, setOpen] = useState(false);
     const [questions, setQuestions] = useState<Question[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -136,8 +140,8 @@ export default function ImportViewer() {
             }
 
             // Set import errors for display
-            if (result.stats?.errors && result.stats.errors.length > 0) {
-                setImportErrors(result.stats.errors);
+            if (result.stats?.warnings && result.stats.warnings.length > 0) {
+                setImportErrors(result.stats.warnings);
             } else {
                 setImportErrors([]);
             }
@@ -163,12 +167,18 @@ export default function ImportViewer() {
         setOpen(false);
     };
 
+    const handleSubmit = () => {
+        console.log('Submitting reviewed questions:', reviewedQuestions);
+        onSubmit(reviewedQuestions);
+        setOpen(false);
+    }
+
     function errorDisplay() {
         return (
             <>
                 {importErrors.length > 0 && (
-                    <Alert severity="error" sx={{ mb: 2 }}>
-                        <Typography variant="h6" gutterBottom>Import Errors:</Typography>
+                    <Alert severity="warning" sx={{ mb: 2 }}>
+                        <Typography variant="h6" gutterBottom>Import Warnings:</Typography>
                         <Box component="ul" sx={{ pl: 2, m: 0 }}>
                             {importErrors.map((error, index) => (
                                 <Typography component="li" key={index} variant="body2">
@@ -188,10 +198,7 @@ export default function ImportViewer() {
                 open={open}
                 title="Import Questions"
                 submitText='Done'
-                onSubmit={() => {
-                    // TODO: Implement actual save logic
-                    console.log('Submitting reviewed questions:', reviewedQuestions);
-                }}
+                onSubmit={handleSubmit}
                 onClose={handleClose}
                 fullWidth
             >

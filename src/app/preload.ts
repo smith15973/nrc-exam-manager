@@ -40,6 +40,7 @@ contextBridge.exposeInMainWorld('db', {
   questions: {
     // Question operations
     add: (question: Question) => dbCall('add-question', question),
+    addBatch: (questions: Question[]) => dbCall('add-questions-batch', questions),
     // single
     getById: (questionId: number) => dbCall('get-question-by-id', questionId),
     getByIdComplete: (questionId: number) => dbCall('get-question-complete', questionId),
@@ -70,10 +71,11 @@ contextBridge.exposeInMainWorld('db', {
 });
 
 contextBridge.exposeInMainWorld('files', {
-  import:{
+  import: {
     questions: () => filesCall('import-questions'),
   },
   export: {
     questions: (questionIds: number[]) => filesCall('export-questions', questionIds),
-  }
+  },
+  openLocation: (filePath: string) => filesCall('open-location', filePath),
 })

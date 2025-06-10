@@ -11,7 +11,7 @@ import ImportViewer from '../../../features/questions/components/ImportViewer';
 export default function ExamPage() {
     const [exam, setExam] = useState(defaultExam);
     const { examId } = useParams<{ examId: string }>();
-    const { getExamById, updateExam, getQuestionsByExamId } = useDatabase();
+    const { getExamById, updateExam, getQuestionsByExamId, addQuestionsBatch } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [examQuestions, setExamQuestions] = useState<Question[]>([]);
@@ -92,9 +92,16 @@ export default function ExamPage() {
         console.log(result);
     }
 
+    const handleImport = async (questions: Question[]) => {
+        const result = await addQuestionsBatch(questions)
+        console.log(result)
+        await loadQuestions(exam.exam_id!);
+    }
+
+
     return (
         <>
-            
+
             <Typography sx={{ pb: 2 }} variant='h4'>Exam: {exam.name} - {exam.plant?.name}</Typography>
 
             {error && (
@@ -106,7 +113,7 @@ export default function ExamPage() {
             <ExamForm exam={exam} handleSubmit={handleSubmit} />
             <Button onClick={handleExport}>Export Exam</Button>
 
-            <ImportViewer />
+            <ImportViewer onSubmit={handleImport} />
 
             {loading && exam.exam_id && (
                 <Alert severity="info" sx={{ mt: 2 }}>

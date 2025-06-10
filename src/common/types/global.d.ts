@@ -109,11 +109,13 @@ interface SystemResponse extends ApiResponse {
 interface QuestionsImportResponse extends ApiResponse {
   questions: Question[];
   stats: {
-    errors: string[];
-    invalid: number;
-    valid: number;
     total: number;
+    processed: number;
+    warnings: string[]
   }
+}
+interface QuestionsExportResponse extends ApiResponse {
+  filePath?: string;
 }
 
 interface Window {
@@ -139,6 +141,7 @@ interface Window {
     },
     questions: {
       add: (question: Question) => Promise<QuestionResponse>;
+      addBatch: (questions: Question[]) => Promise<{ success: boolean, inserted: number[], ignored: number[] }>;
       get: (params?) => Promise<QuestionResponse>;
       getComplete: (params?) => Promise<QuestionResponse>;
       getById: (questionId: number) => Promise<QuestionResponse>;
@@ -170,8 +173,9 @@ interface Window {
       questions: () => Promise<QuestionsImportResponse>
     },
     export: {
-      questions: (questionIds: number[]) => Promise<any>
-    }
+      questions: (questionIds: number[]) => Promise<QuestionsExportResponse>
+    },
+    openLocation: (filePath: string) => void,
   }
 }
 

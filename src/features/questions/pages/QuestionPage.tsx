@@ -137,9 +137,6 @@ export default function QuestionPage() {
                     </Box>
                 )
             })}</Box>
-            <p>{JSON.stringify(question)}</p>
-
-
         </>
     )
 };

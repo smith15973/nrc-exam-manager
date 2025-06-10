@@ -1,6 +1,4 @@
-// db/repositories/PlantRepository.ts
-import sqlite3 from 'sqlite3';
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import { dialog } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as Papa from 'papaparse';
@@ -179,7 +177,7 @@ export class ImportRepository {
     return allData;
   }
 
-  // Updated importQuestions method with proper Question[] formatting
+  // Updated importQuestionsSimple method with proper Question[] formatting
   async importQuestionsSimple(): Promise<Question[] | { success: boolean; error: string }> {
     try {
       const result = await this.importFilesSimple(true);
@@ -320,117 +318,177 @@ export class ImportRepository {
     return null;
   }
 
-  private async validateQuestion(question: Question): Promise<{ isValid: boolean; errors: string[] }> {
-    const errors: string[] = [];
+  // Updated validation method that cleans data instead of rejecting it
+  private async cleanAndValidateQuestion(question: Question): Promise<{ question: Question; warnings: string[] }> {
+    const warnings: string[] = [];
+    const cleanedQuestion = { ...question };
 
     // Get all valid reference data
     const exams = await this.db.exams.getAll();
     const kas = await this.db.kas.getMany();
     const systems = await this.db.systems.getMany();
 
-    // Check required fields
-    if (!question.question_text || question.question_text.trim() === '') {
-      errors.push('Question text is required');
+    // Clean required fields
+    if (!cleanedQuestion.question_text || cleanedQuestion.question_text.trim() === '') {
+      cleanedQuestion.question_text = '';
+      warnings.push('Question text was missing - set to empty string');
     }
 
-    // Validate answers if they exist
-    if (question.answers) {
-      if (question.answers.length !== 4) {
-        errors.push('Question must have exactly 4 answers');
-      }
-
-      const correctAnswers = question.answers.filter(a => a.is_correct === 1);
-      if (correctAnswers.length === 0) {
-        errors.push('Question must have at least one correct answer');
-      }
-
-      // Check for multiple correct answers (assuming only one should be correct)
-      if (correctAnswers.length > 1) {
-        errors.push('Question should have only one correct answer');
-      }
-
-      question.answers.forEach((answer, index) => {
-        if (!answer.answer_text || answer.answer_text.trim() === '') {
-          errors.push(`Answer ${index + 1} text is required`);
-        }
-      });
+    // Clean and validate answers
+    if (!cleanedQuestion.answers) {
+      // Create 4 empty answers if none exist
+      cleanedQuestion.answers = [
+        { answer_id: 0, question_id: cleanedQuestion.question_id, answer_text: '', is_correct: 0, option: 'A', justification: null },
+        { answer_id: 0, question_id: cleanedQuestion.question_id, answer_text: '', is_correct: 0, option: 'B', justification: null },
+        { answer_id: 0, question_id: cleanedQuestion.question_id, answer_text: '', is_correct: 0, option: 'C', justification: null },
+        { answer_id: 0, question_id: cleanedQuestion.question_id, answer_text: '', is_correct: 0, option: 'D', justification: null }
+      ] as [Answer, Answer, Answer, Answer];
+      warnings.push('Question had no answers - created 4 empty answers');
     } else {
-      errors.push('Question must have answers');
-    }
+      // Ensure exactly 4 answers
+      if (cleanedQuestion.answers.length !== 4) {
+        const currentAnswers = [...cleanedQuestion.answers];
 
-    // Validate difficulty level range
-    if (question.difficulty_level !== null && question.difficulty_level !== undefined) {
-      if (question.difficulty_level < 1 || question.difficulty_level > 5) {
-        errors.push('Difficulty level must be between 1 and 5');
+        // Pad with empty answers if less than 4
+        while (currentAnswers.length < 4) {
+          currentAnswers.push({
+            answer_id: 0,
+            question_id: cleanedQuestion.question_id,
+            answer_text: '',
+            is_correct: 0,
+            option: String.fromCharCode(65 + currentAnswers.length),
+            justification: null
+          });
+        }
+
+        // Trim to 4 if more than 4
+        if (currentAnswers.length > 4) {
+          warnings.push(`Question had ${cleanedQuestion.answers.length} answers - trimmed to 4`);
+        } else {
+          warnings.push(`Question had ${cleanedQuestion.answers.length} answers - padded to 4`);
+        }
+
+        cleanedQuestion.answers = currentAnswers.slice(0, 4) as [Answer, Answer, Answer, Answer];
       }
-    }
 
-    // Validate exam references
-    if (question.exams && question.exams.length > 0) {
-      const validExamIds = exams.map(exam => exam.exam_id);
-      question.exams.forEach(examRef => {
-        if (examRef.exam_id && !validExamIds.includes(examRef.exam_id)) {
-          errors.push(`Referenced exam with ID ${examRef.exam_id} does not exist`);
-        }
-      });
-    }
-
-    // Validate KA (Knowledge Area) references
-    if (question.kas && question.kas.length > 0) {
-      const validKaNumbers = kas.map(ka => ka.ka_number);
-      question.kas.forEach(kaRef => {
-        if (kaRef.ka_number && !validKaNumbers.includes(kaRef.ka_number)) {
-          errors.push(`Referenced KA with number ${kaRef.ka_number} does not exist`);
-        }
-      });
-    }
-
-    // Validate system references  
-    if (question.systems && question.systems.length > 0) {
-      const validSystemNumbers = systems.map(system => system.number);
-      question.systems.forEach(systemRef => {
-        if (systemRef.number && !validSystemNumbers.includes(systemRef.number)) {
-          errors.push(`Referenced system with number ${systemRef.number} does not exist`);
-        }
-      });
-    }
-
-    // Validate date format if last_used is provided
-    if (question.last_used) {
-      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-      if (!dateRegex.test(question.last_used)) {
-        errors.push('Last used date must be in YYYY-MM-DD format');
-      } else {
-        const date = new Date(question.last_used);
-        if (isNaN(date.getTime())) {
-          errors.push('Last used date is not a valid date');
-        }
+      // Check for correct answers and fix if needed
+      const correctAnswers = cleanedQuestion.answers.filter(a => a.is_correct === 1);
+      if (correctAnswers.length === 0) {
+        // Set first answer as correct if none are marked
+        cleanedQuestion.answers[0].is_correct = 1;
+        warnings.push('No correct answer found - set answer A as correct');
+      } else if (correctAnswers.length > 1) {
+        // Keep only the first correct answer
+        let foundCorrect = false;
+        cleanedQuestion.answers.forEach(answer => {
+          if (answer.is_correct === 1) {
+            if (foundCorrect) {
+              answer.is_correct = 0;
+            } else {
+              foundCorrect = true;
+            }
+          }
+        });
+        warnings.push(`Multiple correct answers found - kept only the first one`);
       }
-    }
 
-    // Additional business logic validations
-    if (question.question_text && question.question_text.length > 1000) {
-      errors.push('Question text is too long (maximum 1000 characters)');
-    }
+      // Clean answer texts
+      cleanedQuestion.answers.forEach((answer, index) => {
+        if (!answer.answer_text || answer.answer_text.trim() === '') {
+          answer.answer_text = '';
+          warnings.push(`Answer ${String.fromCharCode(65 + index)} text was missing - set to empty string`);
+        }
 
-    if (question.answers) {
-      question.answers.forEach((answer, index) => {
+        // Truncate long answer text
         if (answer.answer_text && answer.answer_text.length > 500) {
-          errors.push(`Answer ${index + 1} text is too long (maximum 500 characters)`);
+          answer.answer_text = answer.answer_text.substring(0, 500);
+          warnings.push(`Answer ${String.fromCharCode(65 + index)} text was too long - truncated to 500 characters`);
         }
       });
+    }
+
+    // Clean difficulty level
+    if (cleanedQuestion.difficulty_level !== null && cleanedQuestion.difficulty_level !== undefined) {
+      if (cleanedQuestion.difficulty_level < 1) {
+        cleanedQuestion.difficulty_level = 1;
+        warnings.push('Difficulty level was below 1 - set to 1');
+      } else if (cleanedQuestion.difficulty_level > 5) {
+        cleanedQuestion.difficulty_level = 5;
+        warnings.push('Difficulty level was above 5 - set to 5');
+      }
+    }
+
+    // Clean exam references
+    if (cleanedQuestion.exams && cleanedQuestion.exams.length > 0) {
+      const validExamIds = exams.map(exam => exam.exam_id);
+      const originalCount = cleanedQuestion.exams.length;
+      cleanedQuestion.exams = cleanedQuestion.exams.filter(examRef =>
+        !examRef.exam_id || validExamIds.includes(examRef.exam_id)
+      );
+
+      if (cleanedQuestion.exams.length < originalCount) {
+        warnings.push(`Removed ${originalCount - cleanedQuestion.exams.length} invalid exam references`);
+      }
+    }
+
+    // Clean KA (Knowledge Area) references
+    if (cleanedQuestion.kas && cleanedQuestion.kas.length > 0) {
+      const validKaNumbers = kas.map(ka => ka.ka_number);
+      const originalCount = cleanedQuestion.kas.length;
+      cleanedQuestion.kas = cleanedQuestion.kas.filter(kaRef =>
+        !kaRef.ka_number || validKaNumbers.includes(kaRef.ka_number)
+      );
+
+      if (cleanedQuestion.kas.length < originalCount) {
+        warnings.push(`Removed ${originalCount - cleanedQuestion.kas.length} invalid KA references`);
+      }
+    }
+
+    // Clean system references  
+    if (cleanedQuestion.systems && cleanedQuestion.systems.length > 0) {
+      const validSystemNumbers = systems.map(system => system.number);
+      const originalCount = cleanedQuestion.systems.length;
+      cleanedQuestion.systems = cleanedQuestion.systems.filter(systemRef =>
+        !systemRef.number || validSystemNumbers.includes(systemRef.number)
+      );
+
+      if (cleanedQuestion.systems.length < originalCount) {
+        warnings.push(`Removed ${originalCount - cleanedQuestion.systems.length} invalid system references`);
+      }
+    }
+
+    // Clean date format
+    if (cleanedQuestion.last_used) {
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!dateRegex.test(cleanedQuestion.last_used)) {
+        // Try to parse and reformat the date
+        const date = new Date(cleanedQuestion.last_used);
+        if (!isNaN(date.getTime())) {
+          cleanedQuestion.last_used = date.toISOString().split('T')[0];
+          warnings.push('Last used date was reformatted to YYYY-MM-DD');
+        } else {
+          cleanedQuestion.last_used = null;
+          warnings.push('Last used date was invalid - set to null');
+        }
+      }
+    }
+
+    // Truncate long question text
+    if (cleanedQuestion.question_text && cleanedQuestion.question_text.length > 1000) {
+      cleanedQuestion.question_text = cleanedQuestion.question_text.substring(0, 1000);
+      warnings.push('Question text was too long - truncated to 1000 characters');
     }
 
     return {
-      isValid: errors.length === 0,
-      errors
+      question: cleanedQuestion,
+      warnings
     };
   }
 
-  // Method to get import statistics
+  // Method to get import statistics with cleaned data
   async importQuestions(): Promise<{
     questions: Question[];
-    stats: { total: number; valid: number; invalid: number; errors: string[] }
+    stats: { total: number; processed: number; warnings: string[] }
   } | { success: boolean; error: string }> {
     try {
       const result = await this.importFilesSimple(true);
@@ -441,25 +499,26 @@ export class ImportRepository {
 
       const rawData = result as any[];
       const questions: Question[] = [];
-      const errors: string[] = [];
+      const allWarnings: string[] = [];
       let totalProcessed = 0;
-      let validQuestions = 0;
+      let successfullyProcessed = 0;
 
       for (const item of rawData) {
         totalProcessed++;
         try {
           const question = this.transformToQuestion(item);
           if (question) {
-            const validation = await this.validateQuestion(question);
-            if (validation.isValid) {
-              questions.push(question);
-              validQuestions++;
-            } else {
-              errors.push(`Question ${totalProcessed}: ${validation.errors.join(', ')}`);
-            }
+            const { question: cleanedQuestion, warnings } = await this.cleanAndValidateQuestion(question);
+            questions.push(cleanedQuestion);
+            successfullyProcessed++;
+
+            // Add warnings with question context
+            warnings.forEach(warning => {
+              allWarnings.push(`Question ${totalProcessed}: ${warning}`);
+            });
           }
         } catch (transformError) {
-          errors.push(`Question ${totalProcessed}: ${(transformError as Error).message}`);
+          allWarnings.push(`Question ${totalProcessed}: Failed to transform - ${(transformError as Error).message}`);
         }
       }
 
@@ -467,42 +526,12 @@ export class ImportRepository {
         questions,
         stats: {
           total: totalProcessed,
-          valid: validQuestions,
-          invalid: totalProcessed - validQuestions,
-          errors
+          processed: successfullyProcessed,
+          warnings: allWarnings
         }
       };
     } catch (error) {
       return { success: false, error: `Failed to import questions: ${(error as Error).message}` };
     }
   }
-
-
-  async exportQuestions(questionIds: number[], defaultFileName?: string): Promise<{ success: boolean; error?: string; filePath?: string }> {
-    try {
-      // Get question data
-      const questions = await Promise.all(
-        questionIds.map(id => this.db.questionService.getCompleteQuestion(id))
-      );
-
-      // Show save dialog
-      const fileName = defaultFileName || `nem_questions_${new Date().toISOString().split('T')[0]}.json`;
-      const filePath = await this.saveFileDialog(fileName, [
-        { name: 'JSON Files', extensions: ['json'] },
-        { name: 'All Files', extensions: ['*'] }
-      ]);
-
-      if (!filePath) {
-        return { success: false, error: 'Export cancelled by user' };
-      }
-
-      // Write file
-      fs.writeFileSync(filePath, JSON.stringify(questions, null, 2), 'utf-8');
-
-      return { success: true, filePath };
-    } catch (error) {
-      return { success: false, error: `Failed to export questions: ${(error as Error).message}` };
-    }
-  }
-
 }

@@ -5,18 +5,216 @@ export class QuestionRepository {
     constructor(private db: sqlite3.Database, private isClosing: () => boolean) { }
 
     async add(question: Question): Promise<number> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing()) {
-                reject(new Error('Database is closing'));
-                return;
+        if (this.isClosing()) {
+            throw new Error('Database is closing');
+        }
+
+        // Check for duplicates first
+        if (question.question_id) {
+            try {
+                const existing = await this.getById(question.question_id);
+                if (existing && this.isDuplicate(existing, question)) {
+                    console.log("Duplicate question found, skipping");
+                    return existing.question_id!;
+                }
+            } catch (error) {
+                // Question doesn't exist, continue with insertion
             }
+        }
 
-            const self = this;
+        // Also check by text/content hash to catch duplicates with different IDs
+        const existingByContent = await this.findByContentHash(question);
+        if (existingByContent) {
+            console.log("Duplicate question content found, skipping");
+            return existingByContent.question_id!;
+        }
+
+
+
+        return this.insertQuestion(question);
+    }
+
+
+    async addBatch(questions: Question[]): Promise<{ inserted: number[], ignored: number[] }> {
+        const self = this;
+        const results = {
+            inserted: [] as number[],
+            ignored: [] as number[]
+        };
+
+        return new Promise((resolve, reject) => {
             this.db.serialize(() => {
-                self.db.run('BEGIN TRANSACTION');
+                this.db.run('BEGIN TRANSACTION');
 
-                self.db.run(
-                    'INSERT INTO questions (question_text, category, exam_level, technical_references, difficulty_level, cognitive_level, objective, last_used) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                let processed = 0;
+                let transactionActive = true; // Track transaction state
+                const total = questions.length;
+
+                const finishTransaction = (success: boolean, error?: any) => {
+                    if (!transactionActive) return; // Prevent double transaction operations
+
+                    transactionActive = false;
+                    if (success) {
+                        self.db.run('COMMIT', (commitErr) => {
+                            if (commitErr) reject(commitErr);
+                            else resolve(results);
+                        });
+                    } else {
+                        self.db.run('ROLLBACK', (rollbackErr) => {
+                            // Ignore rollback errors if transaction is already inactive
+                            reject(error || rollbackErr);
+                        });
+                    }
+                };
+
+                const processQuestion = async (question: Question, index: number) => {
+                    try {
+                        if (this.isClosing()) {
+                            throw new Error('Database is closing');
+                        }
+
+                        // Check for duplicates first - same logic as single add
+                        if (question.question_id) {
+                            try {
+                                const existing = await this.getById(question.question_id);
+                                if (existing && this.isDuplicate(existing, question)) {
+                                    console.log("Duplicate question found, skipping");
+                                    results.ignored.push(existing.question_id!);
+                                    processed++;
+                                    if (processed === total) {
+                                        finishTransaction(true);
+                                    }
+                                    return;
+                                }
+                            } catch (error) {
+                                // Question doesn't exist, continue with insertion
+                            }
+                        }
+
+                        // Also check by content hash to catch duplicates with different IDs
+                        const existingByContent = await this.findByContentHash(question);
+                        if (existingByContent) {
+                            console.log("Duplicate question content found, skipping");
+                            results.ignored.push(existingByContent.question_id!);
+                            processed++;
+                            if (processed === total) {
+                                finishTransaction(true);
+                            }
+                            return;
+                        }
+
+                        // Insert the question with all relations - same as single add
+                        this.db.run(
+                            `INSERT INTO questions 
+                         (question_text, category, exam_level, technical_references, 
+                          difficulty_level, cognitive_level, objective, last_used) 
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                            [
+                                question.question_text,
+                                question.category,
+                                question.exam_level,
+                                question.technical_references,
+                                question.difficulty_level,
+                                question.cognitive_level,
+                                question.objective,
+                                question.last_used
+                            ],
+                            function (this: sqlite3.RunResult, err: any) {
+                                if (err) {
+                                    console.log("THERE IS AN ERROR1", err);
+                                    finishTransaction(false, err);
+                                    return;
+                                }
+
+                                const questionId = this.lastID;
+
+                                // Insert all relations - same logic as single add
+                                const insertOperations = [
+                                    question.exams?.length ? QuestionRepository.prototype.insertExamRelations.call({ db: self.db }, questionId, question.exams) : Promise.resolve(),
+                                    question.answers?.length ? QuestionRepository.prototype.insertAnswers.call({ db: self.db }, questionId, question.answers) : Promise.resolve(),
+                                    question.kas?.length ? QuestionRepository.prototype.insertKaRelations.call({ db: self.db }, questionId, question.kas) : Promise.resolve(),
+                                    question.systems?.length ? QuestionRepository.prototype.insertSystemRelations.call({ db: self.db }, questionId, question.systems) : Promise.resolve()
+                                ].filter(p => p !== Promise.resolve());
+
+                                Promise.all(insertOperations)
+                                    .then(() => {
+                                        results.inserted.push(questionId);
+                                        processed++;
+
+                                        if (processed === total) {
+                                            finishTransaction(true);
+                                        }
+                                    })
+                                    .catch((insertErr) => {
+                                        console.log("THERE IS AN ERROR2", insertErr); // Fixed: was logging 'err' instead of 'insertErr'
+                                        finishTransaction(false, insertErr);
+                                    });
+                            }
+                        );
+
+                    } catch (error) {
+                        console.log("THERE IS AN ERROR3", error);
+                        finishTransaction(false, error);
+                    }
+                };
+
+                // Process all questions
+                questions.forEach((question, index) => {
+                    processQuestion(question, index);
+                });
+            });
+        });
+    }
+
+    // Helper method to check for duplicates
+    private async checkDuplicate(question: Question): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            // Define your duplicate criteria here
+            this.db.get(
+                `SELECT 1 FROM questions 
+             WHERE question_text = ? AND category = ? AND exam_level = ?`,
+                [question.question_text, question.category, question.exam_level],
+                (err, row) => {
+                    if (err) reject(err);
+                    else resolve(!!row);
+                }
+            );
+        });
+    }
+
+    private isDuplicate(existing: Question, newQuestion: Question): boolean {
+        return existing.question_text === newQuestion.question_text &&
+            existing.category === newQuestion.category &&
+            existing.exam_level === newQuestion.exam_level;
+        // Add other fields as needed for your duplicate definition
+    }
+
+    private async findByContentHash(question: Question): Promise<Question | null> {
+        // Create a hash or use key fields to find potential duplicates
+        return new Promise((resolve, reject) => {
+            this.db.get(
+                'SELECT * FROM questions WHERE question_text = ? AND category = ?',
+                [question.question_text, question.category],
+                (err, row) => {
+                    if (err) reject(err);
+                    else resolve(row as Question || null);
+                }
+            );
+        });
+    }
+
+
+    async insertQuestion(question: Question): Promise<number> {
+        return new Promise((resolve, reject) => {
+            const db = this.db;
+            db.serialize(() => {
+                db.run('BEGIN TRANSACTION');
+
+                db.run(
+                    `INSERT INTO questions 
+                 (question_text, category, exam_level, technical_references, 
+                  difficulty_level, cognitive_level, objective, last_used) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
                     [
                         question.question_text,
                         question.category,
@@ -29,120 +227,31 @@ export class QuestionRepository {
                     ],
                     function (err) {
                         if (err) {
-                            self.db.run('ROLLBACK');
+                            db.run('ROLLBACK');
                             reject(err);
                             return;
                         }
 
                         const questionId = this.lastID;
-                        const insertOperations: Promise<void>[] = [];
 
-                        // Handle exam relationships
-                        if (question.exams?.length) {
-                            const examPromise = new Promise<void>((resolveExam, rejectExam) => {
-                                const placeholders = question.exams!.map(() => '(?, ?)').join(', ');
-                                const values: any[] = [];
+                        // Use Promise.all with proper error handling
+                        const insertOperations = [
+                            question.exams?.length ? QuestionRepository.prototype.insertExamRelations.call({ db }, questionId, question.exams) : Promise.resolve(),
+                            question.answers?.length ? QuestionRepository.prototype.insertAnswers.call({ db }, questionId, question.answers) : Promise.resolve(),
+                            question.kas?.length ? QuestionRepository.prototype.insertKaRelations.call({ db }, questionId, question.kas) : Promise.resolve(),
+                            question.systems?.length ? QuestionRepository.prototype.insertSystemRelations.call({ db }, questionId, question.systems) : Promise.resolve()
+                        ].filter(p => p !== Promise.resolve()); // Remove empty promises
 
-                                question.exams!.forEach(exam => {
-                                    values.push(exam.exam_id, questionId);
+                        Promise.all(insertOperations)
+                            .then(() => {
+                                db.run('COMMIT', (commitErr) => {
+                                    if (commitErr) reject(commitErr);
+                                    else resolve(questionId);
                                 });
-
-                                self.db.run(
-                                    `INSERT INTO exam_questions (exam_id, question_id) VALUES ${placeholders}`,
-                                    values,
-                                    (examErr) => {
-                                        if (examErr) rejectExam(examErr);
-                                        else resolveExam();
-                                    }
-                                );
-                            });
-                            insertOperations.push(examPromise);
-                        }
-
-                        // handle answers
-                        if (question.answers?.length) {
-                            const answerPromise = new Promise<void>((resolveAnswer, rejectAnswer) => {
-                                const placeholders = question.answers!.map(() => '(?, ?, ?, ?, ?)').join(', ');
-                                const values: any[] = [];
-
-                                question.answers!.forEach(answer => {
-                                    values.push(
-                                        questionId,
-                                        answer.answer_text,
-                                        answer.is_correct ? 1 : 0,
-                                        answer.justification,
-                                        answer.option
-                                    );
-                                });
-
-                                self.db.run(
-                                    `INSERT INTO answers (question_id, answer_text, is_correct, justification, option) VALUES ${placeholders}`,
-                                    values,
-                                    (answerErr) => {
-                                        if (answerErr) rejectAnswer(answerErr);
-                                        else resolveAnswer();
-                                    }
-                                );
-                            });
-                            insertOperations.push(answerPromise);
-                        }
-
-                        // Handle ka relationships
-                        if (question.kas?.length) {
-                            const kaPromise = new Promise<void>((resolveKa, rejectKa) => {
-                                const placeholders = question.kas!.map(() => '(?, ?)').join(', ');
-                                const values: any[] = [];
-
-                                question.kas!.forEach(ka => {
-                                    values.push(questionId, ka.ka_number);
-                                });
-
-                                self.db.run(
-                                    `INSERT INTO question_kas (question_id, ka_number) VALUES ${placeholders}`,
-                                    values,
-                                    (systemErr) => {
-                                        if (systemErr) rejectKa(systemErr);
-                                        else resolveKa();
-                                    }
-                                );
-                            });
-                            insertOperations.push(kaPromise);
-                        }
-
-                        // Handle system relationships
-                        if (question.systems?.length) {
-                            const systemPromise = new Promise<void>((resolveSystem, rejectSystem) => {
-                                const placeholders = question.systems!.map(() => '(?, ?)').join(', ');
-                                const values: any[] = [];
-
-                                question.systems!.forEach(system => {
-                                    values.push(questionId, system.number);
-                                });
-
-                                self.db.run(
-                                    `INSERT INTO question_systems (question_id, system_number) VALUES ${placeholders}`,
-                                    values,
-                                    (systemErr) => {
-                                        if (systemErr) rejectSystem(systemErr);
-                                        else resolveSystem();
-                                    }
-                                );
-                            });
-                            insertOperations.push(systemPromise);
-                        }
-
-                        Promise.all(insertOperations).then(() => {
-                            self.db.run('COMMIT', (commitErr) => {
-                                if (commitErr) {
-                                    reject(commitErr);
-                                } else {
-                                    resolve(questionId)
-                                }
-                            });
-                        })
+                            })
                             .catch((insertErr) => {
-                                self.db.run('ROLLBACK');
-                                reject(insertErr)
+                                db.run('ROLLBACK');
+                                reject(insertErr);
                             });
                     }
                 );
@@ -150,331 +259,391 @@ export class QuestionRepository {
         });
     }
 
-    
+    // Extract repetitive insertion logic into separate methods
+    insertExamRelations(questionId: number, exams: Exam[]): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const placeholders = exams.map(() => '(?, ?)').join(', ');
+            const values = exams.flatMap(exam => [exam.exam_id, questionId]);
 
-    async getMany(params ?: DBSearchParams): Promise < Question[] > {
-    return new Promise((resolve, reject) => {
-        if (this.isClosing()) {
-            reject(new Error('Database is closing'));
-            return;
-        }
-
-        this.db.all('SELECT * FROM questions', [], (err, rows: Question[]) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(rows);
-            }
+            this.db.run(
+                `INSERT INTO exam_questions (exam_id, question_id) VALUES ${placeholders}`,
+                values,
+                (err) => err ? reject(err) : resolve()
+            );
         });
-    });
-}
+    }
 
-    async getByExamId(examId: number): Promise < Question[] > {
-    return new Promise((resolve, reject) => {
-        if (this.isClosing()) {
-            reject(new Error('Database is closing'));
-            return;
-        }
+    insertAnswers(questionId: number, answers: Answer[]): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const placeholders = answers.map(() => '(?, ?, ?, ?, ?)').join(', ');
+            const values = answers.flatMap(answer => [
+                questionId,
+                answer.answer_text,
+                answer.is_correct ? 1 : 0,
+                answer.justification,
+                answer.option
+            ]);
 
-        const query = `
+            this.db.run(
+                `INSERT INTO answers (question_id, answer_text, is_correct, justification, option) VALUES ${placeholders}`,
+                values,
+                (err) => err ? reject(err) : resolve()
+            );
+        });
+    }
+
+    insertKaRelations(questionId: number, kas: Ka[]): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const placeholders = kas.map(() => '(?, ?)').join(', ');
+            const values = kas.flatMap(ka => [questionId, ka.ka_number]);
+
+            this.db.run(
+                `INSERT INTO question_kas (question_id, ka_number) VALUES ${placeholders}`,
+                values,
+                (err) => err ? reject(err) : resolve()
+            );
+        });
+    }
+
+    insertSystemRelations(questionId: number, systems: System[]): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const placeholders = systems.map(() => '(?, ?)').join(', ');
+            const values = systems.flatMap(system => [questionId, system.number]);
+
+            this.db.run(
+                `INSERT INTO question_systems (question_id, system_number) VALUES ${placeholders}`,
+                values,
+                (err) => err ? reject(err) : resolve()
+            );
+        });
+    }
+
+
+
+
+    async getMany(params?: DBSearchParams): Promise<Question[]> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error('Database is closing'));
+                return;
+            }
+
+            this.db.all('SELECT * FROM questions', [], (err, rows: Question[]) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+    }
+
+    async getByExamId(examId: number): Promise<Question[]> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error('Database is closing'));
+                return;
+            }
+
+            const query = `
             SELECT q.* 
             FROM questions q
             INNER JOIN exam_questions eq ON q.question_id = eq.question_id
             WHERE eq.exam_id = ?
         `;
 
-        this.db.all(query, [examId], (err, rows: Question[]) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(rows);
-            }
+            this.db.all(query, [examId], (err, rows: Question[]) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+            });
         });
-    });
-}
+    }
 
     // Individual query functions
-    async getById(questionId: number): Promise < Question > {
-    return new Promise((resolve, reject) => {
-        if (this.isClosing()) {
-            reject(new Error('Database is closing'));
-            return;
-        }
-
-        const query = 'SELECT * FROM questions WHERE question_id = ?';
-
-        this.db.get(query, [questionId], (err, row: Question) => {
-            if (err) {
-                reject(err);
-            } else if (!row) {
-                reject(new Error(`Question with ID ${questionId} not found`));
-            } else {
-                resolve(row);
+    async getById(questionId: number): Promise<Question> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error('Database is closing'));
+                return;
             }
+
+            const query = 'SELECT * FROM questions WHERE question_id = ?';
+
+            this.db.get(query, [questionId], (err, row: Question) => {
+                if (err) {
+                    reject(err);
+                } else if (!row) {
+                    reject(new Error(`Question with ID ${questionId} not found`));
+                } else {
+                    resolve(row);
+                }
+            });
         });
-    });
-}
+    }
 
-    async update(question: Question): Promise < void> {
-    return new Promise((resolve, reject) => {
-        if (this.isClosing()) {
-            reject(new Error('Database is closing'));
-            return;
-        }
+    async update(question: Question): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error('Database is closing'));
+                return;
+            }
 
-        if (!question.question_id) {
-            reject(new Error('Question ID is required for update'));
-            return;
-        }
+            if (!question.question_id) {
+                reject(new Error('Question ID is required for update'));
+                return;
+            }
 
-        const self = this;
-        this.db.serialize(() => {
-            self.db.run('BEGIN TRANSACTION');
+            const self = this;
+            this.db.serialize(() => {
+                self.db.run('BEGIN TRANSACTION');
 
-            // First, update the main question record
-            self.db.run(
-                'UPDATE questions SET question_text = ?, category = ?, exam_level = ?, technical_references = ?, difficulty_level = ?, cognitive_level = ?, objective = ?, last_used = ? WHERE question_id = ?',
-                [
-                    question.question_text,
-                    question.category,
-                    question.exam_level,
-                    question.technical_references,
-                    question.difficulty_level,
-                    question.cognitive_level,
-                    question.objective,
-                    question.last_used,
-                    question.question_id
-                ],
-                function (err) {
-                    if (err) {
-                        self.db.run('ROLLBACK');
-                        reject(err);
-                        return;
-                    }
-
-                    if (this.changes === 0) {
-                        self.db.run('ROLLBACK');
-                        reject(new Error('Question not found'));
-                        return;
-                    }
-
-                    // Delete existing relationships before inserting new ones
-                    const deleteOperations: Promise<void>[] = [
-                        // Delete existing exam relationships
-                        new Promise<void>((resolveDelete, rejectDelete) => {
-                            self.db.run(
-                                'DELETE FROM exam_questions WHERE question_id = ?',
-                                [question.question_id],
-                                (deleteErr) => {
-                                    if (deleteErr) rejectDelete(deleteErr);
-                                    else resolveDelete();
-                                }
-                            );
-                        }),
-                        // Delete existing answers
-                        new Promise<void>((resolveDelete, rejectDelete) => {
-                            self.db.run(
-                                'DELETE FROM answers WHERE question_id = ?',
-                                [question.question_id],
-                                (deleteErr) => {
-                                    if (deleteErr) rejectDelete(deleteErr);
-                                    else resolveDelete();
-                                }
-                            );
-                        }),
-                        // Delete existing ka relationships
-                        new Promise<void>((resolveDelete, rejectDelete) => {
-                            self.db.run(
-                                'DELETE FROM question_kas WHERE question_id = ?',
-                                [question.question_id],
-                                (deleteErr) => {
-                                    if (deleteErr) rejectDelete(deleteErr);
-                                    else resolveDelete();
-                                }
-                            );
-                        }),
-                        // Delete existing system relationships
-                        new Promise<void>((resolveDelete, rejectDelete) => {
-                            self.db.run(
-                                'DELETE FROM question_systems WHERE question_id = ?',
-                                [question.question_id],
-                                (deleteErr) => {
-                                    if (deleteErr) rejectDelete(deleteErr);
-                                    else resolveDelete();
-                                }
-                            );
-                        })
-                    ];
-
-                    Promise.all(deleteOperations).then(() => {
-                        // Now insert the new relationships
-                        const insertOperations: Promise<void>[] = [];
-
-                        // Handle exam relationships
-                        if (question.exams?.length) {
-                            const examPromise = new Promise<void>((resolveExam, rejectExam) => {
-                                const placeholders = question.exams!.map(() => '(?, ?)').join(', ');
-                                const values: any[] = [];
-
-                                question.exams!.forEach(exam => {
-                                    values.push(exam.exam_id, question.question_id);
-                                });
-
-                                self.db.run(
-                                    `INSERT INTO exam_questions (exam_id, question_id) VALUES ${placeholders}`,
-                                    values,
-                                    (examErr) => {
-                                        if (examErr) rejectExam(examErr);
-                                        else resolveExam();
-                                    }
-                                );
-                            });
-                            insertOperations.push(examPromise);
+                // First, update the main question record
+                self.db.run(
+                    'UPDATE questions SET question_text = ?, category = ?, exam_level = ?, technical_references = ?, difficulty_level = ?, cognitive_level = ?, objective = ?, last_used = ? WHERE question_id = ?',
+                    [
+                        question.question_text,
+                        question.category,
+                        question.exam_level,
+                        question.technical_references,
+                        question.difficulty_level,
+                        question.cognitive_level,
+                        question.objective,
+                        question.last_used,
+                        question.question_id
+                    ],
+                    function (err) {
+                        if (err) {
+                            self.db.run('ROLLBACK');
+                            reject(err);
+                            return;
                         }
 
-                        // Handle answers
-                        if (question.answers?.length) {
-                            const answerPromise = new Promise<void>((resolveAnswer, rejectAnswer) => {
-                                const placeholders = question.answers!.map(() => '(?, ?, ?, ?, ?)').join(', ');
-                                const values: any[] = [];
+                        if (this.changes === 0) {
+                            self.db.run('ROLLBACK');
+                            reject(new Error('Question not found'));
+                            return;
+                        }
 
-                                question.answers!.forEach(answer => {
-                                    values.push(
-                                        question.question_id,
-                                        answer.answer_text,
-                                        answer.is_correct ? 1 : 0,
-                                        answer.justification,
-                                        answer.option
+                        // Delete existing relationships before inserting new ones
+                        const deleteOperations: Promise<void>[] = [
+                            // Delete existing exam relationships
+                            new Promise<void>((resolveDelete, rejectDelete) => {
+                                self.db.run(
+                                    'DELETE FROM exam_questions WHERE question_id = ?',
+                                    [question.question_id],
+                                    (deleteErr) => {
+                                        if (deleteErr) rejectDelete(deleteErr);
+                                        else resolveDelete();
+                                    }
+                                );
+                            }),
+                            // Delete existing answers
+                            new Promise<void>((resolveDelete, rejectDelete) => {
+                                self.db.run(
+                                    'DELETE FROM answers WHERE question_id = ?',
+                                    [question.question_id],
+                                    (deleteErr) => {
+                                        if (deleteErr) rejectDelete(deleteErr);
+                                        else resolveDelete();
+                                    }
+                                );
+                            }),
+                            // Delete existing ka relationships
+                            new Promise<void>((resolveDelete, rejectDelete) => {
+                                self.db.run(
+                                    'DELETE FROM question_kas WHERE question_id = ?',
+                                    [question.question_id],
+                                    (deleteErr) => {
+                                        if (deleteErr) rejectDelete(deleteErr);
+                                        else resolveDelete();
+                                    }
+                                );
+                            }),
+                            // Delete existing system relationships
+                            new Promise<void>((resolveDelete, rejectDelete) => {
+                                self.db.run(
+                                    'DELETE FROM question_systems WHERE question_id = ?',
+                                    [question.question_id],
+                                    (deleteErr) => {
+                                        if (deleteErr) rejectDelete(deleteErr);
+                                        else resolveDelete();
+                                    }
+                                );
+                            })
+                        ];
+
+                        Promise.all(deleteOperations).then(() => {
+                            // Now insert the new relationships
+                            const insertOperations: Promise<void>[] = [];
+
+                            // Handle exam relationships
+                            if (question.exams?.length) {
+                                const examPromise = new Promise<void>((resolveExam, rejectExam) => {
+                                    const placeholders = question.exams!.map(() => '(?, ?)').join(', ');
+                                    const values: any[] = [];
+
+                                    question.exams!.forEach(exam => {
+                                        values.push(exam.exam_id, question.question_id);
+                                    });
+
+                                    self.db.run(
+                                        `INSERT INTO exam_questions (exam_id, question_id) VALUES ${placeholders}`,
+                                        values,
+                                        (examErr) => {
+                                            if (examErr) rejectExam(examErr);
+                                            else resolveExam();
+                                        }
                                     );
                                 });
+                                insertOperations.push(examPromise);
+                            }
 
-                                self.db.run(
-                                    `INSERT INTO answers (question_id, answer_text, is_correct, justification, option) VALUES ${placeholders}`,
-                                    values,
-                                    (answerErr) => {
-                                        if (answerErr) rejectAnswer(answerErr);
-                                        else resolveAnswer();
-                                    }
-                                );
-                            });
-                            insertOperations.push(answerPromise);
-                        }
+                            // Handle answers
+                            if (question.answers?.length) {
+                                const answerPromise = new Promise<void>((resolveAnswer, rejectAnswer) => {
+                                    const placeholders = question.answers!.map(() => '(?, ?, ?, ?, ?)').join(', ');
+                                    const values: any[] = [];
 
-                        // Handle ka relationships
-                        if (question.kas?.length) {
-                            const kaPromise = new Promise<void>((resolveKa, rejectKa) => {
-                                const placeholders = question.kas!.map(() => '(?, ?)').join(', ');
-                                const values: any[] = [];
+                                    question.answers!.forEach(answer => {
+                                        values.push(
+                                            question.question_id,
+                                            answer.answer_text,
+                                            answer.is_correct ? 1 : 0,
+                                            answer.justification,
+                                            answer.option
+                                        );
+                                    });
 
-                                question.kas!.forEach(ka => {
-                                    values.push(question.question_id, ka.ka_number);
+                                    self.db.run(
+                                        `INSERT INTO answers (question_id, answer_text, is_correct, justification, option) VALUES ${placeholders}`,
+                                        values,
+                                        (answerErr) => {
+                                            if (answerErr) rejectAnswer(answerErr);
+                                            else resolveAnswer();
+                                        }
+                                    );
                                 });
+                                insertOperations.push(answerPromise);
+                            }
 
-                                self.db.run(
-                                    `INSERT INTO question_kas (question_id, ka_number) VALUES ${placeholders}`,
-                                    values,
-                                    (kaErr) => {
-                                        if (kaErr) rejectKa(kaErr);
-                                        else resolveKa();
-                                    }
-                                );
-                            });
-                            insertOperations.push(kaPromise);
-                        }
+                            // Handle ka relationships
+                            if (question.kas?.length) {
+                                const kaPromise = new Promise<void>((resolveKa, rejectKa) => {
+                                    const placeholders = question.kas!.map(() => '(?, ?)').join(', ');
+                                    const values: any[] = [];
 
-                        // Handle system relationships
-                        if (question.systems?.length) {
-                            const systemPromise = new Promise<void>((resolveSystem, rejectSystem) => {
-                                const placeholders = question.systems!.map(() => '(?, ?)').join(', ');
-                                const values: any[] = [];
+                                    question.kas!.forEach(ka => {
+                                        values.push(question.question_id, ka.ka_number);
+                                    });
 
-                                question.systems!.forEach(system => {
-                                    values.push(question.question_id, system.number);
+                                    self.db.run(
+                                        `INSERT INTO question_kas (question_id, ka_number) VALUES ${placeholders}`,
+                                        values,
+                                        (kaErr) => {
+                                            if (kaErr) rejectKa(kaErr);
+                                            else resolveKa();
+                                        }
+                                    );
                                 });
+                                insertOperations.push(kaPromise);
+                            }
 
-                                self.db.run(
-                                    `INSERT INTO question_systems (question_id, system_number) VALUES ${placeholders}`,
-                                    values,
-                                    (systemErr) => {
-                                        if (systemErr) rejectSystem(systemErr);
-                                        else resolveSystem();
+                            // Handle system relationships
+                            if (question.systems?.length) {
+                                const systemPromise = new Promise<void>((resolveSystem, rejectSystem) => {
+                                    const placeholders = question.systems!.map(() => '(?, ?)').join(', ');
+                                    const values: any[] = [];
+
+                                    question.systems!.forEach(system => {
+                                        values.push(question.question_id, system.number);
+                                    });
+
+                                    self.db.run(
+                                        `INSERT INTO question_systems (question_id, system_number) VALUES ${placeholders}`,
+                                        values,
+                                        (systemErr) => {
+                                            if (systemErr) rejectSystem(systemErr);
+                                            else resolveSystem();
+                                        }
+                                    );
+                                });
+                                insertOperations.push(systemPromise);
+                            }
+
+                            Promise.all(insertOperations).then(() => {
+                                self.db.run('COMMIT', (commitErr) => {
+                                    if (commitErr) {
+                                        reject(commitErr);
+                                    } else {
+                                        resolve();
                                     }
-                                );
+                                });
+                            }).catch((insertErr) => {
+                                self.db.run('ROLLBACK');
+                                reject(insertErr);
                             });
-                            insertOperations.push(systemPromise);
-                        }
 
-                        Promise.all(insertOperations).then(() => {
-                            self.db.run('COMMIT', (commitErr) => {
-                                if (commitErr) {
-                                    reject(commitErr);
-                                } else {
-                                    resolve();
-                                }
-                            });
-                        }).catch((insertErr) => {
+                        }).catch((deleteErr) => {
                             self.db.run('ROLLBACK');
-                            reject(insertErr);
+                            reject(deleteErr);
                         });
+                    }
+                );
+            });
+        });
+    }
 
-                    }).catch((deleteErr) => {
-                        self.db.run('ROLLBACK');
-                        reject(deleteErr);
-                    });
+    async delete(questionId: number): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error("Database is closing"));
+                return;
+            }
+
+            this.db.run(
+                'DELETE FROM questions WHERE question_id = ?',
+                [questionId],
+                function (err) {
+                    if (err) {
+                        reject(err);
+                    } else if (this.changes === 0) {
+                        reject(new Error('Question not found'));
+                    } else {
+                        resolve();
+                    }
                 }
             );
         });
-    });
-}
+    }
 
-    async delete (questionId: number): Promise < void> {
-    return new Promise((resolve, reject) => {
-        if (this.isClosing()) {
-            reject(new Error("Database is closing"));
-            return;
-        }
+    async getAnswersByQuestionId(questionId: number): Promise<Answer[]> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error('Database is closing'));
+                return;
+            }
 
-        this.db.run(
-            'DELETE FROM questions WHERE question_id = ?',
-            [questionId],
-            function (err) {
+            const query = 'SELECT * FROM answers WHERE question_id = ? ORDER BY answer_id';
+
+            this.db.all(query, [questionId], (err, rows: any[]) => {
                 if (err) {
                     reject(err);
-                } else if (this.changes === 0) {
-                    reject(new Error('Question not found'));
                 } else {
-                    resolve();
+                    const answers: Answer[] = rows.map(row => ({
+                        answer_id: row.answer_id,
+                        question_id: row.question_id,
+                        answer_text: row.answer_text,
+                        is_correct: row.is_correct,
+                        option: row.option,
+                        justification: row.justification
+                    }));
+                    resolve(answers);
                 }
-            }
-        );
-    });
-}
-
-    async getAnswersByQuestionId(questionId: number): Promise < Answer[] > {
-    return new Promise((resolve, reject) => {
-        if (this.isClosing()) {
-            reject(new Error('Database is closing'));
-            return;
-        }
-
-        const query = 'SELECT * FROM answers WHERE question_id = ? ORDER BY answer_id';
-
-        this.db.all(query, [questionId], (err, rows: any[]) => {
-            if (err) {
-                reject(err);
-            } else {
-                const answers: Answer[] = rows.map(row => ({
-                    answer_id: row.answer_id,
-                    question_id: row.question_id,
-                    answer_text: row.answer_text,
-                    is_correct: row.is_correct,
-                    option: row.option,
-                    justification: row.justification
-                }));
-                resolve(answers);
-            }
+            });
         });
-    });
-}
+    }
 
 }

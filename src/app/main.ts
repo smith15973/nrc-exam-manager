@@ -1,10 +1,11 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
 import { Database } from '../data/db/database'
 import * as path from 'path';
 import * as fs from 'fs';
 import * as Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import { ImportRepository } from '../data/db/repositories/ImportRepository';
+import { ExportRepository } from '../data/db/repositories/ExportRepository';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -16,7 +17,8 @@ interface WindowState {
   width: number;
   height: number;
 }
-let ieManger: ImportRepository | null = null;
+let importRepository: ImportRepository | null = null;
+let exportRepository: ExportRepository | null = null;
 let mainWindow: BrowserWindow | null = null;
 let db: Database | null = null;
 let isShuttingDown = false;
@@ -119,9 +121,13 @@ const createWindow = (): void => {
     console.log('Database initialized');
   }
 
-  if (!ieManger) {
-    ieManger = new ImportRepository(db);
-    console.log('File Manager initialized');
+  if (!importRepository) {
+    importRepository = new ImportRepository(db);
+    console.log('Import Repo initialized');
+  }
+  if (!exportRepository) {
+    exportRepository = new ExportRepository(db);
+    console.log('Export Repo initialized');
   }
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -201,23 +207,28 @@ app.on('activate', () => {
 
 // Import handlers
 ipcMain.handle('files-operation', async (_event, { operation, data }) => {
-
   // Ensure database is initialized
   if (!db) {
     db = new Database();
   }
 
-  if (!ieManger) {
-    ieManger = new ImportRepository(db);
+  if (!importRepository) {
+    importRepository = new ImportRepository(db);
+  }
+  if (!exportRepository) {
+    exportRepository = new ExportRepository(db);
   }
 
   switch (operation) {
     case 'import-questions': {
-      return ieManger.importQuestions();
+      return importRepository.importQuestions();
     }
 
     case 'export-questions': {
-      return ieManger.exportQuestions(data)
+      return exportRepository.exportQuestions(data)
+    }
+    case 'open-location': {
+      return shell.showItemInFolder(data);
     }
 
     default:
@@ -300,6 +311,10 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
       case 'add-question':
         const questionId = await db.questions.add(data);
         return { success: true, questionId };
+
+      case 'add-questions-batch':
+        const questionIds = await db.questions.addBatch(data);
+        return { success: true, questionIds };
 
       case 'get-questions':
         const questions = await db.questions.getMany();

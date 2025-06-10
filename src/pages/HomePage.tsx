@@ -1,7 +1,6 @@
 import { ImportExport } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import ImportFileDropbox from '../common/components/ImportFileDropbox';
 
 
 export default function HomePage() {
@@ -23,10 +22,6 @@ export default function HomePage() {
             <Box>
                 <Link to={"/kas"}>Kas</Link>
             </Box>
-            <Box>
-                <ImportFileDropbox />
-            </Box>
-
         </>
     )
 };
