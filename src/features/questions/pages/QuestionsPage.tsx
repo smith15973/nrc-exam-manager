@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ConfirmDelete from "../../../common/components/ConfirmDelete";
 import { useDatabase } from "../../../common/hooks/useDatabase";
 import ExportQuestionsButton from "../components/ExportQuestionsButton";
 import ImportViewer from "../components/ImportViewer";
@@ -12,7 +13,7 @@ import QuestionsTable from "../components/QuestionsTable";
 
 
 export default function QuestionsPage() {
-    const { addQuestion, addQuestionsBatch, getQuestionsComplete } = useDatabase();
+    const { addQuestion, addQuestionsBatch, getQuestionsComplete, deleteQuestion } = useDatabase();
     const [questions, setQuestions] = useState<Question[]>([]);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -47,11 +48,22 @@ export default function QuestionsPage() {
         await loadQuestions();
     }
 
+    const handleDeleteQuestions = () => {
+        Promise.all(selectedIds.map(selectedId => deleteQuestion(selectedId)));
+        loadQuestions();
+    }
+
     return (
         <>
             <QuestionForm handleSubmit={handleSubmit} />
             <ImportViewer onSubmit={handleImport} />
             <ExportQuestionsButton questionIds={selectedIds} />
+            <ConfirmDelete
+                onConfirmDelete={handleDeleteQuestions}
+                buttonText="Delete Selected"
+                message={`Are you sure you want to delete this question? This will remove it from all exam associations! This action cannot be undone!`}
+                disabled={!selectedIds.length}
+            />
             <QuestionsTable
                 questions={questions}
                 checkable

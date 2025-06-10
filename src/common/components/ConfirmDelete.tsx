@@ -11,11 +11,13 @@ interface DeleteQuestionProps {
     message: string;
     redirectPath?: string
     button?: React.ComponentType<{ onClick: () => void; disabled: boolean }>;
+    buttonText?: string;
+    disabled?: boolean | false;
 }
 
 
 export default function ConfirmDelete(props: DeleteQuestionProps) {
-    const { onConfirmDelete, message, redirectPath, button: CustomButton } = props;
+    const { onConfirmDelete, message, redirectPath, button: CustomButton, disabled, buttonText } = props;
     const [isDeleting, setIsDeleting] = React.useState(false);
     const dialogs = useDialogs();
     const navigate = useNavigate();
@@ -51,10 +53,10 @@ export default function ConfirmDelete(props: DeleteQuestionProps) {
                 <Button
                     variant="contained"
                     color="error"
-                    disabled={isDeleting}
+                    disabled={isDeleting || disabled}
                     onClick={handleDelete}
                 >
-                    Delete
+                    {"Delete" || buttonText}
                 </Button>
             )}
         </>
