@@ -6,23 +6,34 @@ import { useParams } from 'react-router-dom';
 import ExamForm from '../components/ExamForm';
 import QuestionsList from '../../../features/questions/components/QuestionsList';
 import ImportViewer from '../../../features/questions/components/ImportViewer';
+import QuestionsTable from '../../../features/questions/components/QuestionsTable';
+import ConfirmDelete from '../../../common/components/ConfirmDelete';
+import ExportQuestionsButton from '../../../features/questions/components/ExportQuestionsButton';
 
 
 export default function ExamPage() {
     const [exam, setExam] = useState(defaultExam);
     const { examId } = useParams<{ examId: string }>();
-    const { getExamById, updateExam, getQuestionsByExamId, addQuestionsBatch } = useDatabase();
+    const { getExamById,
+        updateExam,
+        getQuestionsByExamId,
+        addQuestionsBatch,
+        removeQuestionFromExam
+    } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [examQuestions, setExamQuestions] = useState<Question[]>([]);
+    const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
 
     // Single source of truth for loading exam data
-    const loadExam = async (id: number) => {
+    const loadExam = async () => {
+
         try {
             setLoading(true);
             setError(null);
-            const fetchedExam = await getExamById(id);
+            if (!examId) throw new Error("No examId provided");
+            const fetchedExam = await getExamById(parseInt(examId));
             if (fetchedExam) {
                 setExam(fetchedExam);
             } else {
@@ -36,22 +47,23 @@ export default function ExamPage() {
         }
     };
 
-    const loadQuestions = async (id: number) => {
+    const loadQuestions = async () => {
         try {
-            const questions = await getQuestionsByExamId(id);
-            setExamQuestions(questions)
-
+            if (!examId) throw new Error("No examId provided");
+            const questions = await getQuestionsByExamId(parseInt(examId));
+            setExamQuestions(questions);
         } catch (err) {
-            setError("Failed to load exam questions")
+            setError("Failed to load exam questions");
+            console.error("Failed to load exam questions:", err);
         }
-    }
+    };
 
 
     // Only fetch when examId changes (initial load)
     useEffect(() => {
         if (examId) {
-            loadExam(parseInt(examId));
-            loadQuestions(parseInt(examId));
+            loadExam();
+            loadQuestions();
         }
     }, [examId]);
 
@@ -64,9 +76,8 @@ export default function ExamPage() {
             await updateExam(updatedExam);
 
             // Explicitly refetch to get the updated data with fresh plant info
-            if (updatedExam.exam_id) {
-                await loadExam(updatedExam.exam_id);
-            }
+
+            await loadExam();
         } catch (err) {
             setError('Failed to update exam');
             console.error("Failed to update exam:", err);
@@ -95,8 +106,24 @@ export default function ExamPage() {
     const handleImport = async (questions: Question[]) => {
         const result = await addQuestionsBatch(questions)
         console.log(result)
-        await loadQuestions(exam.exam_id!);
+        await loadQuestions();
     }
+
+    const handleRemoveQuestionFromExam = async () => {
+        if (examId) {
+            Promise.all(selectedIds.map(selectedId => removeQuestionFromExam(parseInt(examId), selectedId)));
+            if (examId) {
+                loadExam();
+                loadQuestions();
+            }
+            setSelectedIds([]);
+        }
+    }
+
+    const onSelectionChange = (newSelectedIds: number[]) => {
+        setSelectedIds(newSelectedIds)
+    }
+
 
 
     return (
@@ -111,9 +138,6 @@ export default function ExamPage() {
             )}
 
             <ExamForm exam={exam} handleSubmit={handleSubmit} />
-            <Button onClick={handleExport}>Export Exam</Button>
-
-            <ImportViewer onSubmit={handleImport} />
 
             {loading && exam.exam_id && (
                 <Alert severity="info" sx={{ mt: 2 }}>
@@ -121,7 +145,22 @@ export default function ExamPage() {
                 </Alert>
             )}
 
-            <QuestionsList questions={examQuestions} deleteQuestion={() => { }} />
+            <ImportViewer onSubmit={handleImport} />
+            <ExportQuestionsButton questionIds={selectedIds} />
+            <ConfirmDelete
+                onConfirmDelete={handleRemoveQuestionFromExam}
+                buttonText="Remove From Exam"
+                message={`Are you sure you want to remove these questions from this exam?`}
+                disabled={!selectedIds.length}
+            />
+            <QuestionsTable
+                questions={examQuestions}
+                checkable
+                selectedIds={selectedIds}
+                onSelectionChange={onSelectionChange}
+            />
+
+
 
 
         </>

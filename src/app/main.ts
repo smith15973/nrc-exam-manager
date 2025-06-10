@@ -307,6 +307,10 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         await db.exams.delete(data);
         return { success: true };
 
+      case 'remove-question-from-exam':
+        console.log(data)
+        await db.exams.removeQuestion(data.examId, data.questionId)
+
       // Question operations
       case 'add-question':
         const questionId = await db.questions.add(data);

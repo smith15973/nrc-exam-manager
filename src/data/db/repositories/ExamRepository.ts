@@ -200,5 +200,31 @@ export class ExamRepository {
     }
 
 
+    async removeQuestion(examId: number, questionId: number): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error("Database is closing"));
+                return;
+            }
+
+            console.log("IN REPO", examId, questionId)
+            this.db.run(
+                'DELETE FROM exam_questions WHERE exam_id = ? AND question_id = ?',
+                [examId, questionId],
+                function (err) {
+                    if (err) {
+                        reject(err);
+                    } else if (this.changes === 0) { // `this` here refers to the Statement, NOT your class
+                        reject(new Error('Exam question not found'));
+                    } else {
+                        resolve();
+                    }
+                }
+            );
+        });
+    }
+
+
+
 
 }

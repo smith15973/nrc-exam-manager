@@ -56,7 +56,7 @@ export default function ConfirmDelete(props: DeleteQuestionProps) {
                     disabled={isDeleting || disabled}
                     onClick={handleDelete}
                 >
-                    {"Delete" || buttonText}
+                    {buttonText || "Delete"}
                 </Button>
             )}
         </>

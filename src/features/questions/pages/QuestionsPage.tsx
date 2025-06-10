@@ -51,6 +51,7 @@ export default function QuestionsPage() {
     const handleDeleteQuestions = () => {
         Promise.all(selectedIds.map(selectedId => deleteQuestion(selectedId)));
         loadQuestions();
+        setSelectedIds([]);
     }
 
     return (

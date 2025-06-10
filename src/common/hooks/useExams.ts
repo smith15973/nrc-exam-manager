@@ -110,11 +110,27 @@ export const useExams = () => {
     }
 
 
+    const removeQuestionFromExam = async (examId: number, questionId: number): Promise<void> => {
+        console.log(examId)
+        try {
+            const result = await window.db.exams.removeQuestion(examId, questionId)
+            console.log(result)
+            if (result.success) {
+                return
+            } else {
+                setError(result.error || 'Failed to remove questions');
+            }
+        } catch (err) {
+            setError('Failed to remove questions')
+        }
+    }
+
+
     useEffect(() => {
         getExams();
     }, []);
 
     return {
-        exams, getExams, addExam, updateExam, deleteExam, getExamsByQuestionId, getExamById, error
+        exams, getExams, addExam, updateExam, deleteExam, getExamsByQuestionId, getExamById, error, removeQuestionFromExam
     }
 }
