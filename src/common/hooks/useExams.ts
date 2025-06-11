@@ -111,10 +111,8 @@ export const useExams = () => {
 
 
     const removeQuestionFromExam = async (examId: number, questionId: number): Promise<void> => {
-        console.log(examId)
         try {
             const result = await window.db.exams.removeQuestion(examId, questionId)
-            console.log(result)
             if (result.success) {
                 return
             } else {

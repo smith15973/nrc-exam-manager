@@ -16,7 +16,6 @@ export const useQuestions = () => {
 
         try {
             const result = await window.db.questions.add(question);
-            console.log(result)
             if (result.success) {
                 setError(null);
                 await getQuestions();

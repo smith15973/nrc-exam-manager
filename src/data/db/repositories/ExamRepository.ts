@@ -207,11 +207,10 @@ export class ExamRepository {
                 return;
             }
 
-            console.log("IN REPO", examId, questionId)
             this.db.run(
                 'DELETE FROM exam_questions WHERE exam_id = ? AND question_id = ?',
                 [examId, questionId],
-                function (err) {
+                function (err) {        
                     if (err) {
                         reject(err);
                     } else if (this.changes === 0) { // `this` here refers to the Statement, NOT your class
