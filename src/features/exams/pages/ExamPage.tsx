@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDatabase } from '../../../common/hooks/useDatabase';
-import { Alert, Button, CircularProgress, Typography } from '@mui/material';
+import { Alert, Button, CircularProgress, FormControlLabel, Switch, Typography } from '@mui/material';
 import { defaultExam } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
 import ExamForm from '../components/ExamForm';
@@ -9,6 +9,7 @@ import QuestionsTable from '../../../features/questions/components/QuestionsTabl
 import ConfirmDelete from '../../../common/components/ConfirmDelete';
 import ExportQuestionsButton from '../../../features/questions/components/ExportQuestionsButton';
 import QuestionForm from '../../../features/questions/components/QuestionForm';
+import QuestionTemplate from '../../../features/questions/components/QuestionTemplate';
 
 
 export default function ExamPage() {
@@ -27,6 +28,8 @@ export default function ExamPage() {
     const [error, setError] = useState<string | null>(null);
     const [examQuestions, setExamQuestions] = useState<Question[]>([]);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [tableView, setTableView] = useState(true);
+    const [student, setStudent] = useState(false);
 
 
 
@@ -139,6 +142,16 @@ export default function ExamPage() {
         <>
 
             <Typography sx={{ pb: 2 }} variant='h4'>Exam: {exam.name} - {exam.plant?.name}</Typography>
+            <FormControlLabel
+                control={<Switch checked={tableView} onChange={(e) => setTableView(e.currentTarget.checked)} />}
+                label="Table View"
+                labelPlacement='start'
+            />
+            <FormControlLabel
+                    control={<Switch checked={student} onChange={(e) => setStudent(e.currentTarget.checked)} />}
+                    label="Student View"
+                    labelPlacement='start'
+                />
 
             {error && (
                 <Alert severity="error" sx={{ mb: 2 }}>
@@ -163,12 +176,18 @@ export default function ExamPage() {
                 message={`Are you sure you want to remove these questions from this exam?`}
                 disabled={!selectedIds.length}
             />
-            <QuestionsTable
-                questions={examQuestions}
-                checkable
-                selectedIds={selectedIds}
-                onSelectionChange={onSelectionChange}
-            />
+
+            {tableView ?
+                <QuestionsTable
+                    questions={examQuestions}
+                    checkable
+                    selectedIds={selectedIds}
+                    onSelectionChange={onSelectionChange}
+                /> : examQuestions?.map((examQuestion, idx) => {
+                    return (
+                        <QuestionTemplate key={examQuestion.question_id} question={examQuestion} examName={exam.name} student={student} />
+                    )
+                })}
 
 
 

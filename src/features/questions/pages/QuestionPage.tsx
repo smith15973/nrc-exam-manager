@@ -78,7 +78,7 @@ export default function QuestionPage() {
         <>
             <Box sx={{ display: 'flex', justifyContent: 'right' }}>
                 <FormControlLabel
-                    control={<Switch onChange={(e) => setStudent(e.currentTarget.checked)} />}
+                    control={<Switch checked={student} onChange={(e) => setStudent(e.currentTarget.checked)} />}
                     label="Student View"
                     labelPlacement='start'
                 />

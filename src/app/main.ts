@@ -329,7 +329,11 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         return { success: true, questions };
 
       case 'get-questions-by-exam-id':
-        const examQuestions = await db.questions.getByExamId(data);
+        const examQuestionIds = (await db.questions.getByExamId(data)).map(question => question.question_id);
+        const questionService = db.questionService; // Extract it first
+        const examQuestions = await Promise.all(
+          examQuestionIds.map(examQuestionId => questionService.getCompleteQuestion(examQuestionId))
+        );
         return { success: true, questions: examQuestions };
 
       case 'get-question-by-id':
