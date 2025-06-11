@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import QuestionForm from '../components/QuestionForm';
 import DeleteQuestion from '../components/DeleteQuestion';
 import ConfirmDelete from '../../../common/components/ConfirmDelete';
+import QuestionTemplate from '../components/QuestionTemplate';
 
 
 export default function QuestionPage() {
@@ -84,8 +85,6 @@ export default function QuestionPage() {
                 />
             </Box>
 
-            <Typography variant='h4' sx={{ pb: 2 }}>Question: {question.question_text}</Typography>
-
             {error && (
                 <Alert severity="error" sx={{ mb: 2 }}>
                     {error}
@@ -100,43 +99,7 @@ export default function QuestionPage() {
                 </Alert>
             )}
 
-            <Box>
-                {question.systems?.map(system => {
-                    return (
-                        <Box key={system.number}>
-                            <Box>Sys# {system.number}</Box>
-                            <Box>System Name: {system.name}</Box>
-                        </Box>
-                    )
-                })}
-            </Box>
-
-
-            <Box>
-                {question.kas?.map(ka => {
-                    return (
-                        <Box key={ka.ka_number}>
-                            <Box>KA# {ka.ka_number}</Box>
-                            <Box>KA Name: {ka.ka_description}</Box>
-                        </Box>
-                    )
-                })}
-            </Box>
-
-            <Box>Category: {question.category}</Box>
-            <Box>Exam Level: {question.exam_level}</Box>
-            <Box>Technical References: {question.technical_references}</Box>
-            <Box>Difficutly Level: {question.difficulty_level}</Box>
-            <Box>Cognitive Level: {question.cognitive_level}</Box>
-            <Box>Objective: {question.objective}</Box>
-            <Box>Last Used: {question.last_used}</Box>
-            <Box>{question.answers?.map(answer => {
-                return (
-                    <Box key={answer.option} sx={{ backgroundColor: answer.is_correct ? 'green' : '' }}>
-                        {answer.option}: {answer.answer_text}
-                    </Box>
-                )
-            })}</Box>
+            <QuestionTemplate question={question}/>
         </>
     )
 };

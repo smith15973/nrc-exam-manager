@@ -47,7 +47,6 @@ export default function QuestionForm(props: QuestionFormProps) {
         }
     }
     
-    console.log(examIds)
     setSelectedExams(examIds);
 }, [questionForm.exams, examId, exams]);
 
