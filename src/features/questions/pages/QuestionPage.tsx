@@ -99,7 +99,7 @@ export default function QuestionPage() {
                 </Alert>
             )}
 
-            <QuestionTemplate question={question}/>
+            <QuestionTemplate question={question}  />
         </>
     )
 };
