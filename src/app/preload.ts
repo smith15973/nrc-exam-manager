@@ -36,7 +36,9 @@ contextBridge.exposeInMainWorld('db', {
 
     update: (exam: Exam) => dbCall('update-exam', exam),
     delete: (examId: number) => dbCall('delete-exam', examId),
-    removeQuestion: (examId: number, questionId: number) => dbCall('remove-question-from-exam', { examId, questionId }),
+    removeQuestion: (examId: number, questionId: number) => dbCall('remove-exam-question', { examId, questionId }),
+    addQuestionToExam: (examId: number, questionId: number) => dbCall('add-exam-question', { examId, questionId }),
+
   },
   questions: {
     // Question operations

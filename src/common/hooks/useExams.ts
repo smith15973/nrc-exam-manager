@@ -123,12 +123,25 @@ export const useExams = () => {
         }
     }
 
+    const addExamQuestion = async (examId: number, questionId: number): Promise<void> => {
+        try {
+            const result = await window.db.exams.addQuestionToExam(examId, questionId)
+            if (result.success) {
+                return
+            } else {
+                setError(result.error || 'Failed to add exam question');
+            }
+        } catch (err) {
+            setError('Failed to add exam question')
+        }
+    }
+
 
     useEffect(() => {
         getExams();
     }, []);
 
     return {
-        exams, getExams, addExam, updateExam, deleteExam, getExamsByQuestionId, getExamById, error, removeQuestionFromExam
+        exams, getExams, addExam, updateExam, deleteExam, getExamsByQuestionId, getExamById, error, removeQuestionFromExam, addExamQuestion
     }
 }

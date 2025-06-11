@@ -139,6 +139,7 @@ interface Window {
       update: (exam: Exam) => Promise<ExamResponse>;
       delete: (examId: number) => Promise<ExamResponse>;
       removeQuestion: (examId: number, questionId: number) => Promise<ExamResponse>
+      addQuestionToExam: (examId: number, questionId: number) => Promise<ExamResponse>
     },
     questions: {
       add: (question: Question) => Promise<QuestionResponse>;

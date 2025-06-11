@@ -11,11 +11,12 @@ import CheckKas from '../../kas/components/CheckKas';
 interface QuestionFormProps {
     question?: Question;
     exam?: Exam;
-    handleSubmit: (question: Question) => void;
+    onSubmit: (question: Question) => void;
+    examId?: number;
 }
 
 export default function QuestionForm(props: QuestionFormProps) {
-    const { question, handleSubmit, exam } = props;
+    const { question, onSubmit, exam, examId } = props;
     const [questionForm, setQuestionForm] = useState<Question>(question || defaultQuestion);
     const [selectedExams, setSelectedExams] = useState<number[]>([])
     const [selectedSystems, setSelectedSystems] = useState<string[]>([])
@@ -30,9 +31,25 @@ export default function QuestionForm(props: QuestionFormProps) {
     }, [question, exam]);
 
     useEffect(() => {
-        const examIds = questionForm.exams?.map(exam => exam.exam_id).filter((id): id is number => id !== undefined) || [];
-        setSelectedExams(examIds);
-    }, [questionForm.exams]);
+    const examIds = questionForm.exams?.map(exam => exam.exam_id).filter((id): id is number => id !== undefined) || [];
+    
+    // If examId prop is provided and not already in the form
+    if (examId && !examIds.includes(examId)) {
+        // Find the exam object from the exams list
+        const examToAdd = exams.find(exam => exam.exam_id === examId);
+        if (examToAdd) {
+            // Add the exam to the form
+            setQuestionForm(prev => ({
+                ...prev,
+                exams: [...(prev.exams || []), examToAdd]
+            }));
+            examIds.push(examId);
+        }
+    }
+    
+    console.log(examIds)
+    setSelectedExams(examIds);
+}, [questionForm.exams, examId, exams]);
 
     useEffect(() => {
         const systemNums = questionForm.systems?.map(system => system.number).filter((num): num is string => num !== undefined) || [];
@@ -106,8 +123,8 @@ export default function QuestionForm(props: QuestionFormProps) {
     const handleSystemCheckChange = createSimpleCheckHandler(systems, 'number', 'systems');
     const handleKaCheckChange = createSimpleCheckHandler(kas, 'ka_number', 'kas');
 
-    const onSubmit = () => {
-        handleSubmit(questionForm)
+    const handleSubmit = () => {
+        onSubmit(questionForm)
         setQuestionForm(defaultQuestion)
         setOpen(false);
     }
@@ -144,7 +161,7 @@ export default function QuestionForm(props: QuestionFormProps) {
                 open={open}
                 title={`${question ? 'Edit' : 'Add'} Question`}
                 submitText={`${question ? 'Update' : 'Add'} Question`}
-                onSubmit={onSubmit}
+                onSubmit={handleSubmit}
                 onClose={() => setOpen(false)}
                 validate={validateForm}
                 maxWidth='lg'

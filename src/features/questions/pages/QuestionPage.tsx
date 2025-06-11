@@ -76,7 +76,7 @@ export default function QuestionPage() {
     return (
         <>
             <Box display={'flex'} justifyContent={'space-between'}>
-                <QuestionForm question={question} handleSubmit={handleSubmit} />
+                <QuestionForm question={question} onSubmit={handleSubmit} />
                 <ConfirmDelete
                     message='Are you sure you want to delete this question? This will remove it from all exam associations! This action cannot be undone!'
                     onConfirmDelete={() => deleteQuestion(question.question_id)}

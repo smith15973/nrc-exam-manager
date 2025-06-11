@@ -1,4 +1,6 @@
+import { Button } from "@mui/material";
 import { useEffect, useState } from "react";
+import CheckExams from "../../../features/exams/components/CheckExams";
 import ConfirmDelete from "../../../common/components/ConfirmDelete";
 import { useDatabase } from "../../../common/hooks/useDatabase";
 import ExportQuestionsButton from "../components/ExportQuestionsButton";
@@ -13,10 +15,12 @@ import QuestionsTable from "../components/QuestionsTable";
 
 
 export default function QuestionsPage() {
-    const { addQuestion, addQuestionsBatch, getQuestionsComplete, deleteQuestion } = useDatabase();
+    const { addQuestion, addQuestionsBatch, getQuestionsComplete, deleteQuestion, addExamQuestion: addQuestionToExam, exams } = useDatabase();
     const [questions, setQuestions] = useState<Question[]>([]);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [selectedExamIds, setSelectedExamIds] = useState<number[]>([]);
     const [error, setError] = useState<string | null>(null);
+
 
 
     useEffect(() => {
@@ -54,9 +58,12 @@ export default function QuestionsPage() {
         setSelectedIds([]);
     }
 
+
+
+
     return (
         <>
-            <QuestionForm handleSubmit={handleSubmit} />
+            <QuestionForm onSubmit={handleSubmit} />
             <ImportViewer onSubmit={handleImport} />
             <ExportQuestionsButton questionIds={selectedIds} />
             <ConfirmDelete

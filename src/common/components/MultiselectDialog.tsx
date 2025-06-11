@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import { Search, FilterList, Clear, Check, Close } from '@mui/icons-material';
 import React, { useState, useMemo } from 'react';
+import SearchField from './SearchField';
 
 interface MultiSelectConfig<T, K> {
     label: string;
@@ -253,30 +254,9 @@ export default function MultiSelectDialog<T, K extends string | number>(props: M
                 </DialogTitle>
 
                 <DialogContent>
-                    {/* Search Bar */}
-                    <TextField
-                        placeholder='Search (use "quotes" for exact match, AND/OR for boolean search)'
-                        fullWidth
+                    <SearchField
                         value={filterState.searchQuery}
-                        onChange={(e) => handleFilterChange('searchQuery', e.target.value)}
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <Search />
-                                </InputAdornment>
-                            ),
-                            endAdornment: filterState.searchQuery && (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        onClick={() => handleFilterChange('searchQuery', '')}
-                                        size="small"
-                                    >
-                                        <Clear />
-                                    </IconButton>
-                                </InputAdornment>
-                            )
-                        }}
-                        sx={{ mb: 2 }}
+                        onChange={(value) => handleFilterChange('searchQuery', value)}
                     />
 
                     {/* Quick Filters */}

@@ -4,26 +4,30 @@ import { Alert, Button, CircularProgress, Typography } from '@mui/material';
 import { defaultExam } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
 import ExamForm from '../components/ExamForm';
-import QuestionsList from '../../../features/questions/components/QuestionsList';
 import ImportViewer from '../../../features/questions/components/ImportViewer';
 import QuestionsTable from '../../../features/questions/components/QuestionsTable';
 import ConfirmDelete from '../../../common/components/ConfirmDelete';
 import ExportQuestionsButton from '../../../features/questions/components/ExportQuestionsButton';
+import QuestionForm from '../../../features/questions/components/QuestionForm';
 
 
 export default function ExamPage() {
     const [exam, setExam] = useState(defaultExam);
-    const { examId } = useParams<{ examId: string }>();
+    const { examId: examIdParam } = useParams<{ examId: string }>();
+    const examId = examIdParam ? parseInt(examIdParam, 10) : undefined;
     const { getExamById,
         updateExam,
         getQuestionsByExamId,
         addQuestionsBatch,
-        removeQuestionFromExam
+        removeQuestionFromExam,
+        addExamQuestion,
+        addQuestion
     } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [examQuestions, setExamQuestions] = useState<Question[]>([]);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
 
 
     // Single source of truth for loading exam data
@@ -33,7 +37,7 @@ export default function ExamPage() {
             setLoading(true);
             setError(null);
             if (!examId) throw new Error("No examId provided");
-            const fetchedExam = await getExamById(parseInt(examId));
+            const fetchedExam = await getExamById(examId);
             if (fetchedExam) {
                 setExam(fetchedExam);
             } else {
@@ -50,7 +54,7 @@ export default function ExamPage() {
     const loadQuestions = async () => {
         try {
             if (!examId) throw new Error("No examId provided");
-            const questions = await getQuestionsByExamId(parseInt(examId));
+            const questions = await getQuestionsByExamId(examId);
             setExamQuestions(questions);
         } catch (err) {
             setError("Failed to load exam questions");
@@ -111,7 +115,7 @@ export default function ExamPage() {
 
     const handleRemoveQuestionFromExam = async () => {
         if (examId) {
-            Promise.all(selectedIds.map(selectedId => removeQuestionFromExam(parseInt(examId), selectedId)));
+            Promise.all(selectedIds.map(selectedId => removeQuestionFromExam(examId, selectedId)));
             if (examId) {
                 loadExam();
                 loadQuestions();
@@ -122,6 +126,11 @@ export default function ExamPage() {
 
     const onSelectionChange = (newSelectedIds: number[]) => {
         setSelectedIds(newSelectedIds)
+    }
+
+    const handleCreateNewQuestion = async (question: Question) => {
+        await addQuestion(question)
+        await loadQuestions();
     }
 
 
@@ -145,6 +154,7 @@ export default function ExamPage() {
                 </Alert>
             )}
 
+            <QuestionForm examId={examId} onSubmit={handleCreateNewQuestion} />
             <ImportViewer onSubmit={handleImport} />
             <ExportQuestionsButton questionIds={selectedIds} />
             <ConfirmDelete

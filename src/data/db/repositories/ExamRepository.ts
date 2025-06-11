@@ -210,13 +210,34 @@ export class ExamRepository {
             this.db.run(
                 'DELETE FROM exam_questions WHERE exam_id = ? AND question_id = ?',
                 [examId, questionId],
-                function (err) {        
+                function (err) {
                     if (err) {
                         reject(err);
                     } else if (this.changes === 0) { // `this` here refers to the Statement, NOT your class
                         reject(new Error('Exam question not found'));
                     } else {
                         resolve();
+                    }
+                }
+            );
+        });
+    }
+
+    async addQuestionToExam(examId: number, questionId: number): Promise<number> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error("Database is closing"));
+                return;
+            }
+
+            this.db.run(
+                'INSERT INTO exam_questions (exam_id, question_id) VALUES (?, ?)',
+                [examId, questionId],
+                function (err) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(this.lastID);
                     }
                 }
             );
