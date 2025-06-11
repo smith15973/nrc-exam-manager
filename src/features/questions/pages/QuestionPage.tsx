@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useDatabase } from '../../../common/hooks/useDatabase';
-import { Alert, CircularProgress, Typography, Box } from '@mui/material';
+import { Alert, CircularProgress, Box, Switch, FormControl, FormLabel, FormControlLabel } from '@mui/material';
 import { defaultQuestion } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
 import QuestionForm from '../components/QuestionForm';
-import DeleteQuestion from '../components/DeleteQuestion';
 import ConfirmDelete from '../../../common/components/ConfirmDelete';
 import QuestionTemplate from '../components/QuestionTemplate';
 
@@ -15,6 +14,7 @@ export default function QuestionPage() {
     const { getQuestionComplete, updateQuestion, deleteQuestion } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [student, setStudent] = useState(false);
 
 
     // Single source of truth for loading question data
@@ -76,6 +76,13 @@ export default function QuestionPage() {
 
     return (
         <>
+            <Box sx={{ display: 'flex', justifyContent: 'right' }}>
+                <FormControlLabel
+                    control={<Switch onChange={(e) => setStudent(e.currentTarget.checked)} />}
+                    label="Student View"
+                    labelPlacement='start'
+                />
+            </Box>
             <Box display={'flex'} justifyContent={'space-between'}>
                 <QuestionForm question={question} onSubmit={handleSubmit} />
                 <ConfirmDelete
@@ -99,7 +106,7 @@ export default function QuestionPage() {
                 </Alert>
             )}
 
-            <QuestionTemplate question={question}  />
+            <QuestionTemplate question={question} student={student} />
         </>
     )
 };
