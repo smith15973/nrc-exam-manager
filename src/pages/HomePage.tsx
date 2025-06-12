@@ -1,9 +1,19 @@
 import { ImportExport } from '@mui/icons-material';
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 
 export default function HomePage() {
+
+    const handleChangeDatabase = async () => {
+        try {
+        const result = await window.files.changeDBLocation();
+        console.log(result);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     return (
         <>
             <Typography variant='h4'>NRC EXAM MANAGER</Typography>
@@ -22,6 +32,7 @@ export default function HomePage() {
             <Box>
                 <Link to={"/kas"}>Kas</Link>
             </Box>
+            <Button onClick={handleChangeDatabase}>Change Database</Button>
         </>
     )
 };

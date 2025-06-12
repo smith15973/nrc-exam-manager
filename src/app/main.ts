@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
-import { Database } from '../data/db/database'
+import { Database } from '../data/db/database';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as Papa from 'papaparse';
@@ -10,97 +10,290 @@ import { ExportRepository } from '../data/db/repositories/ExportRepository';
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-// Define WindowState interface
-interface WindowState {
-  x?: number;
-  y?: number;
-  width: number;
-  height: number;
+// Define Config interface
+interface Config {
+  windowState: {
+    x?: number;
+    y?: number;
+    width: number;
+    height: number;
+  };
+  dbPath?: string | null;
 }
+
 let importRepository: ImportRepository | null = null;
 let exportRepository: ExportRepository | null = null;
 let mainWindow: BrowserWindow | null = null;
 let db: Database | null = null;
 let isShuttingDown = false;
 
-// Path to store window position data
-const getWindowStatePath = (): string => {
-  return path.join(app.getPath('userData'), 'window-state.json');
+// Path to store configuration
+const getConfigPath = (): string => {
+  return path.join(app.getPath('userData'), 'config.json');
 };
 
-const getDbConfigPath = (): string => {
-  return path.join(app.getPath('userData'), 'db-config.json');
+const loadConfig = (): Config => {
+  try {
+    const configPath = getConfigPath();
+    if (fs.existsSync(configPath)) {
+      const configContent = fs.readFileSync(configPath, 'utf8');
+      console.log('Config content:', configContent);
+      
+      // Check if the content is empty or only whitespace
+      if (!configContent.trim()) {
+        console.warn('Config file is empty, returning default configuration');
+        return {
+          windowState: {
+            width: 1200,
+            height: 800,
+          },
+        };
+      }
+
+      const config = JSON.parse(configContent);
+      console.log('Parsed config:', config);
+      
+      // Ensure windowState is always present
+      return {
+        windowState: {
+          width: 1200,
+          height: 800,
+          ...config.windowState, // Merge with saved windowState, if it exists
+        },
+        dbPath: config.dbPath,
+      };
+    }
+  } catch (error) {
+    console.error('Error loading config:', error);
+  }
+  // Default configuration if file doesn't exist, is empty, or is invalid
+  return {
+    windowState: {
+      width: 1200,
+      height: 800,
+    },
+  };
 };
 
-// Function to save window position and size
+// Function to save configuration
+const saveConfig = (config: Config): void => {
+  try {
+    fs.writeFileSync(getConfigPath(), JSON.stringify(config, null, 2));
+  } catch (error) {
+    console.error('Error saving config:', error);
+  }
+};
+
+// Function to save window state
 const saveWindowState = (window: BrowserWindow): void => {
   if (!window.isMinimized() && !window.isMaximized()) {
     const position = window.getPosition();
     const size = window.getSize();
-
-    const windowState: WindowState = {
+    const config = loadConfig();
+    config.windowState = {
       x: position[0],
       y: position[1],
       width: size[0],
-      height: size[1]
+      height: size[1],
     };
-
-    try {
-      fs.writeFileSync(getWindowStatePath(), JSON.stringify(windowState));
-    } catch (error) {
-      console.error('Error saving window state:', error);
-    }
+    saveConfig(config);
   }
 };
 
-// Function to load saved window state
-const loadWindowState = (): WindowState => {
-  try {
-    const windowStatePath = getWindowStatePath();
-    if (fs.existsSync(windowStatePath)) {
-      return JSON.parse(fs.readFileSync(windowStatePath, 'utf8'));
-    }
-  } catch (error) {
-    console.error('Error loading window state:', error);
-  }
+// Function to show initial database choice dialog
+const showInitialDatabaseChoice = async (): Promise<'new' | 'existing' | null> => {
+  const result = await dialog.showMessageBox({
+    type: 'question',
+    title: 'Database Setup',
+    message: 'Welcome! Please choose how you want to set up your database:',
+    buttons: ['Create New Database', 'Open Existing Database', 'Cancel'],
+    defaultId: 0,
+    cancelId: 2
+  });
 
-  // Default window state if no saved state exists
-  return {
-    width: 1200,
-    height: 800
-  };
-};
-
-const loadDbConfig = (): string | null => {
-  try {
-    const dbConfigPath = getDbConfigPath();
-    if (fs.existsSync(dbConfigPath)) {
-      const config = JSON.parse(fs.readFileSync(dbConfigPath, 'utf8'));
-      return config.dbPath || null;
-    }
-  } catch (error) {
-    console.error('Error loading database config:', error);
-  }
-  return null;
-};
-
-const saveDbConfig = (dbPath: string): void => {
-  try {
-    const dbConfigPath = getDbConfigPath();
-    fs.writeFileSync(dbConfigPath, JSON.stringify({ dbPath }));
-  } catch (error) {
-    console.error('Error saving database config:', error);
+  switch (result.response) {
+    case 0: return 'new';
+    case 1: return 'existing';
+    default: return null;
   }
 };
 
-const promptForDbPath = async (isChangeDb = false): Promise<string | null> => {
+// Function to prompt for new database location
+const promptForNewDbPath = async (): Promise<string | null> => {
+  const result = await dialog.showSaveDialog({
+    title: 'Create New Database',
+    defaultPath: path.join(app.getPath('userData'), 'database.db'),
+    filters: [{ name: 'SQLite Database', extensions: ['db', 'sqlite', 'sqlite3'] }],
+    properties: ['createDirectory']
+  });
+  
+  return result.canceled ? null : result.filePath || null;
+};
+
+// Function to prompt for existing database
+const promptForExistingDbPath = async (): Promise<string | null> => {
   const result = await dialog.showOpenDialog({
-    title: isChangeDb ? 'Select Existing Database' : 'Select or Create Database',
+    title: 'Select Existing Database',
     defaultPath: app.getPath('userData'),
     filters: [{ name: 'SQLite Database', extensions: ['db', 'sqlite', 'sqlite3'] }],
-    properties: ['openFile', 'createDirectory'], // Allow selecting existing files
+    properties: ['openFile']
   });
-  return result.canceled ? null : result.filePaths[0] || null;
+  
+  if (result.canceled || !result.filePaths.length) {
+    return null;
+  }
+  
+  const selectedPath = result.filePaths[0];
+  
+  // Verify the file exists and is accessible
+  try {
+    fs.accessSync(selectedPath, fs.constants.R_OK | fs.constants.W_OK);
+    return selectedPath;
+  } catch (error) {
+    console.error('Database file is not accessible:', error);
+    await dialog.showErrorBox(
+      'Database Error', 
+      `Cannot access the selected database file: ${selectedPath}\n\nPlease check file permissions or select a different file.`
+    );
+    return null;
+  }
+};
+
+// Function to handle initial database setup
+const setupInitialDatabase = async (): Promise<string | null> => {
+  const choice = await showInitialDatabaseChoice();
+  
+  if (!choice) {
+    return null; // User cancelled
+  }
+  
+  let dbPath: string | null = null;
+  
+  if (choice === 'new') {
+    dbPath = await promptForNewDbPath();
+    if (dbPath) {
+      // Ensure the directory exists
+      const dir = path.dirname(dbPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      // If file already exists, ask for confirmation
+      if (fs.existsSync(dbPath)) {
+        const overwrite = await dialog.showMessageBox({
+          type: 'warning',
+          title: 'File Exists',
+          message: `The file "${path.basename(dbPath)}" already exists. Do you want to overwrite it?`,
+          buttons: ['Overwrite', 'Choose Different Location', 'Cancel'],
+          defaultId: 1,
+          cancelId: 2
+        });
+        
+        if (overwrite.response === 1) {
+          // Choose different location
+          return await setupInitialDatabase();
+        } else if (overwrite.response === 2) {
+          // Cancel
+          return null;
+        }
+        // If response === 0, continue with overwrite
+      }
+    }
+  } else {
+    dbPath = await promptForExistingDbPath();
+  }
+  
+  return dbPath;
+};
+
+// Function to show change database choice dialog
+const showChangeDatabaseChoice = async (): Promise<'new' | 'existing' | null> => {
+  const result = await dialog.showMessageBox({
+    type: 'question',
+    title: 'Change Database',
+    message: 'How would you like to change your database?',
+    buttons: ['Create New Database', 'Switch to Existing Database', 'Cancel'],
+    defaultId: 0,
+    cancelId: 2
+  });
+
+  switch (result.response) {
+    case 0: return 'new';
+    case 1: return 'existing';
+    default: return null;
+  }
+};
+
+// Function to handle database change
+const changeDatabaseLocation = async (): Promise<{ success: boolean; dbPath?: string; error?: string }> => {
+  const choice = await showChangeDatabaseChoice();
+  
+  if (!choice) {
+    return { success: false, error: 'Operation cancelled' };
+  }
+  
+  let newDbPath: string | null = null;
+  
+  if (choice === 'new') {
+    newDbPath = await promptForNewDbPath();
+    if (newDbPath) {
+      // Ensure the directory exists
+      const dir = path.dirname(newDbPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      // If file already exists, ask for confirmation
+      if (fs.existsSync(newDbPath)) {
+        const overwrite = await dialog.showMessageBox({
+          type: 'warning',
+          title: 'File Exists',
+          message: `The file "${path.basename(newDbPath)}" already exists. Do you want to overwrite it?`,
+          buttons: ['Overwrite', 'Cancel'],
+          defaultId: 1,
+          cancelId: 1
+        });
+        
+        if (overwrite.response === 1) {
+          return { success: false, error: 'Operation cancelled' };
+        }
+      }
+    }
+  } else {
+    newDbPath = await promptForExistingDbPath();
+  }
+  
+  if (!newDbPath) {
+    return { success: false, error: 'No database path selected' };
+  }
+  
+  try {
+    // Close existing database connection
+    if (db) {
+      console.log('Closing existing database connection...');
+      db.close();
+      db = null;
+      importRepository = null;
+      exportRepository = null;
+    }
+    
+    // Update config with new database path
+    const config = loadConfig();
+    config.dbPath = newDbPath;
+    saveConfig(config);
+    
+    // Initialize new database connection
+    db = new Database(newDbPath);
+    importRepository = new ImportRepository(db);
+    exportRepository = new ExportRepository(db);
+    
+    console.log('Database changed to:', newDbPath);
+    
+    return { success: true, dbPath: newDbPath };
+  } catch (error) {
+    console.error('Error changing database:', error);
+    return { success: false, error: `Failed to switch database: ${error instanceof Error ? error.message : 'Unknown error'}` };
+  }
 };
 
 // Add graceful shutdown function
@@ -129,17 +322,50 @@ if (require('electron-squirrel-startup')) {
 }
 
 const createWindow = async (): Promise<void> => {
-  const windowState = loadWindowState();
+  const config = loadConfig();
+  const windowState = config.windowState || { width: 1200, height: 800 };
 
-  let dbPath = loadDbConfig();
+  let dbPath = config.dbPath;
+  
+  // If no database path is configured, show initial setup
   if (!dbPath) {
-    dbPath = await promptForDbPath();
+    dbPath = await setupInitialDatabase();
     if (!dbPath) {
-      console.error('No database path selected, quitting app');
+      console.log('No database path selected, quitting app');
       app.quit();
       return;
     }
-    saveDbConfig(dbPath);
+    config.dbPath = dbPath;
+    saveConfig(config);
+  } else {
+    // Verify existing database path is still accessible
+    try {
+      fs.accessSync(dbPath, fs.constants.R_OK | fs.constants.W_OK);
+    } catch (error) {
+      console.warn('Configured database path is not accessible:', dbPath);
+      const reconnect = await dialog.showMessageBox({
+        type: 'warning',
+        title: 'Database Not Found',
+        message: `The configured database at "${dbPath}" is not accessible.\n\nWould you like to select a different database?`,
+        buttons: ['Select Different Database', 'Quit Application'],
+        defaultId: 0,
+        cancelId: 1
+      });
+      
+      if (reconnect.response === 0) {
+        dbPath = await setupInitialDatabase();
+        if (!dbPath) {
+          console.log('No database path selected, quitting app');
+          app.quit();
+          return;
+        }
+        config.dbPath = dbPath;
+        saveConfig(config);
+      } else {
+        app.quit();
+        return;
+      }
+    }
   }
 
   mainWindow = new BrowserWindow({
@@ -154,6 +380,7 @@ const createWindow = async (): Promise<void> => {
     },
   });
 
+  // Initialize database and repositories
   if (!db) {
     db = new Database(dbPath);
     console.log('Database initialized at:', dbPath);
@@ -209,37 +436,13 @@ app.on('activate', async () => {
   }
 });
 
-
-// // File Dialog Helpers
-// async function saveFileDialog(defaultName: string, filters: Electron.FileFilter[]): Promise<string | null> {
-//   const result = await dialog.showSaveDialog({
-//     defaultPath: defaultName,
-//     filters
-//   });
-
-//   return result.canceled ? null : result.filePath!;
-// }
-
-// async function openFileDialog(filters: Electron.FileFilter[], allowMultiple = false): Promise<string[] | null> {
-//   const properties: Electron.OpenDialogOptions['properties'] = ['openFile'];
-//   if (allowMultiple) {
-//     properties.push('multiSelections');
-//   }
-
-//   const result = await dialog.showOpenDialog({
-//     properties,
-//     filters
-//   });
-
-//   return result.canceled ? null : result.filePaths;
-// }
-
-
 // Import handlers
 ipcMain.handle('files-operation', async (_event, { operation, data }) => {
   // Ensure database is initialized
   if (!db) {
-    db = new Database(loadDbConfig() || path.join(app.getPath('userData'), 'nrc_exam_questions_database.db'));
+    const config = loadConfig();
+    const dbPath = config.dbPath || path.join(app.getPath('userData'), 'nrc_exam_questions_database.db');
+    db = new Database(dbPath);
   }
 
   if (!importRepository) {
@@ -260,22 +463,22 @@ ipcMain.handle('files-operation', async (_event, { operation, data }) => {
     case 'open-location': {
       return shell.showItemInFolder(data);
     }
+    case 'change-db-location':
+      return await changeDatabaseLocation();
 
     default:
       return { success: false, error: `Unknown files operation ${operation}` };
   }
 })
 
-
-
-
-
 // Unified database handler
 ipcMain.handle('db-operation', async (_event, { operation, data }) => {
   try {
     // Ensure database is initialized
     if (!db) {
-      db = new Database(loadDbConfig() || path.join(app.getPath('userData'), 'nrc_exam_questions_database.db'));
+      const config = loadConfig();
+      const dbPath = config.dbPath || path.join(app.getPath('userData'), 'nrc_exam_questions_database.db');
+      db = new Database(dbPath);
     }
 
     // Route to appropriate database method
@@ -344,7 +547,6 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         const examQuestionId = await db.exams.addQuestionToExam(data.examId, data.questionId)
         return { success: true, examQuestionId };
 
-
       // Question operations
       case 'add-question':
         const questionId = await db.questions.add(data);
@@ -360,7 +562,7 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
 
       case 'get-questions-by-exam-id':
         const examQuestionIds = (await db.questions.getByExamId(data)).map(question => question.question_id);
-        const questionService = db.questionService; // Extract it first
+        const questionService = db.questionService;
         const examQuestions = await Promise.all(
           examQuestionIds.map(examQuestionId => questionService.getCompleteQuestion(examQuestionId))
         );

@@ -178,6 +178,7 @@ interface Window {
       questions: (questionIds: number[]) => Promise<QuestionsExportResponse>
     },
     openLocation: (filePath: string) => void,
+    changeDBLocation: () => Promise<ApiResponse>;
   }
 }
 

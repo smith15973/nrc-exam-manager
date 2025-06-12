@@ -81,4 +81,5 @@ contextBridge.exposeInMainWorld('files', {
     questions: (questionIds: number[]) => filesCall('export-questions', questionIds),
   },
   openLocation: (filePath: string) => filesCall('open-location', filePath),
+  changeDBLocation: () => filesCall('change-db-location'),
 })
