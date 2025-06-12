@@ -122,7 +122,7 @@ const showInitialDatabaseChoice = async (): Promise<'new' | 'existing' | null> =
 const promptForNewDbPath = async (): Promise<string | null> => {
   const result = await dialog.showSaveDialog({
     title: 'Create New Database',
-    defaultPath: path.join(app.getPath('userData'), 'database.db'),
+    defaultPath: loadConfig().dbPath || path.join(app.getPath('userData'), 'database.db'),
     filters: [{ name: 'SQLite Database', extensions: ['db', 'sqlite', 'sqlite3'] }],
     properties: ['createDirectory']
   });
@@ -134,7 +134,7 @@ const promptForNewDbPath = async (): Promise<string | null> => {
 const promptForExistingDbPath = async (): Promise<string | null> => {
   const result = await dialog.showOpenDialog({
     title: 'Select Existing Database',
-    defaultPath: app.getPath('userData'),
+    defaultPath: loadConfig().dbPath || app.getPath('userData'),
     filters: [{ name: 'SQLite Database', extensions: ['db', 'sqlite', 'sqlite3'] }],
     properties: ['openFile']
   });
