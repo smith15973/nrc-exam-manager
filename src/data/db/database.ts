@@ -113,9 +113,9 @@ export class Database {
     // Current version is the highest migration number
     private readonly currentSchemaVersion = Math.max(...Object.keys(Database.MIGRATIONS).map(Number));
 
-    constructor() {
+    constructor(dbPath: string) {
         // const dbPath = path.join(app.getPath('userData'), 'nrc_exam_questions_database.db');
-        const dbPath = '/Users/noah/Desktop/Projects/Davis_Besse_2025/nrc-exam-manager/src/data/nrc_exam_questions_database.db';
+        // const dbPath = '/Users/noah/Desktop/Projects/Davis_Besse_2025/nrc-exam-manager/src/data/nrc_exam_questions_database.db';
         console.log('Database location:', dbPath);
         console.log('Target schema version:', this.currentSchemaVersion);
 

@@ -28,6 +28,10 @@ const getWindowStatePath = (): string => {
   return path.join(app.getPath('userData'), 'window-state.json');
 };
 
+const getDbConfigPath = (): string => {
+  return path.join(app.getPath('userData'), 'db-config.json');
+};
+
 // Function to save window position and size
 const saveWindowState = (window: BrowserWindow): void => {
   if (!window.isMinimized() && !window.isMaximized()) {
@@ -67,31 +71,56 @@ const loadWindowState = (): WindowState => {
   };
 };
 
+const loadDbConfig = (): string | null => {
+  try {
+    const dbConfigPath = getDbConfigPath();
+    if (fs.existsSync(dbConfigPath)) {
+      const config = JSON.parse(fs.readFileSync(dbConfigPath, 'utf8'));
+      return config.dbPath || null;
+    }
+  } catch (error) {
+    console.error('Error loading database config:', error);
+  }
+  return null;
+};
+
+const saveDbConfig = (dbPath: string): void => {
+  try {
+    const dbConfigPath = getDbConfigPath();
+    fs.writeFileSync(dbConfigPath, JSON.stringify({ dbPath }));
+  } catch (error) {
+    console.error('Error saving database config:', error);
+  }
+};
+
+const promptForDbPath = async (isChangeDb = false): Promise<string | null> => {
+  const result = await dialog.showOpenDialog({
+    title: isChangeDb ? 'Select Existing Database' : 'Select or Create Database',
+    defaultPath: app.getPath('userData'),
+    filters: [{ name: 'SQLite Database', extensions: ['db', 'sqlite', 'sqlite3'] }],
+    properties: ['openFile', 'createDirectory'], // Allow selecting existing files
+  });
+  return result.canceled ? null : result.filePaths[0] || null;
+};
+
 // Add graceful shutdown function
 const handleShutdown = async (): Promise<void> => {
   if (isShuttingDown) return;
   isShuttingDown = true;
-
   console.log('Application shutting down...');
-
-  // Save window state if window exists
   if (mainWindow && !mainWindow.isDestroyed()) {
     saveWindowState(mainWindow);
   }
-
-  // Close the database connection
   if (db) {
     console.log('Closing database...');
     try {
-      await db.close();
+      db.close();
       console.log('Database closed successfully');
     } catch (err) {
       console.error('Error closing database:', err);
     }
     db = null;
   }
-
-  // Exit the application with success code
   process.exit(0);
 };
 
@@ -99,9 +128,19 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-const createWindow = (): void => {
-  // Load saved window state
+const createWindow = async (): Promise<void> => {
   const windowState = loadWindowState();
+
+  let dbPath = loadDbConfig();
+  if (!dbPath) {
+    dbPath = await promptForDbPath();
+    if (!dbPath) {
+      console.error('No database path selected, quitting app');
+      app.quit();
+      return;
+    }
+    saveDbConfig(dbPath);
+  }
 
   mainWindow = new BrowserWindow({
     x: windowState.x,
@@ -115,10 +154,9 @@ const createWindow = (): void => {
     },
   });
 
-  // Initialize database if not already initialized
   if (!db) {
-    db = new Database();
-    console.log('Database initialized');
+    db = new Database(dbPath);
+    console.log('Database initialized at:', dbPath);
   }
 
   if (!importRepository) {
@@ -133,7 +171,6 @@ const createWindow = (): void => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   mainWindow.webContents.openDevTools();
 
-  // Save window state when the window is closed
   mainWindow.on('close', () => {
     if (mainWindow) {
       saveWindowState(mainWindow);
@@ -145,37 +182,30 @@ const createWindow = (): void => {
   });
 };
 
-app.on('ready', () => {
-  createWindow();
+app.on('ready', async () => {
+  await createWindow();
 });
 
-// Register process event handlers for termination signals
 process.on('SIGINT', handleShutdown);
 process.on('SIGTERM', handleShutdown);
 process.on('SIGHUP', handleShutdown);
 
-// Modify will-quit to use our handleShutdown function
 app.on('will-quit', (event) => {
   if (!isShuttingDown) {
-    // Prevent the default quit behavior
     event.preventDefault();
-    // Use our custom shutdown handler
     handleShutdown();
   }
 });
 
-
-// Modified to keep database connection open on macOS
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
-  // Don't close the database here, just let the window close
 });
 
-app.on('activate', () => {
+app.on('activate', async () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    await createWindow();
   }
 });
 
@@ -209,7 +239,7 @@ app.on('activate', () => {
 ipcMain.handle('files-operation', async (_event, { operation, data }) => {
   // Ensure database is initialized
   if (!db) {
-    db = new Database();
+    db = new Database(loadDbConfig() || path.join(app.getPath('userData'), 'nrc_exam_questions_database.db'));
   }
 
   if (!importRepository) {
@@ -245,7 +275,7 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
   try {
     // Ensure database is initialized
     if (!db) {
-      db = new Database();
+      db = new Database(loadDbConfig() || path.join(app.getPath('userData'), 'nrc_exam_questions_database.db'));
     }
 
     // Route to appropriate database method
