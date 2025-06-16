@@ -12,7 +12,7 @@ interface SearchFieldProps extends Omit<TextFieldProps, 'onChange'> {
 const SearchField: React.FC<SearchFieldProps> = ({
   value = '',
   onChange,
-  placeholder = 'Search (use "quotes" for exact match, AND/OR for boolean search)',
+  placeholder = 'Search',
   fullWidth = true,
   sx = { mb: 2 },
   disabled = false,
