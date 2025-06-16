@@ -170,3 +170,19 @@ export const defaultSystem: System = {
   name: '',
 }
 
+export const defaultQuestionFilters = {
+  query: '',
+  examIds: [],
+  kaNums: [],
+  systemNums: [],
+  lastUsedStart: '',
+  lastUsedEnd: '',
+  examLevelStart: '',
+  examLevelEnd: '',
+  diffLevelStart: '',
+  diffLevelEnd: '',
+  cogLevelStart: '',
+  cogLevelEnd: '',
+  objective: '',
+}
+

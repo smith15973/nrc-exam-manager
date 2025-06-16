@@ -557,7 +557,8 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         return { success: true, questionIds };
 
       case 'get-questions':
-        const questions = await db.questions.getMany();
+        console.log("IN main get-questions", data)
+        const questions = await db.questions.getMany(data);
         return { success: true, questions };
 
       case 'get-questions-by-exam-id':
@@ -569,6 +570,7 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         return { success: true, questions: examQuestions };
 
       case 'get-question-by-id':
+        console.log("IN main get-question-by-id", data)
         const question = await db.questions.getById(data);
         return { success: true, question };
 
@@ -577,11 +579,13 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         return { success: true, answers };
 
       case 'get-question-complete':
+        console.log("IN main get-question-complete", data)
         const questionWithAll = await db.questionService.getCompleteQuestion(data);
         return { success: true, question: questionWithAll };
 
       case 'get-questions-complete':
-        const questionsComplete = await db.questionService.getQuestionsComplete();
+        console.log("IN main get-questions-complete", data)
+        const questionsComplete = await db.questionService.getQuestionsComplete(data);
         return { success: true, questions: questionsComplete };
 
       case 'update-question':

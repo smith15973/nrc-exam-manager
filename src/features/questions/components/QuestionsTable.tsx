@@ -22,6 +22,8 @@ interface QuestionTableProps {
   checkable?: boolean;
   selectedIds?: number[];
   onSelectionChange?: (selectedIds: number[]) => void;
+  onFilterChange?: (key: string, value: any) => void;
+  filters?: QuestionFilters;
 }
 
 const VirtuosoTableComponents: TableComponents<Question> = {
@@ -43,7 +45,7 @@ const VirtuosoTableComponents: TableComponents<Question> = {
 export default function QuestionsTable(props: QuestionTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [openRows, setOpenRows] = useState<{ [key: number]: boolean }>({});
-  const { questions, checkable = false, selectedIds = [], onSelectionChange } = props;
+  const { questions, checkable = false, selectedIds = [], onSelectionChange, filters, onFilterChange } = props;
   const navigate = useNavigate();
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,8 +57,10 @@ export default function QuestionsTable(props: QuestionTableProps) {
     onSelectionChange?.([]);
   };
 
-  const handleSearchQueryChange = (query: string) => {
-    setSearchQuery(query);
+  const handleSearchQueryChange = (value: any) => {
+    if (onFilterChange) {
+      onFilterChange('query', value)
+    }
   };
 
   const toggleRow = (questionId: number) => {
@@ -82,7 +86,6 @@ export default function QuestionsTable(props: QuestionTableProps) {
             />
           )}
         </TableCell>
-        <TableCell sx={{ width: 48 }} />
         <TableCell sx={{ width: '40%' }}>Question</TableCell>
         <TableCell align="right" sx={{ width: '15%' }}>K/A #s</TableCell>
         <TableCell align="right" sx={{ width: '15%' }}>System #s</TableCell>
@@ -111,15 +114,6 @@ export default function QuestionsTable(props: QuestionTableProps) {
               }}
             />
           )}
-        </TableCell>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => toggleRow(row.question_id)}
-          >
-            {isOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-          </IconButton>
         </TableCell>
         <TableCell
           component="th"
@@ -194,7 +188,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
 
   return (
     <Box sx={{ height: 600, width: '100%', py: 2 }}>
-      <QuestionsTableToolbar numSelected={selectedIds.length} searchQuery={searchQuery} onSearchChange={handleSearchQueryChange} />
+      <QuestionsTableToolbar numSelected={selectedIds.length} searchQuery={filters?.query || ''} onSearchChange={handleSearchQueryChange} />
       <Paper style={{ height: 600, width: '100%' }}>
         <TableVirtuoso
           data={questions}

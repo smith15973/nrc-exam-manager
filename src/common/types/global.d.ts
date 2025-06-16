@@ -144,8 +144,8 @@ interface Window {
     questions: {
       add: (question: Question) => Promise<QuestionResponse>;
       addBatch: (questions: Question[]) => Promise<{ success: boolean, inserted: number[], ignored: number[] }>;
-      get: (params?) => Promise<QuestionResponse>;
-      getComplete: (params?) => Promise<QuestionResponse>;
+      get: (filters?: QuestionFilters) => Promise<QuestionResponse>;
+      getComplete: (filters?: QuestionFilters) => Promise<QuestionResponse>;
       getById: (questionId: number) => Promise<QuestionResponse>;
       getByIdComplete: (questionId: number) => Promise<QuestionResponse>;
       getByExamId: (examId: number) => Promise<QuestionResponse>;
@@ -184,4 +184,21 @@ interface Window {
 
 interface DBSearchParams {
   [key: string]: any;
+}
+
+interface QuestionFilters {
+  query?: string;
+  examIds?: number[];
+  kaNums?: number[];
+  systemNums?: number[];
+  lastUsedStart?: string;
+  lastUsedEnd?: string;
+  examLevelStart?: string;
+  examLevelEnd?: string;
+  diffLevelStart?: string;
+  diffLevelEnd?: string;
+  cogLevelStart?: string;
+  cogLevelEnd?: string;
+  objective?: string;
+
 }

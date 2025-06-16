@@ -1,12 +1,10 @@
-import { Button } from "@mui/material";
 import { useEffect, useState } from "react";
-import CheckExams from "../../../features/exams/components/CheckExams";
+import { defaultQuestionFilters } from "../../../data/db/schema";
 import ConfirmDelete from "../../../common/components/ConfirmDelete";
 import { useDatabase } from "../../../common/hooks/useDatabase";
 import ExportQuestionsButton from "../components/ExportQuestionsButton";
 import ImportViewer from "../components/ImportViewer";
 import QuestionForm from "../components/QuestionForm";
-import QuestionsList from "../components/QuestionsList";
 import QuestionsTable from "../components/QuestionsTable";
 
 
@@ -18,18 +16,19 @@ export default function QuestionsPage() {
     const { addQuestion, addQuestionsBatch, getQuestionsComplete, deleteQuestion, addExamQuestion: addQuestionToExam, exams } = useDatabase();
     const [questions, setQuestions] = useState<Question[]>([]);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
-    const [selectedExamIds, setSelectedExamIds] = useState<number[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const [filters, setFilters] = useState<QuestionFilters>(defaultQuestionFilters);
 
 
 
     useEffect(() => {
         loadQuestions();
-    }, []);
+    }, [filters]);
 
     const loadQuestions = async () => {
         try {
-            const questions = await getQuestionsComplete();
+            console.log("Loading Questions", filters)
+            const questions = await getQuestionsComplete(filters);
             setQuestions(questions)
 
         } catch (err) {
@@ -58,6 +57,12 @@ export default function QuestionsPage() {
         setSelectedIds([]);
     }
 
+    const handleFilterChange = (key: string, value: any) => {
+        console.log(value)
+        setFilters((prev) => ({ ...prev, [key]: value }))
+        // loadQuestions();
+    }
+
 
 
 
@@ -77,6 +82,8 @@ export default function QuestionsPage() {
                 checkable
                 selectedIds={selectedIds}
                 onSelectionChange={onSelectionChange}
+                filters={filters}
+                onFilterChange={handleFilterChange}
             />
         </>
     )

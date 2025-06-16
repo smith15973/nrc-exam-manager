@@ -321,14 +321,212 @@ export class QuestionRepository {
 
 
 
-    async getMany(params?: DBSearchParams): Promise<Question[]> {
+    async getMany(filters?: QuestionFilters): Promise<Question[]> {
         return new Promise((resolve, reject) => {
             if (this.isClosing()) {
                 reject(new Error('Database is closing'));
                 return;
             }
 
-            this.db.all('SELECT * FROM questions', [], (err, rows: Question[]) => {
+            console.log("IN THE SQL", filters)
+
+            // Build the base query
+            let query = 'SELECT * FROM questions';
+            const conditions: string[] = [];
+            const params: any[] = [];
+
+            // Apply filters if provided
+            if (filters) {
+                // Text search in question_text
+                if (filters.query) {
+                    conditions.push('question_text LIKE ?');
+                    params.push(`%${filters.query}%`);
+                }
+
+                // Date range filters
+                if (filters.lastUsedStart) {
+                    conditions.push('last_used >= ?');
+                    params.push(filters.lastUsedStart);
+                }
+                if (filters.lastUsedEnd) {
+                    conditions.push('last_used <= ?');
+                    params.push(filters.lastUsedEnd);
+                }
+
+                // Exam level filters
+                if (filters.examLevelStart) {
+                    conditions.push('exam_level >= ?');
+                    params.push(filters.examLevelStart);
+                }
+                if (filters.examLevelEnd) {
+                    conditions.push('exam_level <= ?');
+                    params.push(filters.examLevelEnd);
+                }
+
+                // Difficulty level filters
+                if (filters.diffLevelStart) {
+                    conditions.push('difficulty_level >= ?');
+                    params.push(parseInt(filters.diffLevelStart));
+                }
+                if (filters.diffLevelEnd) {
+                    conditions.push('difficulty_level <= ?');
+                    params.push(parseInt(filters.diffLevelEnd));
+                }
+
+                // Cognitive level filters
+                if (filters.cogLevelStart) {
+                    conditions.push('cognitive_level >= ?');
+                    params.push(filters.cogLevelStart);
+                }
+                if (filters.cogLevelEnd) {
+                    conditions.push('cognitive_level <= ?');
+                    params.push(filters.cogLevelEnd);
+                }
+
+                // Objective filter
+                if (filters.objective) {
+                    conditions.push('objective LIKE ?');
+                    params.push(`%${filters.objective}%`);
+                }
+
+                // Handle relationship-based filters (requires JOINs)
+                if (filters.examIds && filters.examIds.length > 0) {
+                    const placeholders = filters.examIds.map(() => '?').join(',');
+                    conditions.push(`question_id IN (
+                    SELECT question_id FROM question_exams 
+                    WHERE exam_id IN (${placeholders})
+                )`);
+                    params.push(...filters.examIds);
+                }
+
+                if (filters.kaNums && filters.kaNums.length > 0) {
+                    const placeholders = filters.kaNums.map(() => '?').join(',');
+                    conditions.push(`question_id IN (
+                    SELECT question_id FROM question_kas 
+                    WHERE ka_num IN (${placeholders})
+                )`);
+                    params.push(...filters.kaNums);
+                }
+
+                if (filters.systemNums && filters.systemNums.length > 0) {
+                    const placeholders = filters.systemNums.map(() => '?').join(',');
+                    conditions.push(`question_id IN (
+                    SELECT question_id FROM question_systems 
+                    WHERE system_num IN (${placeholders})
+                )`);
+                    params.push(...filters.systemNums);
+                }
+            }
+
+            // Add WHERE clause if there are conditions
+            if (conditions.length > 0) {
+                query += ' WHERE ' + conditions.join(' AND ');
+            }
+
+            // Execute the query
+            this.db.all(query, params, (err, rows: Question[]) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+    }
+
+    // Alternative: More efficient version that builds query with JOINs for better performance
+    async getManyWithJoins(filters?: QuestionFilters): Promise<Question[]> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error('Database is closing'));
+                return;
+            }
+
+            let query = 'SELECT DISTINCT q.* FROM questions q';
+            const joins: string[] = [];
+            const conditions: string[] = [];
+            const params: any[] = [];
+
+            if (filters) {
+                // Add JOINs for relationship filters
+                if (filters.examIds && filters.examIds.length > 0) {
+                    joins.push('JOIN exam_questions qe ON q.question_id = qe.question_id');
+                    const placeholders = filters.examIds.map(() => '?').join(',');
+                    conditions.push(`qe.exam_id IN (${placeholders})`);
+                    params.push(...filters.examIds);
+                }
+
+                if (filters.kaNums && filters.kaNums.length > 0) {
+                    joins.push('JOIN question_kas qk ON q.question_id = qk.question_id');
+                    const placeholders = filters.kaNums.map(() => '?').join(',');
+                    conditions.push(`qk.ka_num IN (${placeholders})`);
+                    params.push(...filters.kaNums);
+                }
+
+                if (filters.systemNums && filters.systemNums.length > 0) {
+                    joins.push('JOIN question_systems qs ON q.question_id = qs.question_id');
+                    const placeholders = filters.systemNums.map(() => '?').join(',');
+                    conditions.push(`qs.system_num IN (${placeholders})`);
+                    params.push(...filters.systemNums);
+                }
+
+                // Direct column filters
+                if (filters.query) {
+                    conditions.push('q.question_text LIKE ?');
+                    params.push(`%${filters.query}%`);
+                }
+
+                if (filters.lastUsedStart) {
+                    conditions.push('q.last_used >= ?');
+                    params.push(filters.lastUsedStart);
+                }
+                if (filters.lastUsedEnd) {
+                    conditions.push('q.last_used <= ?');
+                    params.push(filters.lastUsedEnd);
+                }
+
+                if (filters.examLevelStart) {
+                    conditions.push('q.exam_level >= ?');
+                    params.push(filters.examLevelStart);
+                }
+                if (filters.examLevelEnd) {
+                    conditions.push('q.exam_level <= ?');
+                    params.push(filters.examLevelEnd);
+                }
+
+                if (filters.diffLevelStart) {
+                    conditions.push('q.difficulty_level >= ?');
+                    params.push(parseInt(filters.diffLevelStart));
+                }
+                if (filters.diffLevelEnd) {
+                    conditions.push('q.difficulty_level <= ?');
+                    params.push(parseInt(filters.diffLevelEnd));
+                }
+
+                if (filters.cogLevelStart) {
+                    conditions.push('q.cognitive_level >= ?');
+                    params.push(filters.cogLevelStart);
+                }
+                if (filters.cogLevelEnd) {
+                    conditions.push('q.cognitive_level <= ?');
+                    params.push(filters.cogLevelEnd);
+                }
+
+                if (filters.objective) {
+                    conditions.push('q.objective LIKE ?');
+                    params.push(`%${filters.objective}%`);
+                }
+            }
+
+            // Combine query parts
+            if (joins.length > 0) {
+                query += ' ' + joins.join(' ');
+            }
+            if (conditions.length > 0) {
+                query += ' WHERE ' + conditions.join(' AND ');
+            }
+
+            this.db.all(query, params, (err, rows: Question[]) => {
                 if (err) {
                     reject(err);
                 } else {
