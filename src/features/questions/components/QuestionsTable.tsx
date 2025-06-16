@@ -1,7 +1,8 @@
-import Box from '@mui/material/Box';
-import { useNavigate } from 'react-router-dom';
+import * as React from 'react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
+  Box,
   Checkbox,
   IconButton,
   Paper,
@@ -13,6 +14,7 @@ import {
   TableRow,
 } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import { TableVirtuoso, TableComponents } from 'react-virtuoso';
 import QuestionsTableToolbar from './QuestionsTableToolbar';
 
 interface QuestionTableProps {
@@ -22,8 +24,25 @@ interface QuestionTableProps {
   onSelectionChange?: (selectedIds: number[]) => void;
 }
 
+const VirtuosoTableComponents: TableComponents<Question> = {
+  Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
+    <TableContainer component={Paper} {...props} ref={ref} />
+  )),
+  Table: (props) => (
+    <Table {...props} sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }} />
+  ),
+  TableHead: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
+    <TableHead {...props} ref={ref} />
+  )),
+  TableRow,
+  TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
+    <TableBody {...props} ref={ref} />
+  )),
+};
+
 export default function QuestionsTable(props: QuestionTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [openRows, setOpenRows] = useState<{ [key: number]: boolean }>({});
   const { questions, checkable = false, selectedIds = [], onSelectionChange } = props;
   const navigate = useNavigate();
 
@@ -36,53 +55,60 @@ export default function QuestionsTable(props: QuestionTableProps) {
     onSelectionChange?.([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
-    const selectedIndex = selectedIds.indexOf(id);
-    let newSelected: number[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = [...selectedIds, id];
-    } else if (selectedIndex === 0) {
-      newSelected = selectedIds.slice(1);
-    } else if (selectedIndex === selectedIds.length - 1) {
-      newSelected = selectedIds.slice(0, -1);
-    } else if (selectedIndex > 0) {
-      newSelected = [
-        ...selectedIds.slice(0, selectedIndex),
-        ...selectedIds.slice(selectedIndex + 1),
-      ];
-    }
-    onSelectionChange?.(newSelected);
-  };
-
   const handleSearchQueryChange = (query: string) => {
     setSearchQuery(query);
   };
 
+  const toggleRow = (questionId: number) => {
+    setOpenRows((prev) => ({
+      ...prev,
+      [questionId]: !prev[questionId],
+    }));
+  };
 
+  function fixedHeaderContent() {
+    return (
+      <TableRow sx={{ backgroundColor: 'background.paper' }}>
+        <TableCell padding="checkbox" sx={{ width: 48 }}>
+          {checkable && (
+            <Checkbox
+              color="primary"
+              indeterminate={
+                selectedIds.length > 0 && selectedIds.length < questions.length
+              }
+              checked={questions.length > 0 && selectedIds.length === questions.length}
+              onChange={handleSelectAllClick}
+              inputProps={{ 'aria-label': 'select all questions' }}
+            />
+          )}
+        </TableCell>
+        <TableCell sx={{ width: 48 }} />
+        <TableCell sx={{ width: '40%' }}>Question</TableCell>
+        <TableCell align="right" sx={{ width: '15%' }}>K/A #s</TableCell>
+        <TableCell align="right" sx={{ width: '15%' }}>System #s</TableCell>
+        <TableCell align="right" sx={{ width: '15%' }}>Exams</TableCell>
+        <TableCell align="right" sx={{ width: '10%' }}>Last Used</TableCell>
+      </TableRow>
+    );
+  }
 
-  function Row(props: { row: Question }) {
-    const { row } = props;
-    const [open, setOpen] = useState(false);
+  function rowContent(_index: number, row: Question) {
     const isItemSelected = selectedIds.includes(row.question_id);
     const labelId = `question-table-checkbox-${row.question_id}`;
+    const isOpen = !!openRows[row.question_id];
 
     return (
-      <TableRow
-        hover
-        onClick={(event) => checkable && handleClick(event, row.question_id)}
-        role="checkbox"
-        aria-checked={isItemSelected}
-        tabIndex={-1}
-        selected={isItemSelected}
-        sx={{ cursor: checkable ? 'pointer' : 'default' }}
-      >
+      <React.Fragment>
         <TableCell padding="checkbox">
           {checkable && (
             <Checkbox
               color="primary"
               checked={isItemSelected}
               inputProps={{ 'aria-labelledby': labelId }}
+              onClick={(event) => {
+                event.stopPropagation();
+                handleClick(event, row.question_id);
+              }}
             />
           )}
         </TableCell>
@@ -90,9 +116,9 @@ export default function QuestionsTable(props: QuestionTableProps) {
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={() => setOpen(!open)}
+            onClick={() => toggleRow(row.question_id)}
           >
-            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+            {isOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </TableCell>
         <TableCell
@@ -140,49 +166,43 @@ export default function QuestionsTable(props: QuestionTableProps) {
             </>
           )}
         </TableCell>
-        <TableCell align="right" sx={{ width: '10%' }}>
+        <TableCell align="right">
           {row.last_used}
         </TableCell>
-      </TableRow>
+      </React.Fragment>
     );
   }
 
-  return (
-    <Box sx={{ height: 600, width: '100%', pt: 2 }}>
-      <QuestionsTableToolbar numSelected={selectedIds.length} searchQuery={searchQuery} onSearchChange={handleSearchQueryChange} />
-      <TableContainer component={Paper}>
-        <Table aria-label="collapsible table">
-          <TableHead>
+  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+    const selectedIndex = selectedIds.indexOf(id);
+    let newSelected: number[] = [];
 
-            <TableRow>
-              <TableCell padding="checkbox">
-                {checkable && (
-                  <Checkbox
-                    color="primary"
-                    indeterminate={
-                      selectedIds.length > 0 && selectedIds.length < questions.length
-                    }
-                    checked={questions.length > 0 && selectedIds.length === questions.length}
-                    onChange={handleSelectAllClick}
-                    inputProps={{ 'aria-label': 'select all questions' }}
-                  />
-                )}
-              </TableCell>
-              <TableCell />
-              <TableCell>Question</TableCell>
-              <TableCell align="right">K/A #s</TableCell>
-              <TableCell align="right">System #s</TableCell>
-              <TableCell align="right">Exams</TableCell>
-              <TableCell align="right">Last Used</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {questions.map((question) => (
-              <Row key={question.question_id} row={question} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    if (selectedIndex === -1) {
+      newSelected = [...selectedIds, id];
+    } else if (selectedIndex === 0) {
+      newSelected = selectedIds.slice(1);
+    } else if (selectedIndex === selectedIds.length - 1) {
+      newSelected = selectedIds.slice(0, -1);
+    } else if (selectedIndex > 0) {
+      newSelected = [
+        ...selectedIds.slice(0, selectedIndex),
+        ...selectedIds.slice(selectedIndex + 1),
+      ];
+    }
+    onSelectionChange?.(newSelected);
+  };
+
+  return (
+    <Box sx={{ height: 600, width: '100%', py: 2 }}>
+      <QuestionsTableToolbar numSelected={selectedIds.length} searchQuery={searchQuery} onSearchChange={handleSearchQueryChange} />
+      <Paper style={{ height: 600, width: '100%' }}>
+        <TableVirtuoso
+          data={questions}
+          components={VirtuosoTableComponents}
+          fixedHeaderContent={fixedHeaderContent}
+          itemContent={rowContent}
+        />
+      </Paper>
     </Box>
   );
 }

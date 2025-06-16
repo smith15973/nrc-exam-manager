@@ -61,6 +61,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.0",
+    "react-virtuoso": "^4.13.0",
     "sheetjs": "^2.0.0",
     "sqlite3": "^5.1.7",
     "xlsx": "^0.18.5"
