@@ -187,6 +187,7 @@ interface DBSearchParams {
 }
 
 interface QuestionFilters {
+  question_id?: number;
   query?: string;
   examIds?: number[];
   kaNums?: number[];

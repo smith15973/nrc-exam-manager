@@ -337,6 +337,8 @@ export class QuestionRepository {
 
             // Apply filters if provided
             if (filters) {
+                filters.query = filters.query?.trim() || '';
+
                 // Text search in question_text
                 if (filters.query) {
                     conditions.push('question_text LIKE ?');
@@ -448,6 +450,7 @@ export class QuestionRepository {
             const params: any[] = [];
 
             if (filters) {
+                filters.query = filters.query?.trim() || '';
                 // Add JOINs for relationship filters
                 if (filters.examIds && filters.examIds.length > 0) {
                     joins.push('JOIN exam_questions qe ON q.question_id = qe.question_id');

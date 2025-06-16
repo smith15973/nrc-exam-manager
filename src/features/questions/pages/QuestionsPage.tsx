@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { defaultQuestionFilters } from "../../../data/db/schema";
 import ConfirmDelete from "../../../common/components/ConfirmDelete";
 import { useDatabase } from "../../../common/hooks/useDatabase";
 import ExportQuestionsButton from "../components/ExportQuestionsButton";
@@ -17,7 +16,7 @@ export default function QuestionsPage() {
     const [questions, setQuestions] = useState<Question[]>([]);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [error, setError] = useState<string | null>(null);
-    const [filters, setFilters] = useState<QuestionFilters>(defaultQuestionFilters);
+    const [filters, setFilters] = useState<QuestionFilters>();
 
 
 
