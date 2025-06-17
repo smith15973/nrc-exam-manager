@@ -15,6 +15,7 @@ import SystemsPage from '../features/systems/pages/SystemsPage';
 import KasPage from '../features/kas/pages/KasPage';
 import KaPage from '../features/kas/pages/KaPage';
 import { DialogsProvider } from '@toolpad/core/useDialogs';
+import SandboxPage from '../pages/SandboxPage';
 
 
 
@@ -36,6 +37,7 @@ const App = () => {
                         <Route path='/systems/:systemNum' element={<SystemPage />} />
                         <Route path='/kas' element={<KasPage />} />
                         <Route path='/kas/:kaNum' element={<KaPage />} />
+                        <Route path='/sandbox' element={<SandboxPage />} />
                         <Route path="*" element={<HomePage />} />
                     </Routes>
             </HashRouter>

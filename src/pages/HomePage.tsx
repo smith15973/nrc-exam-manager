@@ -32,6 +32,9 @@ export default function HomePage() {
             <Box>
                 <Link to={"/kas"}>Kas</Link>
             </Box>
+            <Box>
+                <Link to={"/sandbox"}>Sandbox</Link>
+            </Box>
             <Button onClick={handleChangeDatabase}>Change Database</Button>
         </>
     )

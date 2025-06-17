@@ -30,6 +30,7 @@ const navItems = [
   { label: 'Exams', link: '/exams' },
   { label: 'Systems', link: '/systems' },
   { label: 'Kas', link: '/kas' },
+  { label: 'Sandbox', link: '/sandbox' },
 ];
 
 export default function DrawerAppBar(props: Props) {
