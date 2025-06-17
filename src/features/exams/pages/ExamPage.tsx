@@ -10,6 +10,7 @@ import ConfirmDelete from '../../../common/components/ConfirmDelete';
 import ExportQuestionsButton from '../../../features/questions/components/ExportQuestionsButton';
 import QuestionForm from '../../../features/questions/components/QuestionForm';
 import QuestionTemplate from '../../../features/questions/components/QuestionTemplate';
+import { Box, flex } from '@mui/system';
 
 
 export default function ExamPage() {
@@ -141,25 +142,17 @@ export default function ExamPage() {
     return (
         <>
 
-            <Typography sx={{ pb: 2 }} variant='h4'>Exam: {exam.name} - {exam.plant?.name}</Typography>
-            <FormControlLabel
-                control={<Switch checked={tableView} onChange={(e) => setTableView(e.currentTarget.checked)} />}
-                label="Table View"
-                labelPlacement='start'
-            />
-            <FormControlLabel
-                    control={<Switch checked={student} onChange={(e) => setStudent(e.currentTarget.checked)} />}
-                    label="Student View"
-                    labelPlacement='start'
-                />
+
+            <Box sx={{ display: 'flex' }}>
+                <Typography sx={{ pb: 2 }} variant='h4'>Exam: {exam.name} - {exam.plant?.name}</Typography>
+                <ExamForm exam={exam} handleSubmit={handleSubmit} />
+            </Box>
 
             {error && (
                 <Alert severity="error" sx={{ mb: 2 }}>
                     {error}
                 </Alert>
             )}
-
-            <ExamForm exam={exam} handleSubmit={handleSubmit} />
 
             {loading && exam.exam_id && (
                 <Alert severity="info" sx={{ mt: 2 }}>
@@ -176,6 +169,21 @@ export default function ExamPage() {
                 message={`Are you sure you want to remove these questions from this exam?`}
                 disabled={!selectedIds.length}
             />
+
+            <Box sx={{ display: 'flex' }}>
+                <FormControlLabel
+                    // sx={{ flex: 1 }}
+                    control={<Switch checked={tableView} onChange={(e) => setTableView(e.currentTarget.checked)} />}
+                    label="Table View"
+                    labelPlacement='start'
+                />
+                <FormControlLabel
+                    // sx={{ flex: 1 }}
+                    control={<Switch checked={student} onChange={(e) => setStudent(e.currentTarget.checked)} />}
+                    label="Student View"
+                    labelPlacement='start'
+                />
+            </Box>
 
             {tableView ?
                 <QuestionsTable
