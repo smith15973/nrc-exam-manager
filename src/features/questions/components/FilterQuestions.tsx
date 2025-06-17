@@ -43,7 +43,7 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                 open={open}
                 onClose={onClose}
                 disableRestoreFocus
-                maxWidth="lg"
+                maxWidth="md"
                 fullWidth
 
             >
@@ -61,7 +61,7 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
 
                     {/* Category */}
                     <Box
-                        sx={{ pt: 1 }}
+                        sx={{ pt: 2 }}
                     >
                         <TextField
                             fullWidth
@@ -69,6 +69,30 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                             value={filters.category || ""}
                             onChange={(e) => onFilterChange("category", e.target.value)}
                             label="Category"
+                        />
+                    </Box>
+                    {/* Objective */}
+                    <Box
+                        sx={{ pt: 2 }}
+                    >
+                        <TextField
+                            fullWidth
+                            type="text"
+                            value={filters.objective || ""}
+                            onChange={(e) => onFilterChange("objective", e.target.value)}
+                            label="Objective"
+                        />
+                    </Box>
+                    {/* Technical References */}
+                    <Box
+                        sx={{ pt: 2 }}
+                    >
+                        <TextField
+                            fullWidth
+                            type="text"
+                            value={filters.technical_references || ""}
+                            onChange={(e) => onFilterChange("technical_references", e.target.value)}
+                            label="Technical References"
                         />
                     </Box>
 
@@ -91,6 +115,7 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                                     ? "Start date should be before end date"
                                     : ""
                             }
+                            sx={{ pr: 2 }}
                         />
                         <TextField
                             type="date"
@@ -120,6 +145,7 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                                     ? "Minimum exam level should be less than or equal to max exam level"
                                     : ""
                             }
+                            sx={{ pr: 2 }}
                         />
                         <TextField
                             type="text"
@@ -147,6 +173,7 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                                     ? "Minimum difficulty level should be less than or equal to max difficulty level"
                                     : ""
                             }
+                            sx={{ pr: 2 }}
                         />
                         <TextField
                             type="text"
@@ -174,6 +201,7 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                                     ? "Minimum cognitive level should be less than or equal to max cognitive level"
                                     : ""
                             }
+                            sx={{ pr: 2 }}
                         />
                         <TextField
                             type="text"
@@ -191,7 +219,21 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                         <CheckKas
                             kaOptions={kas}
                             selectedIdList={filters.kaNums || []}
-                            handleChange={(e) => { console.log(e) }} />
+                            handleChange={(e) => {
+                                const kaNum = e.currentTarget.name;
+                                let newList: string[];
+
+                                if (e.currentTarget.checked) {
+                                    // Add KA number if checked
+                                    newList = [...(filters.kaNums || []), kaNum];
+                                } else {
+                                    // Remove KA number if unchecked
+                                    newList = (filters.kaNums || []).filter(num => num !== kaNum);
+                                }
+
+                                onFilterChange("kaNums", newList);
+                            }}
+                        />
                     </Box>
 
 
@@ -202,7 +244,21 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                         <CheckSystems
                             systemOptions={systems}
                             selectedIdList={filters.systemNums || []}
-                            handleChange={(e) => { console.log(e) }} />
+                            handleChange={(e) => {
+                                const systemNum = e.currentTarget.name;
+                                let newList: string[];
+
+                                if (e.currentTarget.checked) {
+                                    // Add system number if checked
+                                    newList = [...(filters.systemNums || []), systemNum];
+                                } else {
+                                    // Remove system number if unchecked
+                                    newList = (filters.systemNums || []).filter(num => num !== systemNum);
+                                }
+
+                                onFilterChange("systemNums", newList);
+                            }}
+                        />
                     </Box>
 
                     {/* Exams */}
@@ -212,7 +268,21 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                         <CheckExams
                             examOptions={exams}
                             selectedIdList={filters.examIds || []}
-                            handleChange={(e) => { console.log(e) }} />
+                            handleChange={(e) => {
+                                const examId = parseInt(e.currentTarget.name);
+                                let newList: number[];
+
+                                if (e.currentTarget.checked) {
+                                    // Add exam ID if checked
+                                    newList = [...(filters.examIds || []), examId];
+                                } else {
+                                    // Remove exam ID if unchecked
+                                    newList = (filters.examIds || []).filter(id => id !== examId);
+                                }
+
+                                onFilterChange("examIds", newList);
+                            }}
+                        />
                     </Box>
                 </DialogContent>
                 <DialogActions>

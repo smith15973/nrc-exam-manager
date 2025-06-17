@@ -17,6 +17,7 @@ export default function QuestionsPage() {
     const { addQuestion, addQuestionsBatch, getQuestionsComplete, deleteQuestion, addExamQuestion: addQuestionToExam, exams } = useDatabase();
     const [questions, setQuestions] = useState<Question[]>([]);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    
     const [error, setError] = useState<string | null>(null);
     const [filters, setFilters] = useState<QuestionFilters>();
 
@@ -40,6 +41,7 @@ export default function QuestionsPage() {
     const handleSubmit = async (question: Question) => {
         await addQuestion(question);
         loadQuestions();
+        setSelectedIds([]);
     }
 
     const onSelectionChange = (newSelectedIds: number[]) => {
@@ -50,6 +52,7 @@ export default function QuestionsPage() {
         const result = await addQuestionsBatch(questions)
         console.log(result)
         await loadQuestions();
+        setSelectedIds([]);
     }
 
     const handleDeleteQuestions = () => {

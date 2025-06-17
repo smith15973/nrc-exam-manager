@@ -32,7 +32,7 @@ export default function AnswerForm(props: AnswerFormProps) {
                     multiline
                     rows={3}
                     label={`Justifcation ${answer.option}`}
-                    value={answer.justification}
+                    value={answer.justification || ''}
                     onChange={(e) => handleChange("justification", e.currentTarget.value)}
                 />
             </Box>

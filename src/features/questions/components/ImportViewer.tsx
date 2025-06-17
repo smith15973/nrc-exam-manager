@@ -201,6 +201,7 @@ export default function ImportViewer({ onSubmit }: ImportViewerProps) {
                 onSubmit={handleSubmit}
                 onClose={handleClose}
                 fullWidth
+                maxWidth='lg'
             >
                 {reviewedQuestions.length > 0 ? (
                     <>
