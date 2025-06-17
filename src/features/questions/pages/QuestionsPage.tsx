@@ -3,8 +3,10 @@ import ConfirmDelete from "../../../common/components/ConfirmDelete";
 import { useDatabase } from "../../../common/hooks/useDatabase";
 import ExportQuestionsButton from "../components/ExportQuestionsButton";
 import ImportViewer from "../components/ImportViewer";
+import QuestionCard from "../components/QuestionCard";
 import QuestionForm from "../components/QuestionForm";
 import QuestionsTable from "../components/QuestionsTable";
+import { Box } from "@mui/system";
 
 
 
@@ -62,7 +64,7 @@ export default function QuestionsPage() {
         // loadQuestions();
     }
 
-    
+
 
 
 
@@ -78,6 +80,25 @@ export default function QuestionsPage() {
                 message={`Are you sure you want to delete this question? This will remove it from all exam associations! This action cannot be undone!`}
                 disabled={!selectedIds.length}
             />
+
+            {/* <Box sx={{
+                columns: { xs: 1, sm: 2, md: 3, lg: 4 }, // Responsive column count
+                columnGap: 2,
+                padding: 2
+            }}>
+                {questions.map(question => (
+                    <QuestionCard
+                        key={question.question_id}
+                        question={question}
+                        sx={{
+                            breakInside: 'avoid', // Prevent cards from breaking across columns
+                            marginBottom: 2,
+                            width: '100%'
+                        }}
+                    />
+                ))}
+            </Box> */}
+
             <QuestionsTable
                 questions={questions}
                 checkable

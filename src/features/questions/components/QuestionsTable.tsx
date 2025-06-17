@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Checkbox,
-  IconButton,
   Paper,
   Table,
   TableBody,
@@ -13,7 +12,6 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { TableVirtuoso, TableComponents } from 'react-virtuoso';
 import QuestionsTableToolbar from './QuestionsTableToolbar';
 
@@ -44,7 +42,6 @@ const VirtuosoTableComponents: TableComponents<Question> = {
 };
 
 export default function QuestionsTable(props: QuestionTableProps) {
-  const [searchQuery, setSearchQuery] = useState('');
   const [openFilters, setOpenFilters] = useState(false);
   const { questions, checkable = false, selectedIds = [], onSelectionChange, filters, onFilterChange, onResetFilters } = props;
   const navigate = useNavigate();

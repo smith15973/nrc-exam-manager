@@ -24,7 +24,6 @@ const App = () => {
         <DialogsProvider>
             <HashRouter>
                 <DrawerAppBar />
-                <Container >
                     <Routes>
                         <Route path='/' element={<HomePage />} />
                         <Route path='/plants' element={<PlantsPage />} />
@@ -39,7 +38,6 @@ const App = () => {
                         <Route path='/kas/:kaNum' element={<KaPage />} />
                         <Route path="*" element={<HomePage />} />
                     </Routes>
-                </Container>
             </HashRouter>
         </DialogsProvider>
     );

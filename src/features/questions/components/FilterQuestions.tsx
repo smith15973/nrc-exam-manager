@@ -185,7 +185,9 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
 
 
                     {/* KAS */}
-                    <Box>
+                    <Box
+                        sx={{ pt: 2 }}
+                    >
                         <CheckKas
                             kaOptions={kas}
                             selectedIdList={filters.kaNums || []}
@@ -194,7 +196,9 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
 
 
                     {/* Systems */}
-                    <Box>
+                    <Box
+                        sx={{ pt: 2 }}
+                    >
                         <CheckSystems
                             systemOptions={systems}
                             selectedIdList={filters.systemNums || []}
@@ -202,7 +206,9 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                     </Box>
 
                     {/* Exams */}
-                    <Box>
+                    <Box
+                        sx={{ pt: 2 }}
+                    >
                         <CheckExams
                             examOptions={exams}
                             selectedIdList={filters.examIds || []}
