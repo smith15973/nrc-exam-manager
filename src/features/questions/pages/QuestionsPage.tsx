@@ -62,6 +62,8 @@ export default function QuestionsPage() {
         // loadQuestions();
     }
 
+    
+
 
 
 
@@ -83,6 +85,7 @@ export default function QuestionsPage() {
                 onSelectionChange={onSelectionChange}
                 filters={filters}
                 onFilterChange={handleFilterChange}
+                onResetFilters={() => setFilters({})}
             />
         </>
     )

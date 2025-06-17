@@ -190,8 +190,8 @@ interface QuestionFilters {
   question_id?: number;
   query?: string;
   examIds?: number[];
-  kaNums?: number[];
-  systemNums?: number[];
+  kaNums?: string[];
+  systemNums?: string[];
   lastUsedStart?: string;
   lastUsedEnd?: string;
   examLevelStart?: string;
@@ -201,5 +201,7 @@ interface QuestionFilters {
   cogLevelStart?: string;
   cogLevelEnd?: string;
   objective?: string;
+  category?: string;
+  technical_references?: string;
 
 }

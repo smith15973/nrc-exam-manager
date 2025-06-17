@@ -22,8 +22,9 @@ interface QuestionTableProps {
   checkable?: boolean;
   selectedIds?: number[];
   onSelectionChange?: (selectedIds: number[]) => void;
-  onFilterChange?: (key: string, value: any) => void;
+  onFilterChange: (key: string, value: any) => void;
   filters?: QuestionFilters;
+  onResetFilters: () => void;
 }
 
 const VirtuosoTableComponents: TableComponents<Question> = {
@@ -44,8 +45,8 @@ const VirtuosoTableComponents: TableComponents<Question> = {
 
 export default function QuestionsTable(props: QuestionTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [openRows, setOpenRows] = useState<{ [key: number]: boolean }>({});
-  const { questions, checkable = false, selectedIds = [], onSelectionChange, filters, onFilterChange } = props;
+  const [openFilters, setOpenFilters] = useState(false);
+  const { questions, checkable = false, selectedIds = [], onSelectionChange, filters, onFilterChange, onResetFilters } = props;
   const navigate = useNavigate();
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,13 +62,6 @@ export default function QuestionsTable(props: QuestionTableProps) {
     if (onFilterChange) {
       onFilterChange('query', value)
     }
-  };
-
-  const toggleRow = (questionId: number) => {
-    setOpenRows((prev) => ({
-      ...prev,
-      [questionId]: !prev[questionId],
-    }));
   };
 
   function fixedHeaderContent() {
@@ -98,7 +92,6 @@ export default function QuestionsTable(props: QuestionTableProps) {
   function rowContent(_index: number, row: Question) {
     const isItemSelected = selectedIds.includes(row.question_id);
     const labelId = `question-table-checkbox-${row.question_id}`;
-    const isOpen = !!openRows[row.question_id];
 
     return (
       <React.Fragment>
@@ -188,7 +181,18 @@ export default function QuestionsTable(props: QuestionTableProps) {
 
   return (
     <Box sx={{ height: 600, width: '100%', py: 2 }}>
-      <QuestionsTableToolbar numSelected={selectedIds.length} searchQuery={filters?.query || ''} onSearchChange={handleSearchQueryChange} />
+      <QuestionsTableToolbar
+        numSelected={selectedIds.length}
+        searchQuery={filters?.query || ''}
+        onSearchChange={handleSearchQueryChange}
+        open={openFilters}
+        onCloseFilter={() => setOpenFilters(false)}
+        onOpenFilter={() => setOpenFilters(true)}
+        onFilterChange={onFilterChange}
+        filters={filters || {}}
+        onResetFilters={onResetFilters}
+
+      />
       <Paper style={{ height: 600, width: '100%' }}>
         <TableVirtuoso
           data={questions}
