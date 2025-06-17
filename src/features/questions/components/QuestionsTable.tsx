@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
+  Button,
   Checkbox,
   Paper,
   Table,
@@ -82,6 +83,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
         <TableCell align="right" sx={{ width: '15%' }}>System #s</TableCell>
         <TableCell align="right" sx={{ width: '15%' }}>Exams</TableCell>
         <TableCell align="right" sx={{ width: '10%' }}>Last Used</TableCell>
+        <TableCell align="right" sx={{ width: '10%' }}>View</TableCell>
       </TableRow>
     );
   }
@@ -152,6 +154,9 @@ export default function QuestionsTable(props: QuestionTableProps) {
         </TableCell>
         <TableCell align="right">
           {row.last_used}
+        </TableCell>
+        <TableCell align="right">
+          <Button variant='contained' onClick={() => navigate(`/questions/${row.question_id}`)}>View</Button>
         </TableCell>
       </React.Fragment>
     );

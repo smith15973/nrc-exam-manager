@@ -202,7 +202,7 @@ export default function QuestionTemplate({ question, print = false, student = fa
                                         color="text.secondary"
                                         sx={{ whiteSpace: 'pre-wrap', ...printStyles }}
                                     >
-                                        {"justification"}
+                                        {answer?.justification}
                                     </Typography>
                                 </Box>
                             </Box>
