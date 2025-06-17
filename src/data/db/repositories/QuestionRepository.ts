@@ -395,7 +395,7 @@ export class QuestionRepository {
                 if (filters.examIds && filters.examIds.length > 0) {
                     const placeholders = filters.examIds.map(() => '?').join(',');
                     conditions.push(`question_id IN (
-                    SELECT question_id FROM question_exams 
+                    SELECT question_id FROM exam_questions
                     WHERE exam_id IN (${placeholders})
                 )`);
                     params.push(...filters.examIds);
@@ -405,7 +405,7 @@ export class QuestionRepository {
                     const placeholders = filters.kaNums.map(() => '?').join(',');
                     conditions.push(`question_id IN (
                     SELECT question_id FROM question_kas 
-                    WHERE ka_num IN (${placeholders})
+                    WHERE ka_number IN (${placeholders})
                 )`);
                     params.push(...filters.kaNums);
                 }
@@ -414,7 +414,7 @@ export class QuestionRepository {
                     const placeholders = filters.systemNums.map(() => '?').join(',');
                     conditions.push(`question_id IN (
                     SELECT question_id FROM question_systems 
-                    WHERE system_num IN (${placeholders})
+                    WHERE system_number IN (${placeholders})
                 )`);
                     params.push(...filters.systemNums);
                 }
