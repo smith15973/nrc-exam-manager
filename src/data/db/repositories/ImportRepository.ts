@@ -334,6 +334,14 @@ export class ImportRepository {
       warnings.push('Question text was missing - set to empty string');
     }
 
+    if (cleanedQuestion.question_text && cleanedQuestion.question_text.trim() !== '') {
+      const existingQuestions = await this.db.questions.getMany({ query: cleanedQuestion.question_text.trim() });
+      const existingQuestion = existingQuestions[0];
+      if (existingQuestion) {
+        warnings.push(`Duplicate question detected - matches existing question ID ${existingQuestion.question_id}`);
+      }
+    }
+
     // Clean and validate answers
     if (!cleanedQuestion.answers) {
       // Create 4 empty answers if none exist
@@ -421,39 +429,62 @@ export class ImportRepository {
     // Clean exam references
     if (cleanedQuestion.exams && cleanedQuestion.exams.length > 0) {
       const validExamIds = exams.map(exam => exam.exam_id);
-      const originalCount = cleanedQuestion.exams.length;
-      cleanedQuestion.exams = cleanedQuestion.exams.filter(examRef =>
-        !examRef.exam_id || validExamIds.includes(examRef.exam_id)
-      );
+      const rejectedExams: string[] = [];
 
-      if (cleanedQuestion.exams.length < originalCount) {
-        warnings.push(`Removed ${originalCount - cleanedQuestion.exams.length} invalid exam references`);
+      cleanedQuestion.exams = cleanedQuestion.exams.filter(examRef => {
+        if (!examRef.exam_id || validExamIds.includes(examRef.exam_id)) {
+          return true;
+        } else {
+          // Find the exam name for the rejected reference
+          const examName = examRef.name || `ID ${examRef.exam_id}`;
+          rejectedExams.push(examName);
+          return false;
+        }
+      });
+
+      if (rejectedExams.length > 0) {
+        warnings.push(`Removed invalid exam references: ${rejectedExams.join(', ')}`);
       }
     }
 
-    // Clean KA (Knowledge Area) references
+    // Clean exam references
     if (cleanedQuestion.kas && cleanedQuestion.kas.length > 0) {
-      const validKaNumbers = kas.map(ka => ka.ka_number);
-      const originalCount = cleanedQuestion.kas.length;
-      cleanedQuestion.kas = cleanedQuestion.kas.filter(kaRef =>
-        !kaRef.ka_number || validKaNumbers.includes(kaRef.ka_number)
-      );
+      const validKaNums = kas.map(ka => ka.ka_number);
+      const rejectedKas: string[] = [];
 
-      if (cleanedQuestion.kas.length < originalCount) {
-        warnings.push(`Removed ${originalCount - cleanedQuestion.kas.length} invalid KA references`);
+      cleanedQuestion.kas = cleanedQuestion.kas.filter(kaRef => {
+        if (!kaRef.ka_number || validKaNums.includes(kaRef.ka_number)) {
+          return true;
+        } else {
+          // Find the exam name for the rejected reference
+          const kaNumber = kaRef.ka_number;
+          rejectedKas.push(kaNumber);
+          return false;
+        }
+      });
+
+      if (rejectedKas.length > 0) {
+        warnings.push(`Removed invalid KA references: ${rejectedKas.join(', ')}`);
       }
     }
 
-    // Clean system references  
+    // Clean system references
     if (cleanedQuestion.systems && cleanedQuestion.systems.length > 0) {
       const validSystemNumbers = systems.map(system => system.number);
-      const originalCount = cleanedQuestion.systems.length;
-      cleanedQuestion.systems = cleanedQuestion.systems.filter(systemRef =>
-        !systemRef.number || validSystemNumbers.includes(systemRef.number)
-      );
+      const rejectedSystems: string[] = [];
 
-      if (cleanedQuestion.systems.length < originalCount) {
-        warnings.push(`Removed ${originalCount - cleanedQuestion.systems.length} invalid system references`);
+      cleanedQuestion.systems = cleanedQuestion.systems.filter(systemRef => {
+        if (!systemRef.number || validSystemNumbers.includes(systemRef.number)) {
+          return true;
+        } else {
+          const systemNumber = systemRef.number;
+          rejectedSystems.push(systemNumber);
+          return false;
+        }
+      });
+
+      if (rejectedSystems.length > 0) {
+        warnings.push(`Removed invalid system references: ${rejectedSystems.join(', ')}`);
       }
     }
 

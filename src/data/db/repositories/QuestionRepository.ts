@@ -73,36 +73,6 @@ export class QuestionRepository {
                             throw new Error('Database is closing');
                         }
 
-                        // Check for duplicates first - same logic as single add
-                        if (question.question_id) {
-                            try {
-                                const existing = await this.getById(question.question_id);
-                                if (existing && this.isDuplicate(existing, question)) {
-                                    console.log("Duplicate question found, skipping");
-                                    results.ignored.push(existing.question_id!);
-                                    processed++;
-                                    if (processed === total) {
-                                        finishTransaction(true);
-                                    }
-                                    return;
-                                }
-                            } catch (error) {
-                                // Question doesn't exist, continue with insertion
-                            }
-                        }
-
-                        // Also check by content hash to catch duplicates with different IDs
-                        const existingByContent = await this.findByContentHash(question);
-                        if (existingByContent) {
-                            console.log("Duplicate question content found, skipping");
-                            results.ignored.push(existingByContent.question_id!);
-                            processed++;
-                            if (processed === total) {
-                                finishTransaction(true);
-                            }
-                            return;
-                        }
-
                         // Insert the question with all relations - same as single add
                         this.db.run(
                             `INSERT INTO questions 
@@ -163,22 +133,6 @@ export class QuestionRepository {
                     processQuestion(question, index);
                 });
             });
-        });
-    }
-
-    // Helper method to check for duplicates
-    private async checkDuplicate(question: Question): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            // Define your duplicate criteria here
-            this.db.get(
-                `SELECT 1 FROM questions 
-             WHERE question_text = ? AND category = ? AND exam_level = ?`,
-                [question.question_text, question.category, question.exam_level],
-                (err, row) => {
-                    if (err) reject(err);
-                    else resolve(!!row);
-                }
-            );
         });
     }
 
@@ -319,7 +273,124 @@ export class QuestionRepository {
     }
 
 
+    async getOne(filters?: QuestionFilters): Promise<Question | null> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error('Database is closing'));
+                return;
+            }
 
+            console.log("IN THE SQL getOne", filters);
+
+            // Build the base query
+            let query = 'SELECT * FROM questions';
+            const conditions: string[] = [];
+            const params: any[] = [];
+
+            // Apply filters if provided
+            if (filters) {
+                filters.query = filters.query?.trim() || '';
+
+                // Text search in question_text
+                if (filters.query) {
+                    conditions.push('question_text LIKE ?');
+                    params.push(`%${filters.query}%`);
+                }
+
+                // Date range filters
+                if (filters.lastUsedStart) {
+                    conditions.push('last_used >= ?');
+                    params.push(filters.lastUsedStart);
+                }
+                if (filters.lastUsedEnd) {
+                    conditions.push('last_used <= ?');
+                    params.push(filters.lastUsedEnd);
+                }
+
+                // Exam level filters
+                if (filters.examLevelStart) {
+                    conditions.push('exam_level >= ?');
+                    params.push(filters.examLevelStart);
+                }
+                if (filters.examLevelEnd) {
+                    conditions.push('exam_level <= ?');
+                    params.push(filters.examLevelEnd);
+                }
+
+                // Difficulty level filters
+                if (filters.diffLevelStart) {
+                    conditions.push('difficulty_level >= ?');
+                    params.push(parseInt(filters.diffLevelStart));
+                }
+                if (filters.diffLevelEnd) {
+                    conditions.push('difficulty_level <= ?');
+                    params.push(parseInt(filters.diffLevelEnd));
+                }
+
+                // Cognitive level filters
+                if (filters.cogLevelStart) {
+                    conditions.push('cognitive_level >= ?');
+                    params.push(filters.cogLevelStart);
+                }
+                if (filters.cogLevelEnd) {
+                    conditions.push('cognitive_level <= ?');
+                    params.push(filters.cogLevelEnd);
+                }
+
+                // Objective filter
+                if (filters.objective) {
+                    conditions.push('objective LIKE ?');
+                    params.push(`%${filters.objective}%`);
+                }
+
+                // Handle relationship-based filters (requires JOINs)
+                if (filters.examIds && filters.examIds.length > 0) {
+                    const placeholders = filters.examIds.map(() => '?').join(',');
+                    conditions.push(`question_id IN (
+                    SELECT question_id FROM exam_questions
+                    WHERE exam_id IN (${placeholders})
+                )`);
+                    params.push(...filters.examIds);
+                }
+
+                if (filters.kaNums && filters.kaNums.length > 0) {
+                    const placeholders = filters.kaNums.map(() => '?').join(',');
+                    conditions.push(`question_id IN (
+                    SELECT question_id FROM question_kas 
+                    WHERE ka_number IN (${placeholders})
+                )`);
+                    params.push(...filters.kaNums);
+                }
+
+                if (filters.systemNums && filters.systemNums.length > 0) {
+                    const placeholders = filters.systemNums.map(() => '?').join(',');
+                    conditions.push(`question_id IN (
+                    SELECT question_id FROM question_systems 
+                    WHERE system_number IN (${placeholders})
+                )`);
+                    params.push(...filters.systemNums);
+                }
+            }
+
+            // Add WHERE clause if there are conditions
+            if (conditions.length > 0) {
+                query += ' WHERE ' + conditions.join(' AND ');
+            }
+
+            // Add LIMIT 1 for single record retrieval
+            query += ' LIMIT 1';
+
+            // Execute the query using db.get() instead of db.all()
+            this.db.get(query, params, (err, row: Question | undefined) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    // Return null if no record found, otherwise return the question
+                    resolve(row || null);
+                }
+            });
+        });
+    }
 
     async getMany(filters?: QuestionFilters): Promise<Question[]> {
         return new Promise((resolve, reject) => {
