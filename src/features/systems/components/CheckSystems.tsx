@@ -13,8 +13,8 @@ export default function CheckSystems(props: CheckSystemsProps) {
         placeholder: "Select Systems",
         dialogTitle: "Selected Systems",
         getKey: (system: System) => system.number,
-        getDisplayLabel: (system: System) => system.name,
-        getDisplayText: (system: System) => `${system.number}-${system.name}`,
+        getDisplayLabel: (system: System) => system.number,
+        getDisplayText: (system: System) => `${system.name}`,
     };
 
     return (

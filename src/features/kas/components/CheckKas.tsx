@@ -13,8 +13,8 @@ export default function CheckKas(props: CheckKasProps) {
     placeholder: "Select Kas",
     dialogTitle: "Selected Kas",
     getKey: (ka: Ka) => ka.ka_number,
-    getDisplayLabel: (ka: Ka) => ka.ka_description,
-    getDisplayText: (ka: Ka) => `${ka.ka_number}-${ka.ka_description}`,
+    getDisplayLabel: (ka: Ka) => ka.ka_number,
+    getDisplayText: (ka: Ka) => `${ka.ka_description}`,
   };
 
   return (
