@@ -25,6 +25,7 @@ let importRepository: ImportRepository | null = null;
 let exportRepository: ExportRepository | null = null;
 let mainWindow: BrowserWindow | null = null;
 let db: Database | null = null;
+let sbdb: Database | null = null;
 let isShuttingDown = false;
 
 // Path to store configuration
@@ -122,7 +123,8 @@ const showInitialDatabaseChoice = async (): Promise<'new' | 'existing' | null> =
 const promptForNewDbPath = async (sb?: boolean): Promise<string | null> => {
   const result = await dialog.showSaveDialog({
     title: 'Create New Database',
-    defaultPath: loadConfig().dbPath || path.join(app.getPath('userData'), sb ? 'secureDatabase.db' : 'database.db'),
+    defaultPath: sb ? path.join(app.getPath('userData'), 'secureDatabase.db') :
+      loadConfig().dbPath || path.join(app.getPath('userData'), 'database.db'),
     filters: [{ name: 'SQLite Database', extensions: ['db', 'sqlite', 'sqlite3'] }],
     properties: ['createDirectory']
   });
@@ -131,10 +133,10 @@ const promptForNewDbPath = async (sb?: boolean): Promise<string | null> => {
 };
 
 // Function to prompt for existing database
-const promptForExistingDbPath = async (): Promise<string | null> => {
+const promptForExistingDbPath = async (sb?: boolean): Promise<string | null> => {
   const result = await dialog.showOpenDialog({
     title: 'Select Existing Database',
-    defaultPath: loadConfig().dbPath || app.getPath('userData'),
+    defaultPath: sb ? app.getPath('userData') : loadConfig().dbPath || app.getPath('userData'),
     filters: [{ name: 'SQLite Database', extensions: ['db', 'sqlite', 'sqlite3'] }],
     properties: ['openFile']
   });
@@ -269,32 +271,66 @@ const changeDatabaseLocation = async (sb?: boolean): Promise<{ success: boolean;
     return { success: false, error: 'No database path selected' };
   }
 
-  try {
-    // Close existing database connection
-    if (db) {
-      console.log('Closing existing database connection...');
-      db.close();
-      db = null;
-      importRepository = null;
-      exportRepository = null;
+
+  // Sandbox mode
+  if (sb) {
+    try {
+      // Close existing database connection
+      if (sbdb) {
+        console.log('Closing existing secure database connection...');
+        sbdb.close();
+        sbdb = null;
+        importRepository = null;
+        exportRepository = null;
+      }
+
+      // Update config with new database path
+      // const config = loadConfig();
+      // config.dbPath = newDbPath;
+      // saveConfig(config);
+
+      // Initialize new database connection
+      sbdb = new Database(newDbPath, true);
+      importRepository = new ImportRepository(sbdb);
+      exportRepository = new ExportRepository(sbdb);
+
+      console.log('Secure database changed to:', newDbPath);
+
+      return { success: true, dbPath: newDbPath };
+    } catch (error) {
+      console.error('Error changing secure database:', error);
+      return { success: false, error: `Failed to switch database: ${error instanceof Error ? error.message : 'Unknown error'}` };
     }
 
-    // Update config with new database path
-    const config = loadConfig();
-    config.dbPath = newDbPath;
-    saveConfig(config);
+    // Main Database
+  } else {
+    try {
+      // Close existing database connection
+      if (db) {
+        console.log('Closing existing database connection...');
+        db.close();
+        db = null;
+        importRepository = null;
+        exportRepository = null;
+      }
 
-    // Initialize new database connection
-    db = new Database(newDbPath);
-    importRepository = new ImportRepository(db);
-    exportRepository = new ExportRepository(db);
+      // Update config with new database path
+      const config = loadConfig();
+      config.dbPath = newDbPath;
+      saveConfig(config);
 
-    console.log('Database changed to:', newDbPath);
+      // Initialize new database connection
+      db = new Database(newDbPath);
+      importRepository = new ImportRepository(db);
+      exportRepository = new ExportRepository(db);
 
-    return { success: true, dbPath: newDbPath };
-  } catch (error) {
-    console.error('Error changing database:', error);
-    return { success: false, error: `Failed to switch database: ${error instanceof Error ? error.message : 'Unknown error'}` };
+      console.log('Database changed to:', newDbPath);
+
+      return { success: true, dbPath: newDbPath };
+    } catch (error) {
+      console.error('Error changing database:', error);
+      return { success: false, error: `Failed to switch database: ${error instanceof Error ? error.message : 'Unknown error'}` };
+    }
   }
 };
 
