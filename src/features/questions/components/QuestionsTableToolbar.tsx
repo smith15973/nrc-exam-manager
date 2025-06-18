@@ -58,11 +58,11 @@ export default function QuestionsTableToolbar(props: EnhancedTableToolbarProps) 
         onChange={onSearchChange}
       />
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <Delete />
-          </IconButton>
-        </Tooltip>
+        ''// <Tooltip title="Delete">
+        //   <IconButton>
+        //     <Delete />
+        //   </IconButton>
+        // </Tooltip>
       ) : (
         <Tooltip title="Filter list">
           <IconButton onClick={onOpenFilter}>
