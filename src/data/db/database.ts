@@ -33,81 +33,126 @@ export class Database {
                 });
             }
         },
-        // 2: {
-        //     description: 'Add option column to answers table',
-        //     up: (db: sqlite3.Database) => {
-        //         // Add the option column that you added to your schema
-        //         db.run('ALTER TABLE answers ADD COLUMN option TEXT', (err) => {
-        //             if (err && !err.message.includes('duplicate column name')) {
-        //                 throw err;
-        //             }
-        //         });
-        //     }
-        // },
+        3: {
+            description: 'Add Full-Text Search (FTS) tables, view, and triggers',
+            up: (db: sqlite3.Database) => {
+                const ftsSetupSql = `
+                    -- Drop existing FTS table to ensure clean state
+                    DROP TABLE IF EXISTS questions_fts;
 
-        // 3: {
-        //     description: 'Add question_systems table to database',
-        //     up: (db: sqlite3.Database) => {
-        //         const sql = `
-        //     CREATE TABLE IF NOT EXISTS question_systems (
-        //         question_id INTEGER NOT NULL,
-        //         system_number TEXT NOT NULL,
-        //         PRIMARY KEY (question_id, system_number),
-        //         FOREIGN KEY (system_number) REFERENCES systems(number) ON DELETE CASCADE,
-        //         FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE
-        //     )
-        // `;
-        //         db.run(sql, (err) => {
-        //             if (err && !err.message.includes('duplicate column name')) {
-        //                 throw err;
-        //             }
-        //         });
-        //     }
-        // },
-        // 4: {
-        //     description: 'Add kas table to database',
-        //     up: (db: sqlite3.Database) => {
-        //         const sql = `
-        //     CREATE TABLE IF NOT EXISTS kas (
-        //         'ka_number TEXT PRIMARY KEY',
-        //         'ka_description TEXT',
-        //         'system_number TEXT',
-        //         'FOREIGN KEY (system_number) REFERENCES systems(system_number) ON DELETE CASCADE',
-        //     )
-        // `;
-        //         db.run(sql, (err) => {
-        //             if (err && !err.message.includes('duplicate column name')) {
-        //                 throw err;
-        //             }
-        //         });
-        //     }
-        // },
-        // 5: {
-        //     description: 'Drop question_ka_numbers and create question_kas table',
-        //     up: (db: sqlite3.Database) => {
-        //         // Drop the question_ka_numbers table
-        //         db.run('DROP TABLE IF EXISTS question_ka_numbers', (err) => {
-        //             if (err) {
-        //                 throw err;
-        //             }
-        //         });
+                    -- 1. Create the FTS virtual table
+                    CREATE VIRTUAL TABLE questions_fts USING fts5(
+                        question_id UNINDEXED,
+                        question_text,
+                        objective,
+                        last_used,
+                        exam_level,
+                        difficulty_level,
+                        cognitive_level,
+                        exam_names,
+                        ka_descriptions,
+                        ka_numbers,
+                        system_names,
+                        system_numbers,
+                        content=questions_search_view
+                    );
 
-        //         // Create the question_kas table
-        //         const sql = `
-        //         CREATE TABLE IF NOT EXISTS question_kas (
-        //             question_id INTEGER NOT NULL,
-        //             ka_number TEXT NOT NULL,
-        //             PRIMARY KEY (question_id, ka_number),
-        //             FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE
-        //         )
-        //     `;
-        //         db.run(sql, (err) => {
-        //             if (err && !err.message.includes('table question_kas already exists')) {
-        //                 throw err;
-        //             }
-        //         });
-        //     }
-        // }
+                    -- 2. Create the search view
+                    CREATE VIEW IF NOT EXISTS questions_search_view AS
+                    SELECT 
+                        q.question_id AS rowid,
+                        q.question_text,
+                        q.objective,
+                        q.last_used,
+                        CAST(q.exam_level AS TEXT) as exam_level,
+                        CAST(q.difficulty_level AS TEXT) as difficulty_level,
+                        CAST(q.cognitive_level AS TEXT) as cognitive_level,
+                        COALESCE(GROUP_CONCAT(DISTINCT e.name), '') as exam_names,
+                        COALESCE(GROUP_CONCAT(DISTINCT k.ka_description), '') as ka_descriptions,
+                        COALESCE(GROUP_CONCAT(DISTINCT k.ka_number), '') as ka_numbers,
+                        COALESCE(GROUP_CONCAT(DISTINCT s.name), '') as system_names,
+                        COALESCE(GROUP_CONCAT(DISTINCT s.number), '') as system_numbers
+                    FROM questions q
+                    LEFT JOIN exam_questions eq ON q.question_id = eq.question_id
+                    LEFT JOIN exams e ON eq.exam_id = e.exam_id
+                    LEFT JOIN question_kas qk ON q.question_id = qk.question_id
+                    LEFT JOIN kas k ON qk.ka_number = k.ka_number
+                    LEFT JOIN question_systems qs ON q.question_id = qs.question_id
+                    LEFT JOIN systems s ON qs.system_number = s.number
+                    GROUP BY q.question_id, q.question_text, q.objective, q.last_used, q.exam_level, q.difficulty_level, q.cognitive_level;
+
+                    -- 3. Populate the FTS table
+                    INSERT INTO questions_fts SELECT * FROM questions_search_view;
+
+                    -- 4. Create triggers
+                    CREATE TRIGGER IF NOT EXISTS questions_fts_update_questions 
+                    AFTER UPDATE ON questions
+                    BEGIN
+                        DELETE FROM questions_fts WHERE question_id = NEW.question_id;
+                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = NEW.question_id;
+                    END;
+
+                    CREATE TRIGGER IF NOT EXISTS questions_fts_insert_questions
+                    AFTER INSERT ON questions
+                    BEGIN
+                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = NEW.question_id;
+                    END;
+
+                    CREATE TRIGGER IF NOT EXISTS questions_fts_delete_questions
+                    AFTER DELETE ON questions
+                    BEGIN
+                        DELETE FROM questions_fts WHERE question_id = OLD.question_id;
+                    END;
+
+                    CREATE TRIGGER IF NOT EXISTS questions_fts_update_exam_questions
+                    AFTER INSERT ON exam_questions
+                    BEGIN
+                        DELETE FROM questions_fts WHERE question_id = NEW.question_id;
+                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = NEW.question_id;
+                    END;
+
+                    CREATE TRIGGER IF NOT EXISTS questions_fts_delete_exam_questions
+                    AFTER DELETE ON exam_questions
+                    BEGIN
+                        DELETE FROM questions_fts WHERE question_id = OLD.question_id;
+                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = OLD.question_id;
+                    END;
+
+                    CREATE TRIGGER IF NOT EXISTS questions_fts_update_question_kas
+                    AFTER INSERT ON question_kas
+                    BEGIN
+                        DELETE FROM questions_fts WHERE question_id = NEW.question_id;
+                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = NEW.question_id;
+                    END;
+
+                    CREATE TRIGGER IF NOT EXISTS questions_fts_delete_question_kas
+                    AFTER DELETE ON question_kas
+                    BEGIN
+                        DELETE FROM questions_fts WHERE question_id = OLD.question_id;
+                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = OLD.question_id;
+                    END;
+
+                    CREATE TRIGGER IF NOT EXISTS questions_fts_update_question_systems
+                    AFTER INSERT ON question_systems
+                    BEGIN
+                        DELETE FROM questions_fts WHERE question_id = NEW.question_id;
+                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = NEW.question_id;
+                    END;
+
+                    CREATE TRIGGER IF NOT EXISTS questions_fts_delete_question_systems
+                    AFTER DELETE ON question_systems
+                    BEGIN
+                        DELETE FROM questions_fts WHERE question_id = OLD.question_id;
+                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = OLD.question_id;
+                    END;
+                `;
+                db.exec(ftsSetupSql, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            }
+        }
     } as const;
 
     // Current version is the highest migration number

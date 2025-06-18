@@ -59,6 +59,18 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                         Reset
                     </Button>
 
+                    {/* Question Text */}
+                    <Box
+                        sx={{ pt: 2 }}
+                    >
+                        <TextField
+                            fullWidth
+                            type="text"
+                            value={filters.question_text || ""}
+                            onChange={(e) => onFilterChange("question_text", e.target.value)}
+                            label="Question"
+                        />
+                    </Box>
                     {/* Category */}
                     <Box
                         sx={{ pt: 2 }}

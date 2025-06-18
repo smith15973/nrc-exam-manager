@@ -246,7 +246,10 @@ export default function QuestionTemplate({ question, print = false, student = fa
 
                         <Box sx={{ flex: 1, minWidth: '200px', ...printStyles }}>
                             <InfoRow label="Category" value={question.category} />
-                            <InfoRow label="KA Statement" value="KA Statement filler. KA Statement filler. KA Statement filler. KA Statement filler." />
+                            <InfoRow
+                                label="KA Statement"
+                                value="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                            />
                         </Box>
                     </Box>
 

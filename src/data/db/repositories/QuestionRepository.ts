@@ -399,91 +399,107 @@ export class QuestionRepository {
                 return;
             }
 
-            console.log("IN THE SQL", filters)
+            console.log("IN THE SQL", filters);
 
-            // Build the base query
-            let query = 'SELECT * FROM questions';
+            let query: string;
+            let params: any[] = [];
             const conditions: string[] = [];
-            const params: any[] = [];
 
-            // Apply filters if provided
+            if (filters?.query?.trim()) {
+                // Use FTS for global search
+                const searchTerm = filters.query.trim();
+                const escapedTerm = searchTerm.replace(/"/g, '""').replace(/\s+/g, ' AND ') + '*';
+                query = `
+                SELECT q.*, bm25(questions_fts) as rank
+                FROM questions q
+                INNER JOIN questions_fts ON q.question_id = questions_fts.rowid
+                WHERE questions_fts MATCH ?
+            `;
+                params.push(escapedTerm);
+                console.log("FTS MATCH Term:", escapedTerm);
+            } else {
+                // No global search - use regular query
+                query = 'SELECT * FROM questions q';
+            }
+
             if (filters) {
-                filters.query = filters.query?.trim() || '';
-
-                // Text search in question_text
-                if (filters.query) {
-                    conditions.push('question_text LIKE ?');
-                    params.push(`%${filters.query}%`);
+                if (filters.question_text?.trim()) {
+                    conditions.push('q.question_text LIKE ?');
+                    params.push(`%${filters.question_text.trim()}%`);
                 }
 
-                // Date range filters
-                if (filters.lastUsedStart) {
-                    conditions.push('last_used >= ?');
-                    params.push(filters.lastUsedStart);
-                }
-                if (filters.lastUsedEnd) {
-                    conditions.push('last_used <= ?');
-                    params.push(filters.lastUsedEnd);
+                if (filters.category?.trim()) {
+                    conditions.push('q.category LIKE ?');
+                    params.push(`%${filters.category.trim()}%`);
                 }
 
-                // Exam level filters
-                if (filters.examLevelStart) {
-                    conditions.push('exam_level >= ?');
-                    params.push(filters.examLevelStart);
-                }
-                if (filters.examLevelEnd) {
-                    conditions.push('exam_level <= ?');
-                    params.push(filters.examLevelEnd);
+                if (filters.objective?.trim()) {
+                    conditions.push('q.objective LIKE ?');
+                    params.push(`%${filters.objective.trim()}%`);
                 }
 
-                // Difficulty level filters
-                if (filters.diffLevelStart) {
-                    conditions.push('difficulty_level >= ?');
+                if (filters.technical_references?.trim()) {
+                    conditions.push('q.technical_references LIKE ?');
+                    params.push(`%${filters.technical_references.trim()}%`);
+                }
+
+                if (filters.lastUsedStart?.trim()) {
+                    conditions.push('q.last_used >= ?');
+                    params.push(filters.lastUsedStart.trim());
+                }
+                if (filters.lastUsedEnd?.trim()) {
+                    conditions.push('q.last_used <= ?');
+                    params.push(filters.lastUsedEnd.trim());
+                }
+
+                // if (filters.examLevelStart?.trim()) {
+                //     conditions.push('q.exam_level >= ?');
+                //     params.push(filters.examLevelStart.trim());
+                // }
+                // if (filters.examLevelEnd?.trim()) {
+                //     conditions.push('q.exam_level <= ?');
+                //     params.push(filters.examLevelEnd.trim());
+                // }
+
+                if (filters.diffLevelStart?.trim()) {
+                    conditions.push('q.difficulty_level >= ?');
                     params.push(parseInt(filters.diffLevelStart));
                 }
-                if (filters.diffLevelEnd) {
-                    conditions.push('difficulty_level <= ?');
+                if (filters.diffLevelEnd?.trim()) {
+                    conditions.push('q.difficulty_level <= ?');
                     params.push(parseInt(filters.diffLevelEnd));
                 }
 
-                // Cognitive level filters
-                if (filters.cogLevelStart) {
-                    conditions.push('cognitive_level >= ?');
-                    params.push(filters.cogLevelStart);
-                }
-                if (filters.cogLevelEnd) {
-                    conditions.push('cognitive_level <= ?');
-                    params.push(filters.cogLevelEnd);
-                }
+                // if (filters.cogLevelStart?.trim()) {
+                //     conditions.push('q.cognitive_level >= ?');
+                //     params.push(filters.cogLevelStart.trim());
+                // }
+                // if (filters.cogLevelEnd?.trim()) {
+                //     conditions.push('q.cognitive_level <= ?');
+                //     params.push(filters.cogLevelEnd.trim());
+                // }
 
-                // Objective filter
-                if (filters.objective) {
-                    conditions.push('objective LIKE ?');
-                    params.push(`%${filters.objective}%`);
-                }
-
-                // Handle relationship-based filters (requires JOINs)
-                if (filters.examIds && filters.examIds.length > 0) {
+                if (filters.examIds?.length) {
                     const placeholders = filters.examIds.map(() => '?').join(',');
-                    conditions.push(`question_id IN (
+                    conditions.push(`q.question_id IN (
                     SELECT question_id FROM exam_questions
                     WHERE exam_id IN (${placeholders})
                 )`);
                     params.push(...filters.examIds);
                 }
 
-                if (filters.kaNums && filters.kaNums.length > 0) {
+                if (filters.kaNums?.length) {
                     const placeholders = filters.kaNums.map(() => '?').join(',');
-                    conditions.push(`question_id IN (
+                    conditions.push(`q.question_id IN (
                     SELECT question_id FROM question_kas 
                     WHERE ka_number IN (${placeholders})
                 )`);
                     params.push(...filters.kaNums);
                 }
 
-                if (filters.systemNums && filters.systemNums.length > 0) {
+                if (filters.systemNums?.length) {
                     const placeholders = filters.systemNums.map(() => '?').join(',');
-                    conditions.push(`question_id IN (
+                    conditions.push(`q.question_id IN (
                     SELECT question_id FROM question_systems 
                     WHERE system_number IN (${placeholders})
                 )`);
@@ -491,16 +507,21 @@ export class QuestionRepository {
                 }
             }
 
-            // Add WHERE clause if there are conditions
             if (conditions.length > 0) {
-                query += ' WHERE ' + conditions.join(' AND ');
+                query += (filters?.query?.trim() ? ' AND ' : ' WHERE ') + conditions.join(' AND ');
             }
 
-            // Execute the query
+            query += filters?.query?.trim() ? ' ORDER BY rank' : ' ORDER BY q.question_id';
+
+            console.log("Final Query:", query);
+            console.log("Params:", params);
+
             this.db.all(query, params, (err, rows: Question[]) => {
                 if (err) {
+                    console.error("Query Error:", err);
                     reject(err);
                 } else {
+                    console.log("Returned Rows:", rows.length);
                     resolve(rows);
                 }
             });
