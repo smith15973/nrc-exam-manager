@@ -23,7 +23,8 @@ export default function ExamPage() {
         addQuestionsBatch,
         removeQuestionFromExam,
         addExamQuestion,
-        addQuestion
+        addQuestion,
+        getQuestionsComplete
     } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -31,6 +32,7 @@ export default function ExamPage() {
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [tableView, setTableView] = useState(true);
     const [student, setStudent] = useState(false);
+    const [filters, setFilters] = useState<QuestionFilters>();
 
 
 
@@ -57,14 +59,14 @@ export default function ExamPage() {
 
     const loadQuestions = async () => {
         try {
-            if (!examId) throw new Error("No examId provided");
-            const questions = await getQuestionsByExamId(examId);
-            setExamQuestions(questions);
+            console.log("Loading Questions", filters)
+            const questions = await getQuestionsComplete(filters);
+            setExamQuestions(questions)
+
         } catch (err) {
-            setError("Failed to load exam questions");
-            console.error("Failed to load exam questions:", err);
+            setError("Failed to load exam questions")
         }
-    };
+    }
 
 
     // Only fetch when examId changes (initial load)
@@ -72,8 +74,19 @@ export default function ExamPage() {
         if (examId) {
             loadExam();
             loadQuestions();
+            setFilters((prev) => {
+                const newFilters = { ...prev };
+                if (examId && (!newFilters.examIds || !newFilters.examIds.includes(examId))) {
+                    newFilters.examIds = newFilters.examIds ? [...newFilters.examIds, examId] : [examId];
+                }
+                return newFilters;
+            });
         }
     }, [examId]);
+    // Only fetch when examId changes (initial load)
+    useEffect(() => {
+        loadQuestions();
+    }, [filters]);
 
     const handleSubmit = async (updatedExam: Exam) => {
         try {
@@ -137,6 +150,17 @@ export default function ExamPage() {
         await loadQuestions();
     }
 
+    const handleFilterChange = (key: string, value: any) => {
+        console.log(value);
+        setFilters((prev) => {
+            const newFilters = { ...prev, [key]: value };
+            if (examId && (!newFilters.examIds || !newFilters.examIds.includes(examId))) {
+                newFilters.examIds = newFilters.examIds ? [...newFilters.examIds, examId] : [examId];
+            }
+            return newFilters;
+        });
+        // loadQuestions();
+    }
 
 
     return (
@@ -191,6 +215,9 @@ export default function ExamPage() {
                     checkable
                     selectedIds={selectedIds}
                     onSelectionChange={onSelectionChange}
+                    filters={filters}
+                    onFilterChange={handleFilterChange}
+                    onResetFilters={() => setFilters({})}
                 /> : examQuestions?.map((examQuestion, idx) => {
                     return (
                         <QuestionTemplate key={examQuestion.question_id} question={examQuestion} examName={exam.name} student={student} />
