@@ -186,7 +186,7 @@ export default function ExamPage() {
 
             <QuestionForm examId={examId} onSubmit={handleCreateNewQuestion} />
             <ImportViewer onSubmit={handleImport} />
-            <ExportQuestionsButton questionIds={selectedIds} />
+            <ExportQuestionsButton questionIds={selectedIds} onExport={() => setSelectedIds([])} />
             <ConfirmDelete
                 onConfirmDelete={handleRemoveQuestionFromExam}
                 buttonText="Remove From Exam"

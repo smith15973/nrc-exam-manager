@@ -76,7 +76,7 @@ export default function QuestionsPage() {
         <>
             <QuestionForm onSubmit={handleSubmit} />
             <ImportViewer onSubmit={handleImport} />
-            <ExportQuestionsButton questionIds={selectedIds} />
+            <ExportQuestionsButton questionIds={selectedIds} onExport={() => {setSelectedIds([])}} />
             <ConfirmDelete
                 onConfirmDelete={handleDeleteQuestions}
                 buttonText="Delete Selected"

@@ -7,10 +7,11 @@ interface ExportQuestionsButtonProps {
     questionIds: number[];
     buttonText?: string;
     onClick?: () => void;
+    onExport: () => void;
 }
 
 export default function ExportQuestionsButton(props: ExportQuestionsButtonProps) {
-    const { questionIds, buttonText, onClick } = props;
+    const { questionIds, buttonText, onClick, onExport } = props;
     const [status, setStatus] = useState<null | { success: boolean, msg: React.ReactNode }>();
 
     const openFileLocation = (filePath: string) => {
@@ -44,6 +45,7 @@ export default function ExportQuestionsButton(props: ExportQuestionsButtonProps)
                         </>
                     ) : <> Successfully Exported! </>
                 });
+                {onExport()}
             } else {
                 if (result.error === "Export cancelled by user") {
                     setStatus(null);

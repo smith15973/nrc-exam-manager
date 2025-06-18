@@ -33,30 +33,10 @@ export class Database {
                 });
             }
         },
-        3: {
+        2: {
             description: 'Add Full-Text Search (FTS) tables, view, and triggers',
             up: (db: sqlite3.Database) => {
                 const ftsSetupSql = `
-                    -- Drop existing FTS table to ensure clean state
-                    DROP TABLE IF EXISTS questions_fts;
-
-                    -- 1. Create the FTS virtual table
-                    CREATE VIRTUAL TABLE questions_fts USING fts5(
-                        question_id UNINDEXED,
-                        question_text,
-                        objective,
-                        last_used,
-                        exam_level,
-                        difficulty_level,
-                        cognitive_level,
-                        exam_names,
-                        ka_descriptions,
-                        ka_numbers,
-                        system_names,
-                        system_numbers,
-                        content=questions_search_view
-                    );
-
                     -- 2. Create the search view
                     CREATE VIEW IF NOT EXISTS questions_search_view AS
                     SELECT 
@@ -80,71 +60,6 @@ export class Database {
                     LEFT JOIN question_systems qs ON q.question_id = qs.question_id
                     LEFT JOIN systems s ON qs.system_number = s.number
                     GROUP BY q.question_id, q.question_text, q.objective, q.last_used, q.exam_level, q.difficulty_level, q.cognitive_level;
-
-                    -- 3. Populate the FTS table
-                    INSERT INTO questions_fts SELECT * FROM questions_search_view;
-
-                    -- 4. Create triggers
-                    CREATE TRIGGER IF NOT EXISTS questions_fts_update_questions 
-                    AFTER UPDATE ON questions
-                    BEGIN
-                        DELETE FROM questions_fts WHERE question_id = NEW.question_id;
-                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = NEW.question_id;
-                    END;
-
-                    CREATE TRIGGER IF NOT EXISTS questions_fts_insert_questions
-                    AFTER INSERT ON questions
-                    BEGIN
-                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = NEW.question_id;
-                    END;
-
-                    CREATE TRIGGER IF NOT EXISTS questions_fts_delete_questions
-                    AFTER DELETE ON questions
-                    BEGIN
-                        DELETE FROM questions_fts WHERE question_id = OLD.question_id;
-                    END;
-
-                    CREATE TRIGGER IF NOT EXISTS questions_fts_update_exam_questions
-                    AFTER INSERT ON exam_questions
-                    BEGIN
-                        DELETE FROM questions_fts WHERE question_id = NEW.question_id;
-                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = NEW.question_id;
-                    END;
-
-                    CREATE TRIGGER IF NOT EXISTS questions_fts_delete_exam_questions
-                    AFTER DELETE ON exam_questions
-                    BEGIN
-                        DELETE FROM questions_fts WHERE question_id = OLD.question_id;
-                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = OLD.question_id;
-                    END;
-
-                    CREATE TRIGGER IF NOT EXISTS questions_fts_update_question_kas
-                    AFTER INSERT ON question_kas
-                    BEGIN
-                        DELETE FROM questions_fts WHERE question_id = NEW.question_id;
-                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = NEW.question_id;
-                    END;
-
-                    CREATE TRIGGER IF NOT EXISTS questions_fts_delete_question_kas
-                    AFTER DELETE ON question_kas
-                    BEGIN
-                        DELETE FROM questions_fts WHERE question_id = OLD.question_id;
-                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = OLD.question_id;
-                    END;
-
-                    CREATE TRIGGER IF NOT EXISTS questions_fts_update_question_systems
-                    AFTER INSERT ON question_systems
-                    BEGIN
-                        DELETE FROM questions_fts WHERE question_id = NEW.question_id;
-                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = NEW.question_id;
-                    END;
-
-                    CREATE TRIGGER IF NOT EXISTS questions_fts_delete_question_systems
-                    AFTER DELETE ON question_systems
-                    BEGIN
-                        DELETE FROM questions_fts WHERE question_id = OLD.question_id;
-                        INSERT INTO questions_fts SELECT * FROM questions_search_view WHERE question_id = OLD.question_id;
-                    END;
                 `;
                 db.exec(ftsSetupSql, (err) => {
                     if (err) {
