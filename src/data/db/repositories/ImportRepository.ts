@@ -486,9 +486,10 @@ export class ImportRepository {
   }
 
   // Method to get import statistics with cleaned data
+  // Method to get import statistics with cleaned data
   async importQuestions(): Promise<{
     questions: Question[];
-    stats: { total: number; processed: number; warnings: string[] }
+    stats: { total: number; processed: number; warnings: { questionNumber: number, msgs: string[] }[] }
   } | { success: boolean; error: string }> {
     try {
       const result = await this.importFilesSimple(true);
@@ -499,7 +500,7 @@ export class ImportRepository {
 
       const rawData = result as any[];
       const questions: Question[] = [];
-      const allWarnings: string[] = [];
+      const allWarnings: { questionNumber: number, msgs: string[] }[] = [];
       let totalProcessed = 0;
       let successfullyProcessed = 0;
 
@@ -513,12 +514,18 @@ export class ImportRepository {
             successfullyProcessed++;
 
             // Add warnings with question context
-            warnings.forEach(warning => {
-              allWarnings.push(`Question ${totalProcessed}: ${warning}`);
-            });
+            if (warnings.length > 0) {
+              allWarnings.push({
+                questionNumber: totalProcessed,
+                msgs: warnings
+              });
+            }
           }
         } catch (transformError) {
-          allWarnings.push(`Question ${totalProcessed}: Failed to transform - ${(transformError as Error).message}`);
+          allWarnings.push({
+            questionNumber: totalProcessed,
+            msgs: [`Failed to transformToQuestion - ${(transformError as Error).message}`]
+          });
         }
       }
 

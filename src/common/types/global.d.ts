@@ -111,9 +111,14 @@ interface QuestionsImportResponse extends ApiResponse {
   stats: {
     total: number;
     processed: number;
-    warnings: string[]
+    warnings: {
+      questionNumber: number;
+      msgs: string[];
+    }[]
   }
 }
+
+
 interface QuestionsExportResponse extends ApiResponse {
   filePath?: string;
 }
