@@ -83,4 +83,5 @@ contextBridge.exposeInMainWorld('files', {
   },
   openLocation: (filePath: string) => filesCall('open-location', filePath),
   changeDBLocation: () => filesCall('change-db-location'),
+  selectSBDBLocation: () => filesCall('select-sb-db-location'),
 })

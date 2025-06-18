@@ -38,7 +38,7 @@ const loadConfig = (): Config => {
     if (fs.existsSync(configPath)) {
       const configContent = fs.readFileSync(configPath, 'utf8');
       console.log('Config content:', configContent);
-      
+
       // Check if the content is empty or only whitespace
       if (!configContent.trim()) {
         console.warn('Config file is empty, returning default configuration');
@@ -52,7 +52,7 @@ const loadConfig = (): Config => {
 
       const config = JSON.parse(configContent);
       console.log('Parsed config:', config);
-      
+
       // Ensure windowState is always present
       return {
         windowState: {
@@ -119,14 +119,14 @@ const showInitialDatabaseChoice = async (): Promise<'new' | 'existing' | null> =
 };
 
 // Function to prompt for new database location
-const promptForNewDbPath = async (): Promise<string | null> => {
+const promptForNewDbPath = async (sb?: boolean): Promise<string | null> => {
   const result = await dialog.showSaveDialog({
     title: 'Create New Database',
-    defaultPath: loadConfig().dbPath || path.join(app.getPath('userData'), 'database.db'),
+    defaultPath: loadConfig().dbPath || path.join(app.getPath('userData'), sb ? 'secureDatabase.db' : 'database.db'),
     filters: [{ name: 'SQLite Database', extensions: ['db', 'sqlite', 'sqlite3'] }],
     properties: ['createDirectory']
   });
-  
+
   return result.canceled ? null : result.filePath || null;
 };
 
@@ -138,13 +138,13 @@ const promptForExistingDbPath = async (): Promise<string | null> => {
     filters: [{ name: 'SQLite Database', extensions: ['db', 'sqlite', 'sqlite3'] }],
     properties: ['openFile']
   });
-  
+
   if (result.canceled || !result.filePaths.length) {
     return null;
   }
-  
+
   const selectedPath = result.filePaths[0];
-  
+
   // Verify the file exists and is accessible
   try {
     fs.accessSync(selectedPath, fs.constants.R_OK | fs.constants.W_OK);
@@ -152,7 +152,7 @@ const promptForExistingDbPath = async (): Promise<string | null> => {
   } catch (error) {
     console.error('Database file is not accessible:', error);
     await dialog.showErrorBox(
-      'Database Error', 
+      'Database Error',
       `Cannot access the selected database file: ${selectedPath}\n\nPlease check file permissions or select a different file.`
     );
     return null;
@@ -162,13 +162,13 @@ const promptForExistingDbPath = async (): Promise<string | null> => {
 // Function to handle initial database setup
 const setupInitialDatabase = async (): Promise<string | null> => {
   const choice = await showInitialDatabaseChoice();
-  
+
   if (!choice) {
     return null; // User cancelled
   }
-  
+
   let dbPath: string | null = null;
-  
+
   if (choice === 'new') {
     dbPath = await promptForNewDbPath();
     if (dbPath) {
@@ -177,7 +177,7 @@ const setupInitialDatabase = async (): Promise<string | null> => {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
-      
+
       // If file already exists, ask for confirmation
       if (fs.existsSync(dbPath)) {
         const overwrite = await dialog.showMessageBox({
@@ -188,7 +188,7 @@ const setupInitialDatabase = async (): Promise<string | null> => {
           defaultId: 1,
           cancelId: 2
         });
-        
+
         if (overwrite.response === 1) {
           // Choose different location
           return await setupInitialDatabase();
@@ -202,17 +202,19 @@ const setupInitialDatabase = async (): Promise<string | null> => {
   } else {
     dbPath = await promptForExistingDbPath();
   }
-  
+
   return dbPath;
 };
 
 // Function to show change database choice dialog
-const showChangeDatabaseChoice = async (): Promise<'new' | 'existing' | null> => {
+const showChangeDatabaseChoice = async (sb?: boolean): Promise<'new' | 'existing' | null> => {
   const result = await dialog.showMessageBox({
     type: 'question',
-    title: 'Change Database',
-    message: 'How would you like to change your database?',
-    buttons: ['Create New Database', 'Switch to Existing Database', 'Cancel'],
+    title: sb ? 'Secure Database Access' : 'Change Database',
+    message: sb
+      ? 'Please select your preferred method for accessing a secure database:'
+      : 'Please choose how you would like to change your database:',
+    buttons: ['Create New Database', 'Use Existing Database', 'Cancel'],
     defaultId: 0,
     cancelId: 2
   });
@@ -225,24 +227,24 @@ const showChangeDatabaseChoice = async (): Promise<'new' | 'existing' | null> =>
 };
 
 // Function to handle database change
-const changeDatabaseLocation = async (): Promise<{ success: boolean; dbPath?: string; error?: string }> => {
-  const choice = await showChangeDatabaseChoice();
-  
+const changeDatabaseLocation = async (sb?: boolean): Promise<{ success: boolean; dbPath?: string; error?: string }> => {
+  const choice = await showChangeDatabaseChoice(sb);
+
   if (!choice) {
     return { success: false, error: 'Operation cancelled' };
   }
-  
+
   let newDbPath: string | null = null;
-  
+
   if (choice === 'new') {
-    newDbPath = await promptForNewDbPath();
+    newDbPath = await promptForNewDbPath(sb);
     if (newDbPath) {
       // Ensure the directory exists
       const dir = path.dirname(newDbPath);
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
-      
+
       // If file already exists, ask for confirmation
       if (fs.existsSync(newDbPath)) {
         const overwrite = await dialog.showMessageBox({
@@ -253,7 +255,7 @@ const changeDatabaseLocation = async (): Promise<{ success: boolean; dbPath?: st
           defaultId: 1,
           cancelId: 1
         });
-        
+
         if (overwrite.response === 1) {
           return { success: false, error: 'Operation cancelled' };
         }
@@ -262,11 +264,11 @@ const changeDatabaseLocation = async (): Promise<{ success: boolean; dbPath?: st
   } else {
     newDbPath = await promptForExistingDbPath();
   }
-  
+
   if (!newDbPath) {
     return { success: false, error: 'No database path selected' };
   }
-  
+
   try {
     // Close existing database connection
     if (db) {
@@ -276,19 +278,19 @@ const changeDatabaseLocation = async (): Promise<{ success: boolean; dbPath?: st
       importRepository = null;
       exportRepository = null;
     }
-    
+
     // Update config with new database path
     const config = loadConfig();
     config.dbPath = newDbPath;
     saveConfig(config);
-    
+
     // Initialize new database connection
     db = new Database(newDbPath);
     importRepository = new ImportRepository(db);
     exportRepository = new ExportRepository(db);
-    
+
     console.log('Database changed to:', newDbPath);
-    
+
     return { success: true, dbPath: newDbPath };
   } catch (error) {
     console.error('Error changing database:', error);
@@ -326,7 +328,7 @@ const createWindow = async (): Promise<void> => {
   const windowState = config.windowState || { width: 1200, height: 800 };
 
   let dbPath = config.dbPath;
-  
+
   // If no database path is configured, show initial setup
   if (!dbPath) {
     dbPath = await setupInitialDatabase();
@@ -351,7 +353,7 @@ const createWindow = async (): Promise<void> => {
         defaultId: 0,
         cancelId: 1
       });
-      
+
       if (reconnect.response === 0) {
         dbPath = await setupInitialDatabase();
         if (!dbPath) {
@@ -463,8 +465,12 @@ ipcMain.handle('files-operation', async (_event, { operation, data }) => {
     case 'open-location': {
       return shell.showItemInFolder(data);
     }
-    case 'change-db-location':
+    case 'change-db-location': {
       return await changeDatabaseLocation();
+    }
+    case 'select-sb-db-location': {
+      return await changeDatabaseLocation(true);
+    }
 
     default:
       return { success: false, error: `Unknown files operation ${operation}` };

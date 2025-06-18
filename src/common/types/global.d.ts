@@ -179,6 +179,7 @@ interface Window {
     },
     openLocation: (filePath: string) => void,
     changeDBLocation: () => Promise<ApiResponse>;
+    selectSBDBLocation: () => Promise<ApiResponse>;
   }
 }
 
