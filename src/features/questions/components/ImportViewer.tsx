@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { defaultQuestion, questionSchema, defaultAnswer } from '../../../data/db/schema';
 import { Box, TextField, SxProps, Button, Typography, Alert, Dialog, DialogContent, DialogActions, DialogTitle } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
-import AnswerForm from '../../answers/components/AnswerForm';
+import AnswerForm from './AnswerForm';
 import CheckExams from '../../exams/components/CheckExams';
 import CheckSystems from '../../systems/components/CheckSystems';
 import CheckKas from '../../kas/components/CheckKas';
@@ -244,7 +244,7 @@ export default function ImportViewer({ onSubmit }: ImportViewerProps) {
                 disabled={
                   !currentQuestionNumber ||
                   reviewedQuestions.findIndex((q) => q.questionNumber === currentQuestionNumber) ===
-                    reviewedQuestions.length - 1
+                  reviewedQuestions.length - 1
                 }
               >
                 Next

@@ -33,41 +33,41 @@ export class Database {
                 });
             }
         },
-        2: {
-            description: 'Add Full-Text Search (FTS) tables, view, and triggers',
-            up: (db: sqlite3.Database) => {
-                const ftsSetupSql = `
-                    -- 2. Create the search view
-                    CREATE VIEW IF NOT EXISTS questions_search_view AS
-                    SELECT 
-                        q.question_id AS rowid,
-                        q.question_text,
-                        q.objective,
-                        q.last_used,
-                        CAST(q.exam_level AS TEXT) as exam_level,
-                        CAST(q.difficulty_level AS TEXT) as difficulty_level,
-                        CAST(q.cognitive_level AS TEXT) as cognitive_level,
-                        COALESCE(GROUP_CONCAT(DISTINCT e.name), '') as exam_names,
-                        COALESCE(GROUP_CONCAT(DISTINCT k.ka_description), '') as ka_descriptions,
-                        COALESCE(GROUP_CONCAT(DISTINCT k.ka_number), '') as ka_numbers,
-                        COALESCE(GROUP_CONCAT(DISTINCT s.name), '') as system_names,
-                        COALESCE(GROUP_CONCAT(DISTINCT s.number), '') as system_numbers
-                    FROM questions q
-                    LEFT JOIN exam_questions eq ON q.question_id = eq.question_id
-                    LEFT JOIN exams e ON eq.exam_id = e.exam_id
-                    LEFT JOIN question_kas qk ON q.question_id = qk.question_id
-                    LEFT JOIN kas k ON qk.ka_number = k.ka_number
-                    LEFT JOIN question_systems qs ON q.question_id = qs.question_id
-                    LEFT JOIN systems s ON qs.system_number = s.number
-                    GROUP BY q.question_id, q.question_text, q.objective, q.last_used, q.exam_level, q.difficulty_level, q.cognitive_level;
-                `;
-                db.exec(ftsSetupSql, (err) => {
-                    if (err) {
-                        throw err;
-                    }
-                });
-            }
-        }
+        // 2: {
+        //     description: 'Add Full-Text Search (FTS) tables, view, and triggers',
+        //     up: (db: sqlite3.Database) => {
+        //         const ftsSetupSql = `
+        //             -- 2. Create the search view
+        //             CREATE VIEW IF NOT EXISTS questions_search_view AS
+        //             SELECT 
+        //                 q.question_id AS rowid,
+        //                 q.question_text,
+        //                 q.objective,
+        //                 q.last_used,
+        //                 CAST(q.exam_level AS TEXT) as exam_level,
+        //                 CAST(q.difficulty_level AS TEXT) as difficulty_level,
+        //                 CAST(q.cognitive_level AS TEXT) as cognitive_level,
+        //                 COALESCE(GROUP_CONCAT(DISTINCT e.name), '') as exam_names,
+        //                 COALESCE(GROUP_CONCAT(DISTINCT k.ka_description), '') as ka_descriptions,
+        //                 COALESCE(GROUP_CONCAT(DISTINCT k.ka_number), '') as ka_numbers,
+        //                 COALESCE(GROUP_CONCAT(DISTINCT s.name), '') as system_names,
+        //                 COALESCE(GROUP_CONCAT(DISTINCT s.number), '') as system_numbers
+        //             FROM questions q
+        //             LEFT JOIN exam_questions eq ON q.question_id = eq.question_id
+        //             LEFT JOIN exams e ON eq.exam_id = e.exam_id
+        //             LEFT JOIN question_kas qk ON q.question_id = qk.question_id
+        //             LEFT JOIN kas k ON qk.ka_number = k.ka_number
+        //             LEFT JOIN question_systems qs ON q.question_id = qs.question_id
+        //             LEFT JOIN systems s ON qs.system_number = s.number
+        //             GROUP BY q.question_id, q.question_text, q.objective, q.last_used, q.exam_level, q.difficulty_level, q.cognitive_level;
+        //         `;
+        //         db.exec(ftsSetupSql, (err) => {
+        //             if (err) {
+        //                 throw err;
+        //             }
+        //         });
+        //     }
+        // }
     } as const;
 
     // Current version is the highest migration number

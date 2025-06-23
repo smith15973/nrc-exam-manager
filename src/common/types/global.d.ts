@@ -18,49 +18,79 @@ interface Exam {
 interface Question {
   question_id: number;
   question_text: string;
-  category: string | null;
-  exam_level: string | null;
+  img_url: string | null;
+  answer_a: string;
+  answer_a_justification: string;
+  answer_b: string;
+  answer_b_justification: string;
+  answer_c: string;
+  answer_c_justification: string;
+  answer_d: string;
+  answer_d_justification: string;
+  correct_answer: "A" | "B" | "C" | "D";
+  exam_level: 0 | 1;
+  cognitive_level: 0 | 1;
   technical_references: string | null;
-  difficulty_level: number | null;
-  cognitive_level: string | null;
+  references_provided: string | null;
   objective: string | null;
   last_used: string | null;
-  // Optional relationship properties
-  answers?: [Answer, Answer, Answer, Answer];
   exams?: Exam[];
-  kas?: Ka[];
-  systems?: System[];
+  system_kas?: SystemKa[];
 }
 
 interface ExamQuestion {
   exam_id: number;
   question_id: number;
-  question_number: number | null;
+  question_number: number;
+  main_system_ka_system: string;
+  main_system_ka_ka: string;
+  ka_match_justification: string;
+  sro_match_justification: string | null;
+  answers_order: string;
   // Optional relationship properties
   exam?: Exam;
   question?: Question;
 }
 
-interface Answer {
-  answer_id: number;
-  question_id: number;
-  answer_text: string;
-  is_correct: number;
-  option: string | null;
-  justification: string | null;
-  // Optional relationship properties
-  question?: Question;
+interface Category {
+  category_number: string;
+  category_description: string;
 }
-
 interface Ka {
   ka_number: string;
-  ka_description: string;
+  category_number: string;
+
+  category?: Category;
+}
+interface System {
+  system_number: string;
+  system_name: string;
 }
 
-interface System {
-  number: string;
-  name: string;
+interface SystemKa {
+  system_number: string;
+  ka_number: string;
+  system_ka_number: string;
+  ka_statement: string | null;
+  ro_importance: number;
+  sro_importance: number;
+  cfr_content: string | null;
+
+  system?: System;
+  ka?: Ka;
 }
+
+interface QuestionSystemKa {
+  question_id: number;
+  ka_number: string;
+  system_number: string;
+
+  question?: Question;
+  ka?: Ka;
+  system?: System;
+}
+
+
 
 interface ApiResponse {
   success: boolean;
@@ -85,12 +115,6 @@ interface QuestionResponse extends ApiResponse {
   questions?: Question[];
 }
 
-interface AnswerResponse extends ApiResponse {
-  answerId?: number;
-  answer?: Answer;
-  answers?: Answer[];
-}
-
 interface ExamQuestionResponse extends ApiResponse {
   examQuestion?: ExamQuestion;
   examQuestions?: ExamQuestion[];
@@ -104,6 +128,21 @@ interface KaResponse extends ApiResponse {
 interface SystemResponse extends ApiResponse {
   system?: System;
   systems?: System[];
+}
+
+interface CategoryResponse extends ApiResponse {
+  category?: Category;
+  categories?: Category[];
+}
+
+interface SystemKaResponse extends ApiResponse {
+  systemKa?: SystemKa;
+  systemKas?: SystemKa[];
+}
+
+interface QuestionSystemKasResponse extends ApiResponse {
+  questionSystemKa?: QuestionSystemKa;
+  questionSystemKas?: QuestionSystemKa[];
 }
 
 interface QuestionsImportResponse extends ApiResponse {
