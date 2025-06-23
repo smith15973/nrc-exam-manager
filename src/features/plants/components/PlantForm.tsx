@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { defaultPlant, plantSchema } from '../../../data/db/schema';
 import { Box, Button, TextField } from '@mui/material';
 import { FormDialog } from '../../../common/components/FormDialog'
 

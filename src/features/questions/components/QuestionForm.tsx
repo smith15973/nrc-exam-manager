@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { defaultQuestion, questionSchema, defaultAnswer } from '../../../data/db/schema';
 import { Box, Button, TextField, SxProps } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
-import AnswerForm from '../../answers/components/AnswerForm';
+import AnswerForm from './AnswerForm';
 import { FormDialog } from '../../../common/components/FormDialog';
 import CheckExams from '../../exams/components/CheckExams';
 import CheckSystems from '../../systems/components/CheckSystems';
@@ -31,24 +30,24 @@ export default function QuestionForm(props: QuestionFormProps) {
     }, [question, exam]);
 
     useEffect(() => {
-    const examIds = questionForm.exams?.map(exam => exam.exam_id).filter((id): id is number => id !== undefined) || [];
-    
-    // If examId prop is provided and not already in the form
-    if (examId && !examIds.includes(examId)) {
-        // Find the exam object from the exams list
-        const examToAdd = exams.find(exam => exam.exam_id === examId);
-        if (examToAdd) {
-            // Add the exam to the form
-            setQuestionForm(prev => ({
-                ...prev,
-                exams: [...(prev.exams || []), examToAdd]
-            }));
-            examIds.push(examId);
+        const examIds = questionForm.exams?.map(exam => exam.exam_id).filter((id): id is number => id !== undefined) || [];
+
+        // If examId prop is provided and not already in the form
+        if (examId && !examIds.includes(examId)) {
+            // Find the exam object from the exams list
+            const examToAdd = exams.find(exam => exam.exam_id === examId);
+            if (examToAdd) {
+                // Add the exam to the form
+                setQuestionForm(prev => ({
+                    ...prev,
+                    exams: [...(prev.exams || []), examToAdd]
+                }));
+                examIds.push(examId);
+            }
         }
-    }
-    
-    setSelectedExams(examIds);
-}, [questionForm.exams, examId, exams]);
+
+        setSelectedExams(examIds);
+    }, [questionForm.exams, examId, exams]);
 
     useEffect(() => {
         const systemNums = questionForm.systems?.map(system => system.number).filter((num): num is string => num !== undefined) || [];

@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "lib": ["es6", "dom"],
+    "lib": [
+      "es6",
+      "dom"
+    ],
     "noImplicitThis": true,
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
@@ -16,14 +19,16 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-     "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true,
     "paths": {
       "*": [
         "node_modules/*"
       ]
-    }
+    },
+    "scripts"
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "scripts"
   ]
 }

@@ -10,7 +10,11 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "postinstall": "electron-rebuild"
+    "postinstall": "electron-rebuild",
+    "migrate": "ts-node scripts/migrate.ts",
+    "migrate:prod": "ts-node scripts/migrate.ts ./database.db",
+    "migrate:dev": "ts-node scripts/migrate.ts ./dev-database.db",
+    "schema:generate": "ts-node scripts/generate-schema.ts"
   },
   "keywords": [],
   "author": {

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import { Alert, Button, CircularProgress, FormControlLabel, Switch, Typography } from '@mui/material';
-import { defaultExam } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
 import ExamForm from '../components/ExamForm';
 import ImportViewer from '../../../features/questions/components/ImportViewer';

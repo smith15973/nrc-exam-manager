@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import { Typography } from '@mui/material';
-import { defaultKa } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
 import KaForm from '../components/KaForm';
 

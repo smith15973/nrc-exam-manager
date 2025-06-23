@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { defaultExam, examSchema } from '../../../data/db/schema';
 import { Box, Button, TextField } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import PlantSelect from '../../plants/components/PlantSelect';

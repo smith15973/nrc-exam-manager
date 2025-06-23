@@ -1,6 +1,4 @@
 import { Box, FormControlLabel, Switch, TextField } from "@mui/material";
-import { useState, useEffect } from "react";
-import { defaultAnswer } from "../../../data/db/schema";
 
 
 interface AnswerFormProps {
