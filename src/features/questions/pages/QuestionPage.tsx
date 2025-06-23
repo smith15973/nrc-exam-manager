@@ -3,7 +3,7 @@ import { useDatabase } from '../../../common/hooks/useDatabase';
 import { Alert, CircularProgress, Box, Switch, FormControl, FormLabel, FormControlLabel } from '@mui/material';
 import { defaultQuestion } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
-import QuestionForm from '../components/QuestionForm';
+// import QuestionForm from '../components/QuestionForm';
 import ConfirmDelete from '../../../common/components/ConfirmDelete';
 import QuestionTemplate from '../components/QuestionTemplate';
 
@@ -84,7 +84,7 @@ export default function QuestionPage() {
                 />
             </Box>
             <Box display={'flex'} justifyContent={'space-between'}>
-                <QuestionForm question={question} onSubmit={handleSubmit} />
+                {/* <QuestionForm question={question} onSubmit={handleSubmit} /> */}
                 <ConfirmDelete
                     message='Are you sure you want to delete this question? This will remove it from all exam associations! This action cannot be undone!'
                     onConfirmDelete={() => deleteQuestion(question.question_id)}

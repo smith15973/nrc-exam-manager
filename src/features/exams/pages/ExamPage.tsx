@@ -4,11 +4,11 @@ import { Alert, Button, CircularProgress, FormControlLabel, Switch, Typography }
 import { defaultExam } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
 import ExamForm from '../components/ExamForm';
-import ImportViewer from '../../../features/questions/components/ImportViewer';
+// import ImportViewer from '../../../features/questions/components/ImportViewer';
 import QuestionsTable from '../../../features/questions/components/QuestionsTable';
 import ConfirmDelete from '../../../common/components/ConfirmDelete';
 import ExportQuestionsButton from '../../../features/questions/components/ExportQuestionsButton';
-import QuestionForm from '../../../features/questions/components/QuestionForm';
+// import QuestionForm from '../../../features/questions/components/QuestionForm';
 import QuestionTemplate from '../../../features/questions/components/QuestionTemplate';
 import { Box, flex } from '@mui/system';
 
@@ -184,8 +184,8 @@ export default function ExamPage() {
                 </Alert>
             )}
 
-            <QuestionForm examId={examId} onSubmit={handleCreateNewQuestion} />
-            <ImportViewer onSubmit={handleImport} />
+            {/* <QuestionForm examId={examId} onSubmit={handleCreateNewQuestion} />
+            <ImportViewer onSubmit={handleImport} /> */}
             <ExportQuestionsButton questionIds={selectedIds} onExport={() => setSelectedIds([])} />
             <ConfirmDelete
                 onConfirmDelete={handleRemoveQuestionFromExam}

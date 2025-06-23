@@ -25,8 +25,8 @@ export default function SystemPage() {
 
     const handleSubmit = async (updatedSystem: System) => {
         await updateSystem(updatedSystem)
-        if (updatedSystem.number) {
-            await loadSystem(updatedSystem.number)
+        if (updatedSystem.system_number) {
+            await loadSystem(updatedSystem.system_number)
         }
     }
 
@@ -39,9 +39,9 @@ export default function SystemPage() {
 
     return (
         <>
-            <Typography variant='h4'>System: {system.number} {system.name}</Typography>
+            <Typography variant='h4'>System: {system.system_number} {system.system_name}</Typography>
             <SystemForm system={system} handleSubmit={handleSubmit} />
-            
+
 
 
         </>

@@ -39,7 +39,7 @@ export default function KaPage() {
 
     return (
         <>
-            <Typography variant='h4'>Ka: {ka.ka_number} {ka.ka_description}</Typography>
+            <Typography variant='h4'>Ka: {ka.ka_number} {ka.category_number}</Typography>
             <KaForm ka={ka} handleSubmit={handleSubmit} />
 
 

@@ -41,7 +41,7 @@ export default function SystemForm(props: SystemFormProps) {
     }
 
     const validateForm = () => {
-        return !!systemForm.name && !!systemForm.number
+        return !!systemForm.system_name && !!systemForm.system_number
     }
 
     const formContent = (
