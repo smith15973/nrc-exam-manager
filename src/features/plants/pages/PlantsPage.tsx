@@ -5,7 +5,7 @@ import { Typography } from '@mui/material';
 
 
 export default function PlantsPage() {
-    const { addPlant, deletePlant, error, plantsWithExams, } = useDatabase();
+    const { addPlant, deletePlant, plantsWithExams, } = useDatabase();
 
     const handleSubmit = async (plant: Plant) => {
         await addPlant(plant);
@@ -19,4 +19,4 @@ export default function PlantsPage() {
             {/* {error && <Typography variant='body2' style={{ color: 'red' }}>{error}</Typography>} */}
         </>
     )
-};
+}

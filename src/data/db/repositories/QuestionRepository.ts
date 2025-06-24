@@ -15,7 +15,10 @@ export class QuestionRepository {
                 const existing = await this.getById(question.question_id);
                 if (existing && this.isDuplicate(existing, question)) {
                     console.log("Duplicate question found, skipping");
-                    return existing.question_id!;
+                    if (existing.question_id !== undefined && existing.question_id !== null) {
+                        return existing.question_id;
+                    }
+                    throw new Error("Existing question does not have a question_id");
                 }
             } catch (error) {
                 // Question doesn't exist, continue with insertion
@@ -26,7 +29,10 @@ export class QuestionRepository {
         const existingByContent = await this.findByContentHash(question);
         if (existingByContent) {
             console.log("Duplicate question content found, skipping");
-            return existingByContent.question_id!;
+            if (existingByContent.question_id !== undefined && existingByContent.question_id !== null) {
+                return existingByContent.question_id;
+            }
+            throw new Error("Existing question content does not have a question_id");
         }
 
 
@@ -50,7 +56,7 @@ export class QuestionRepository {
                 let transactionActive = true; // Track transaction state
                 const total = questions.length;
 
-                const finishTransaction = (success: boolean, error?: any) => {
+                const finishTransaction = (success: boolean, error?: unknown) => {
                     if (!transactionActive) return; // Prevent double transaction operations
 
                     transactionActive = false;
@@ -67,7 +73,7 @@ export class QuestionRepository {
                     }
                 };
 
-                const processQuestion = async (question: Question, index: number) => {
+                const processQuestion = async (question: Question) => {
                     try {
                         if (this.isClosing()) {
                             throw new Error('Database is closing');
@@ -113,7 +119,7 @@ export class QuestionRepository {
                                 question.objective,
                                 question.last_used,
                             ],
-                            function (this: sqlite3.RunResult, err: any) {
+                            function (this: sqlite3.RunResult, err: Error | null) {
                                 if (err) {
                                     console.log("THERE IS AN ERROR1", err);
                                     finishTransaction(false, err);
@@ -151,8 +157,8 @@ export class QuestionRepository {
                 };
 
                 // Process all questions
-                questions.forEach((question, index) => {
-                    processQuestion(question, index);
+                questions.forEach((question) => {
+                    processQuestion(question);
                 });
             });
         });
@@ -308,7 +314,7 @@ export class QuestionRepository {
             // Build the base query
             let query = 'SELECT * FROM questions';
             const conditions: string[] = [];
-            const params: any[] = [];
+            const params: unknown[] = [];
 
             // Apply filters if provided
             if (filters) {
@@ -556,7 +562,7 @@ export class QuestionRepository {
             let query = 'SELECT DISTINCT q.* FROM questions q';
             const joins: string[] = [];
             const conditions: string[] = [];
-            const params: any[] = [];
+            const params: unknown[] = [];
 
             if (filters) {
                 filters.query = filters.query?.trim() || '';
@@ -801,10 +807,10 @@ export class QuestionRepository {
                             // Handle exam relationships
                             if (question.exams?.length) {
                                 const examPromise = new Promise<void>((resolveExam, rejectExam) => {
-                                    const placeholders = question.exams!.map(() => '(?, ?)').join(', ');
-                                    const values: any[] = [];
+                                    const placeholders = (question.exams ?? []).map(() => '(?, ?)').join(', ');
+                                    const values: unknown[] = [];
 
-                                    question.exams!.forEach(exam => {
+                                    (question.exams ?? []).forEach(exam => {
                                         values.push(exam.exam_id, question.question_id);
                                     });
 
@@ -824,7 +830,7 @@ export class QuestionRepository {
                             if (question.system_kas?.length) {
                                 const systemKaPromise = new Promise<void>((resolveSystemKa, rejectSystemKa) => {
                                     const placeholders = question.system_kas?.map(() => '(?, ?)').join(', ');
-                                    const values: any[] = [];
+                                    const values: unknown[] = [];
 
                                     question.system_kas?.forEach(ka => {
                                         values.push(question.question_id, ka.ka_number);

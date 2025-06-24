@@ -1,5 +1,5 @@
 // src/components/Test.tsx
-import { IconButton, List, ListItem, Box, ListItemButton, ListItemAvatar, Avatar, SxProps } from '@mui/material';
+import { IconButton, List, ListItem, ListItemButton, ListItemAvatar, Avatar, SxProps } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
 import ConfirmDelete from '../../../common/components/ConfirmDelete';
@@ -51,4 +51,4 @@ export default function SystemsList(props: SystemListProps) {
             })}
         </List>
     );
-};
+}

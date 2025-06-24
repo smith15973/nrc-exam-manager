@@ -20,4 +20,4 @@ export default function ExamsPage() {
             {error && <Typography variant='body2' style={{ color: 'red' }}>{error}</Typography>}
         </>
     )
-};
+}

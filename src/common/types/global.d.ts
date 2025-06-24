@@ -234,7 +234,7 @@ interface Window {
 }
 
 interface DBSearchParams {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface QuestionFilters {

@@ -1,5 +1,5 @@
 // src/components/Test.tsx
-import { IconButton, List, ListItem, Box, ListItemButton, ListItemAvatar, Avatar, SxProps } from '@mui/material';
+import { IconButton, List, ListItem, ListItemButton, ListItemAvatar, Avatar, SxProps } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
 import ConfirmDelete from '../../../common/components/ConfirmDelete';
@@ -23,7 +23,7 @@ export default function PlantsList(props: PlantListProps) {
             <IconButton edge='end' aria-label='delete'>
               <ConfirmDelete
                 message='Are you sure you want to delete this plant? This action cannot be undone!'
-                onConfirmDelete={() => deletePlant(plant.plant_id!)}
+                onConfirmDelete={() => deletePlant(plant.plant_id)}
                 button={({ onClick, disabled }) => (
                   <DeleteIcon
                     onClick={onClick}
@@ -50,4 +50,4 @@ export default function PlantsList(props: PlantListProps) {
       ))}
     </List>
   );
-};
+}

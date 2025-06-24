@@ -35,7 +35,7 @@ export default function PlantForm({ plant, handleSubmit }: PlantFormProps) {
                 <Box sx={{ pt: 2 }} key={field.key}>
                     <TextField
                         type={field.type}
-                        value={(plantForm as any)[field.key] || ''}
+                        value={plantForm[field.key as keyof typeof plantForm] || ''}
                         onChange={(e) => handleChange(field.key, e.target.value)}
                         label={field.label}
                         required={field.required}

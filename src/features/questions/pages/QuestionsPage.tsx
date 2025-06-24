@@ -14,10 +14,10 @@ import { Box } from "@mui/system";
 
 
 export default function QuestionsPage() {
-    const { addQuestion, addQuestionsBatch, getQuestionsComplete, deleteQuestion, addExamQuestion: addQuestionToExam, exams } = useDatabase();
+    const { addQuestion, addQuestionsBatch, getQuestionsComplete, deleteQuestion } = useDatabase();
     const [questions, setQuestions] = useState<Question[]>([]);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
-    
+
     const [error, setError] = useState<string | null>(null);
     const [filters, setFilters] = useState<QuestionFilters>();
 
@@ -61,7 +61,7 @@ export default function QuestionsPage() {
         setSelectedIds([]);
     }
 
-    const handleFilterChange = (key: string, value: any) => {
+    const handleFilterChange = (key: string, value: unknown) => {
         console.log(value)
         setFilters((prev) => ({ ...prev, [key]: value }))
         // loadQuestions();
@@ -76,7 +76,7 @@ export default function QuestionsPage() {
         <>
             <QuestionForm onSubmit={handleSubmit} />
             <ImportViewer onSubmit={handleImport} />
-            <ExportQuestionsButton questionIds={selectedIds} onExport={() => {setSelectedIds([])}} />
+            <ExportQuestionsButton questionIds={selectedIds} onExport={() => { setSelectedIds([]) }} />
             <ConfirmDelete
                 onConfirmDelete={handleDeleteQuestions}
                 buttonText="Delete Selected"

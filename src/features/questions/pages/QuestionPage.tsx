@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDatabase } from '../../../common/hooks/useDatabase';
-import { Alert, CircularProgress, Box, Switch, FormControl, FormLabel, FormControlLabel } from '@mui/material';
+import { Alert, CircularProgress, Box, Switch, FormControlLabel } from '@mui/material';
 import { defaultQuestion } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
 // import QuestionForm from '../components/QuestionForm';
@@ -11,7 +11,7 @@ import QuestionTemplate from '../components/QuestionTemplate';
 export default function QuestionPage() {
     const [question, setQuestion] = useState(defaultQuestion);
     const { questionId } = useParams<{ questionId: string }>();
-    const { getQuestionComplete, updateQuestion, deleteQuestion } = useDatabase();
+    const { getQuestionComplete,  deleteQuestion } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [student, setStudent] = useState(false);
@@ -43,26 +43,6 @@ export default function QuestionPage() {
             loadQuestion(parseInt(questionId));
         }
     }, [questionId]);
-
-    const handleSubmit = async (updatedQuestion: Question) => {
-        try {
-            setLoading(true);
-            setError(null);
-
-            // Update the question
-            await updateQuestion(updatedQuestion);
-
-            // Explicitly refetch to get the updated data with fresh plant info
-            if (updatedQuestion.question_id) {
-                await loadQuestion(updatedQuestion.question_id);
-            }
-        } catch (err) {
-            setError('Failed to update question');
-            console.error("Failed to update question:", err);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     if (loading && question.question_id === undefined) {
         // Initial loading state
@@ -109,4 +89,4 @@ export default function QuestionPage() {
             <QuestionTemplate question={question} student={student} />
         </>
     )
-};
+}

@@ -34,9 +34,9 @@ export default function SystemsPage() {
         <>
             <Typography variant='h4'>Systems</Typography>
             <SystemForm handleSubmit={handleSubmit} />
-            <SystemsList systems={systems} deleteSystem={deleteSystem} />
+            <SystemsList systems={systems} deleteSystem={handleDelete} />
 
 
         </>
     )
-};
+}

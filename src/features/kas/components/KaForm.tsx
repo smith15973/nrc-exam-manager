@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect} from 'react';
 import { defaultKa } from '../../../data/db/schema';
 import { Alert, Box, Button, TextField } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
@@ -29,7 +29,7 @@ export default function KaForm(props: KaFormProps) {
         setOpen(false);
     };
 
-    const handleChange = (key: string, value: any) => {
+    const handleChange = (key: string, value: unknown) => {
         setKaForm((prev) => ({ ...prev, [key]: value }));
     };
 
@@ -50,7 +50,7 @@ export default function KaForm(props: KaFormProps) {
                     <TextField
                         fullWidth
                         type={'text'}
-                        value={(kaForm as any)['ka_number'] || ''}
+                        value={kaForm.ka_number || ''}
                         onChange={(e) => handleChange('ka_number', e.target.value)}
                         label={"KA Number"}
                         required={true}
@@ -60,7 +60,7 @@ export default function KaForm(props: KaFormProps) {
                 <TextField
                     fullWidth
                     type={'text'}
-                    value={(kaForm as any)['category_number'] || ''}
+                    value={kaForm.category_number || ''}
                     onChange={(e) => handleChange('category_number', e.target.value)}
                     label={"Category Number"}
                     required={true}

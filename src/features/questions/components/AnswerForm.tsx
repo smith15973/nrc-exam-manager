@@ -3,14 +3,14 @@ import { Box, FormControlLabel, Switch, TextField } from "@mui/material";
 
 interface AnswerFormProps {
     answer: Answer
-    onChange: (key: string, value: any) => void
+    onChange: (key: string, value: unknown) => void
     letterChoice: string;
 }
 
 export default function AnswerForm(props: AnswerFormProps) {
     const { answer, onChange, letterChoice } = props;
 
-    const handleChange = (key: string, value: any) => {
+    const handleChange = (key: string, value: unknown) => {
         key = key.replace('$', letterChoice.toLowerCase());
         onChange(key, value);
     };

@@ -1,5 +1,5 @@
 // src/components/Test.tsx
-import { IconButton, List, ListItem, ListItemButton, SxProps } from '@mui/material';
+import { IconButton, List, ListItem, ListItemButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
 
@@ -33,4 +33,4 @@ export default function QuestionsList(props: QuestionListProps) {
         </List>
 
     );
-};
+}

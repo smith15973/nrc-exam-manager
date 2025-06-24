@@ -107,7 +107,7 @@ export class Database {
         return new Promise((resolve) => {
             this.db.get(
                 'SELECT version FROM schema_version ORDER BY version DESC LIMIT 1',
-                (err, row: any) => {
+                (err, row: { version: number } | undefined) => {
                     if (err) {
                         resolve(0); // Fresh database
                     } else {
@@ -131,7 +131,10 @@ export class Database {
         }
     }
 
-    private async runMigration(version: number, migration: any): Promise<void> {
+    private async runMigration(
+        version: number,
+        migration: { description: string; up: (db: sqlite3.Database) => void }
+    ): Promise<void> {
         return new Promise((resolve, reject) => {
             this.db.serialize(() => {
                 this.db.run('BEGIN TRANSACTION');

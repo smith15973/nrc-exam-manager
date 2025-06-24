@@ -1,5 +1,5 @@
 // src/components/Test.tsx
-import { IconButton, List, ListItem, ListItemButton, SxProps } from '@mui/material';
+import { IconButton, List, ListItem, ListItemButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
 import ConfirmDelete from '../../../common/components/ConfirmDelete'
@@ -9,11 +9,10 @@ import ConfirmDelete from '../../../common/components/ConfirmDelete'
 interface ExamListProps {
     exams: Exam[];
     deleteExam: (examId: number) => void;
-    sx?: SxProps;
 }
 
 export default function ExamsList(props: ExamListProps) {
-    const { exams, deleteExam, sx } = props
+    const { exams, deleteExam } = props
     return (
         <List>
             {exams.map((exam) => (
@@ -23,7 +22,7 @@ export default function ExamsList(props: ExamListProps) {
                         <IconButton edge='end' aria-label='delete'>
                             <ConfirmDelete
                                 message='Are you sure you want to delete this exam? This action cannot be undone!'
-                                onConfirmDelete={() => deleteExam(exam.exam_id!)}
+                                onConfirmDelete={() => deleteExam(exam.exam_id)}
                                 button={({ onClick, disabled }) => (
                                     <DeleteIcon
                                         onClick={onClick}
@@ -48,4 +47,4 @@ export default function ExamsList(props: ExamListProps) {
         </List>
 
     );
-};
+}

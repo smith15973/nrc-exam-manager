@@ -1,8 +1,7 @@
-import { useState, useEffect, use } from 'react';
-import { defaultSystem, systemSchema } from '../../../data/db/schema';
+import { useState, useEffect } from 'react';
+import { defaultSystem} from '../../../data/db/schema';
 import { Alert, Box, Button, TextField } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
-import PlantSelect from '../../plants/components/PlantSelect';
 import { FormDialog } from '../../../common/components/FormDialog';
 
 interface SystemFormProps {
@@ -30,7 +29,7 @@ export default function SystemForm(props: SystemFormProps) {
         setOpen(false);
     };
 
-    const handleChange = (key: string, value: any) => {
+    const handleChange = (key: string, value: unknown) => {
         setSystemForm((prev) => ({ ...prev, [key]: value }));
     };
 
@@ -51,8 +50,8 @@ export default function SystemForm(props: SystemFormProps) {
                     <TextField
                         fullWidth
                         type={'text'}
-                        value={(systemForm as any)['number'] || ''}
-                        onChange={(e) => handleChange('number', e.target.value)}
+                        value={systemForm.system_number || ''}
+                        onChange={(e) => handleChange('system_number', e.target.value)}
                         label={"System Number"}
                         required={true}
                     />
@@ -61,8 +60,8 @@ export default function SystemForm(props: SystemFormProps) {
                 <TextField
                     fullWidth
                     type={'text'}
-                    value={(systemForm as any)['name'] || ''}
-                    onChange={(e) => handleChange('name', e.target.value)}
+                    value={systemForm.system_name || ''}
+                    onChange={(e) => handleChange('system_name', e.target.value)}
                     label={"System Name"}
                     required={true}
                 />

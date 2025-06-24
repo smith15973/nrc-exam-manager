@@ -1,8 +1,6 @@
 import { FilterList } from "@mui/icons-material";
-import Delete from "@mui/icons-material/Delete";
 import { IconButton, Toolbar, Tooltip, Typography } from "@mui/material";
 import { alpha } from '@mui/material/styles';
-import { useState } from "react";
 import SearchField from "../../../common/components/SearchField";
 import FilterQuestions from "./FilterQuestions";
 
@@ -13,7 +11,7 @@ interface EnhancedTableToolbarProps {
   open: boolean;
   onOpenFilter: () => void;
   onCloseFilter: () => void;
-  onFilterChange: (key: string, value: any) => void;
+  onFilterChange: (key: string, value: unknown) => void;
   filters: QuestionFilters;
   onResetFilters: () => void;
 }

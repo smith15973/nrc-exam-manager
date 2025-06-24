@@ -53,8 +53,9 @@ export default function ExportQuestionsButton(props: ExportQuestionsButtonProps)
                     setStatus({ success: false, msg: `Error: ${result.error}` });
                 }
             }
-        } catch (error: any) {
-            setStatus({ success: false, msg: `Unexpected error: ${error?.message || error}` });
+        } catch (error: unknown) {
+            const errorMsg = error instanceof Error ? error.message : String(error);
+            setStatus({ success: false, msg: `Unexpected error: ${errorMsg}` });
         }
 
         if (onClick) {

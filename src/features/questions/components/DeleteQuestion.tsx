@@ -8,7 +8,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import { useNavigate } from 'react-router-dom';
-import { color } from '@mui/system';
 
 interface DeleteError {
     id: string | null;

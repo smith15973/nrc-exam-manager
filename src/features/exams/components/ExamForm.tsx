@@ -33,7 +33,7 @@ export default function ExamForm(props: ExamFormProps) {
         }
     }, [exam, plant]);
 
-    const handleChange = (key: string, value: any) => {
+    const handleChange = (key: string, value: unknown) => {
         setExamForm((prev) => ({ ...prev, [key]: value }));
     };
 
@@ -58,7 +58,7 @@ export default function ExamForm(props: ExamFormProps) {
                         <TextField
                             fullWidth
                             type={field.type}
-                            value={(examForm as any)[field.key] || ''}
+                            value={examForm[field.key as keyof Exam] ?? ''}
                             onChange={(e) => handleChange(field.key, e.target.value)}
                             label={field.label}
                             required={field.required}

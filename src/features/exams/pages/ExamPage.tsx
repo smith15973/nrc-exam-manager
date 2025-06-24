@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useDatabase } from '../../../common/hooks/useDatabase';
-import { Alert, Button, CircularProgress, FormControlLabel, Switch, Typography } from '@mui/material';
+import { Alert, CircularProgress, FormControlLabel, Switch, Typography, Box } from '@mui/material';
 import { defaultExam } from '../../../data/db/schema';
 import { useParams } from 'react-router-dom';
 import ExamForm from '../components/ExamForm';
-// import ImportViewer from '../../../features/questions/components/ImportViewer';
+import ImportViewer from '../../../features/questions/components/ImportViewer';
 import QuestionsTable from '../../../features/questions/components/QuestionsTable';
 import ConfirmDelete from '../../../common/components/ConfirmDelete';
 import ExportQuestionsButton from '../../../features/questions/components/ExportQuestionsButton';
-// import QuestionForm from '../../../features/questions/components/QuestionForm';
+import QuestionForm from '../../../features/questions/components/QuestionForm';
 import QuestionTemplate from '../../../features/questions/components/QuestionTemplate';
-import { Box, flex } from '@mui/system';
 
 
 export default function ExamPage() {
@@ -19,10 +18,8 @@ export default function ExamPage() {
     const examId = examIdParam ? parseInt(examIdParam, 10) : undefined;
     const { getExamById,
         updateExam,
-        getQuestionsByExamId,
         addQuestionsBatch,
         removeQuestionFromExam,
-        addExamQuestion,
         addQuestion,
         getQuestionsComplete
     } = useDatabase();
@@ -150,7 +147,7 @@ export default function ExamPage() {
         await loadQuestions();
     }
 
-    const handleFilterChange = (key: string, value: any) => {
+    const handleFilterChange = (key: string, value: unknown) => {
         console.log(value);
         setFilters((prev) => {
             const newFilters = { ...prev, [key]: value };
@@ -218,7 +215,7 @@ export default function ExamPage() {
                     filters={filters}
                     onFilterChange={handleFilterChange}
                     onResetFilters={() => setFilters({})}
-                /> : examQuestions?.map((examQuestion, idx) => {
+                /> : examQuestions?.map((examQuestion) => {
                     return (
                         <QuestionTemplate key={examQuestion.question_id} question={examQuestion} examName={exam.name} student={student} />
                     )
@@ -229,4 +226,4 @@ export default function ExamPage() {
 
         </>
     )
-};
+}

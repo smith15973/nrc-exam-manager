@@ -8,7 +8,7 @@ import CheckExams from "../../../features/exams/components/CheckExams";
 interface FilterQuestionsProps {
     open: boolean;
     onClose: () => void;
-    onFilterChange: (key: string, value: any) => void;
+    onFilterChange: (key: string, value: unknown) => void;
     filters: QuestionFilters;
     onResetFilters: () => void;
 
