@@ -23,7 +23,7 @@ export default function AnswerForm(props: AnswerFormProps) {
                     multiline
                     rows={3}
                     label={`Answer ${letterChoice}`}
-                    value={answer.answer_text}
+                    value={answer.answer_text || ''}
                     onChange={(e) => handleChange("answer_$", e.target.value)}
                     sx={{ pb: 1 }}
                 />

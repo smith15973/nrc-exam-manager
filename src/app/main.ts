@@ -526,154 +526,186 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
     // Route to appropriate database method
     switch (operation) {
       // Plant operations
-      case 'add-plant':
+      case 'add-plant': {
         const plantId = await db.plants.add(data);
         return { success: true, plantId };
+      }
 
-      case 'get-plants':
+      case 'get-plants': {
         const plants = await db.plants.getAll();
         return { success: true, plants };
+      }
 
-      case 'get-plants-with-exams':
+      case 'get-plants-with-exams': {
         const plantsWithExams = await db.plants.getAllWithExams();
         return { success: true, plants: plantsWithExams };
+      }
 
-      case 'get-plant':
+      case 'get-plant': {
         const plant = await db.plants.getById(data)
         return { success: true, plant };
+      }
 
-      case 'get-plant-with-exams':
+      case 'get-plant-with-exams': {
         const plantWithExams = await db.plants.getByIdWithExams(data);
         return { success: true, plant: plantWithExams };
+      }
 
-      case 'update-plant':
+      case 'update-plant': {
         await db.plants.update(data)
         return { success: true };
+      }
 
-      case 'delete-plant':
+      case 'delete-plant': {
         await db.plants.delete(data)
         return { success: true };
+      }
 
       // Exam operations
-      case 'add-exam':
+      case 'add-exam': {
         if (!data.plant_id) {
           return { success: false, error: "Plant ID is required" };
         }
+
         const examId = await db.exams.add(data)
         return { success: true, examId };
+      }
 
-      case 'get-exams':
+      case 'get-exams': {
         const exams = await db.exams.getAll();
         return { success: true, exams };
+      }
 
-      case 'get-exam':
+      case 'get-exam': {
         const exam = await db.exams.getById(data);
         return { success: true, exam };
-
-      case 'get-exams-by-question-id':
+      }
+      case 'get-exams-by-question-id': {
         const examsByQuestion = await db.exams.getByQuestionId(data)
         return { success: true, exams: examsByQuestion };
+      }
 
-      case 'update-exam':
+      case 'update-exam': {
         await db.exams.update(data);
         return { success: true };
+      }
 
-      case 'delete-exam':
+      case 'delete-exam': {
         await db.exams.delete(data);
         return { success: true };
+      }
 
-      case 'remove-exam-question':
+      case 'remove-exam-question': {
         await db.exams.removeQuestion(data.examId, data.questionId)
         return { success: true };
-      case 'add-exam-question':
+      }
+      case 'add-exam-question': {
         const examQuestionId = await db.exams.addQuestionToExam(data.examId, data.questionId)
         return { success: true, examQuestionId };
+      }
 
       // Question operations
-      case 'add-question':
+      case 'add-question': {
         const questionId = await db.questions.add(data);
         return { success: true, questionId };
+      }
 
-      case 'add-questions-batch':
+      case 'add-questions-batch': {
         const questionIds = await db.questions.addBatch(data);
         return { success: true, questionIds };
+      }
 
-      case 'get-questions':
+      case 'get-questions': {
         console.log("IN main get-questions", data)
         const questions = await db.questions.getMany(data);
         return { success: true, questions };
+      }
 
-      case 'get-questions-by-exam-id':
+      case 'get-questions-by-exam-id': {
         const examQuestionIds = (await db.questions.getByExamId(data)).map(question => question.question_id);
         const questionService = db.questionService;
         const examQuestions = await Promise.all(
           examQuestionIds.map(examQuestionId => questionService.getCompleteQuestion(examQuestionId))
         );
         return { success: true, questions: examQuestions };
+      }
 
-      case 'get-question-by-id':
+      case 'get-question-by-id': {
         console.log("IN main get-question-by-id", data)
         const question = await db.questions.getById(data);
         return { success: true, question };
+      }
 
-      case 'get-answers-by-question-id':
-        const answers = await db.questions.getAnswersByQuestionId(data);
-        return { success: true, answers };
-
-      case 'get-question-complete':
+      case 'get-question-complete': {
         console.log("IN main get-question-complete", data)
         const questionWithAll = await db.questionService.getCompleteQuestion(data);
         return { success: true, question: questionWithAll };
+      }
 
-      case 'get-questions-complete':
+      case 'get-questions-complete': {
         console.log("IN main get-questions-complete", data)
         const questionsComplete = await db.questionService.getQuestionsComplete(data);
         return { success: true, questions: questionsComplete };
+      }
 
-      case 'update-question':
+      case 'update-question': {
         await db.questions.update(data);
         return { success: true };
+      }
 
-      case 'delete-question':
+      case 'delete-question': {
         await db.questions.delete(data);
         return { success: true };
+      }
 
-      case 'add-system':
+      case 'add-system': {
         await db.systems.add(data);
         return { success: true }
-      case 'get-system':
+      }
+      case 'get-system': {
         const system = await db.systems.get(data);
         return { success: true, system }
-      case 'get-systems':
+      }
+      case 'get-systems': {
         const systems = await db.systems.getMany(data);
         return { success: true, systems }
-      case 'update-system':
+
+      }
+      case 'update-system': {
         await db.systems.update(data);
         return { success: true }
-      case 'delete-system':
+      }
+      case 'delete-system': {
         await db.systems.delete(data);
         return { success: true }
+      }
 
-      case 'add-ka':
+      case 'add-ka': {
         await db.kas.add(data);
         return { success: true }
-      case 'get-ka':
+      }
+      case 'get-ka': {
         const ka = await db.kas.get(data);
         return { success: true, ka }
-      case 'get-kas':
+      }
+      case 'get-kas': {
         const kas = await db.kas.getMany(data);
         return { success: true, kas }
-      case 'update-ka':
+      }
+      case 'update-ka': {
         await db.kas.update(data);
         return { success: true }
-      case 'delete-ka':
+      }
+      case 'delete-ka': {
         await db.kas.delete(data);
         return { success: true }
+      }
 
-      default:
+      default: {
         return { success: false, error: `Unknown operation: ${operation}` };
+      }
     }
-  } catch (err: any) {
-    return { success: false, error: err.message };
+  } catch (err: unknown) {
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
   }
 });

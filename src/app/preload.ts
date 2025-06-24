@@ -2,12 +2,12 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 // Helper function to make database calls
-const dbCall = (operation: string, data?: any) => {
+const dbCall = (operation: string, data?: unknown) => {
   console.log("Preload DATA", data)
   return ipcRenderer.invoke('db-operation', { operation, data });
 };
 // Helper function to make file calls
-const filesCall = (operation: string, data?: any) => {
+const filesCall = (operation: string, data?: unknown) => {
   return ipcRenderer.invoke('files-operation', { operation, data });
 };
 
@@ -55,8 +55,6 @@ contextBridge.exposeInMainWorld('db', {
 
     update: (question: Question) => dbCall('update-question', question),
     delete: (questionId: number) => dbCall('delete-question', questionId),
-
-    getAnswersByQuestionId: (questionId: number) => dbCall('get-answers-by-question-id', questionId),
   },
   systems: {
     add: (system: System) => dbCall('add-system', system),

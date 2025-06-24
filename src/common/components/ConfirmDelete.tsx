@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useDialogs } from '@toolpad/core/useDialogs';
 import Button from '@mui/material/Button';
-
-import { useDatabase } from '../hooks/useDatabase';
 import { useNavigate } from 'react-router-dom';
 
 

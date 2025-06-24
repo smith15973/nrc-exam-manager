@@ -8,6 +8,7 @@ export class QuestionRepository {
         if (this.isClosing()) {
             throw new Error('Database is closing');
         }
+        console.log("Here1")
 
         // Check for duplicates first
         if (question.question_id) {
@@ -25,6 +26,7 @@ export class QuestionRepository {
             }
         }
 
+        console.log("Here2")
         // Also check by text/content hash to catch duplicates with different IDs
         const existingByContent = await this.findByContentHash(question);
         if (existingByContent) {
@@ -35,7 +37,7 @@ export class QuestionRepository {
             throw new Error("Existing question content does not have a question_id");
         }
 
-
+console.log("Here3")
 
         return this.insertQuestion(question);
     }
@@ -173,7 +175,7 @@ export class QuestionRepository {
         // Create a hash or use key fields to find potential duplicates
         return new Promise((resolve, reject) => {
             this.db.get(
-                'SELECT * FROM questions WHERE question_text = ??',
+                'SELECT * FROM questions WHERE question_text = ?',
                 [question.question_text],
                 (err, row) => {
                     if (err) reject(err);
@@ -185,6 +187,8 @@ export class QuestionRepository {
 
 
     async insertQuestion(question: Question): Promise<number> {
+
+        console.log("Here4")
         return new Promise((resolve, reject) => {
             const db = this.db;
             db.serialize(() => {
@@ -236,6 +240,7 @@ export class QuestionRepository {
                             return;
                         }
 
+                        console.log("Here5")
                         const questionId = this.lastID;
 
                         // Use Promise.all with proper error handling
@@ -244,14 +249,17 @@ export class QuestionRepository {
                             question.system_kas?.length ? QuestionRepository.prototype.insertSystemKaRelations.call({ db }, questionId, question.system_kas) : Promise.resolve(),
                         ].filter(p => p !== Promise.resolve()); // Remove empty promises
 
+                        console.log("Here6")
                         Promise.all(insertOperations)
                             .then(() => {
                                 db.run('COMMIT', (commitErr) => {
+                                    console.log("Here7")
                                     if (commitErr) reject(commitErr);
                                     else resolve(questionId);
                                 });
                             })
                             .catch((insertErr) => {
+                                console.log("Here8", insertErr)
                                 db.run('ROLLBACK');
                                 reject(insertErr);
                             });

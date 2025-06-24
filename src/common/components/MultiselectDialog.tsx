@@ -14,13 +14,12 @@ import {
     Typography,
     Divider,
     IconButton,
-    InputAdornment,
     Menu,
     MenuItem,
     ListItemText,
     Switch
 } from '@mui/material';
-import { Search, FilterList, Clear, Check, Close } from '@mui/icons-material';
+import { FilterList, Clear, Check, Close } from '@mui/icons-material';
 import React, { useState, useMemo } from 'react';
 import SearchField from './SearchField';
 
@@ -33,10 +32,10 @@ interface MultiSelectConfig<T, K> {
     getDisplayText: (item: T) => string;
     // New filtering configuration
     getSearchableFields?: (item: T) => string[]; // Multiple fields to search
-    getFilterableProps?: (item: T) => Record<string, any>; // Properties for advanced filtering
+    getFilterableProps?: (item: T) => Record<string, unknown>; // Properties for advanced filtering
     sortOptions?: Array<{
         label: string;
-        getValue: (item: T) => any;
+        getValue: (item: T) => unknown;
         direction?: 'asc' | 'desc';
     }>;
 }
@@ -46,7 +45,7 @@ interface FilterState {
     selectedOnly: boolean;
     sortBy: string;
     sortDirection: 'asc' | 'desc';
-    propertyFilters: Record<string, any>;
+    propertyFilters: Record<string, unknown>;
 }
 
 interface MultiSelectProps<T, K> {
@@ -117,7 +116,7 @@ export default function MultiSelectDialog<T, K extends string | number>(props: M
 
     // Advanced filtering logic
     const filteredOptions = useMemo(() => {
-        let filtered = options.filter(option => {
+        const filtered = options.filter(option => {
             // Search filter
             if (!matchesSearch(option, filterState.searchQuery)) {
                 return false;
@@ -159,9 +158,16 @@ export default function MultiSelectDialog<T, K extends string | number>(props: M
                         return aVal.localeCompare(bVal) * multiplier;
                     }
 
-                    if (aVal < bVal) return -1 * multiplier;
-                    if (aVal > bVal) return 1 * multiplier;
-                    return 0;
+                    if (typeof aVal === 'number' && typeof bVal === 'number') {
+                        if (aVal < bVal) return -1 * multiplier;
+                        if (aVal > bVal) return 1 * multiplier;
+                        return 0;
+                    }
+
+                    // fallback: compare as strings
+                    const aStr = String(aVal);
+                    const bStr = String(bVal);
+                    return aStr.localeCompare(bStr) * multiplier;
                 });
             }
         }
@@ -185,7 +191,7 @@ export default function MultiSelectDialog<T, K extends string | number>(props: M
         return `${selectedNames.slice(0, maxDisplayItems).join(', ')} +${selectedNames.length - maxDisplayItems} more`;
     };
 
-    const handleFilterChange = (key: keyof FilterState, value: any) => {
+    const handleFilterChange = (key: keyof FilterState, value: unknown) => {
         setFilterState(prev => ({
             ...prev,
             [key]: value
@@ -207,20 +213,6 @@ export default function MultiSelectDialog<T, K extends string | number>(props: M
             filterState.selectedOnly ||
             filterState.sortBy !== '' ||
             Object.keys(filterState.propertyFilters).length > 0;
-    };
-
-    // Get unique property values for filtering
-    const getUniquePropertyValues = (propKey: string) => {
-        if (!config.getFilterableProps) return [];
-
-        const values = options.map(option => {
-            const props = config.getFilterableProps!(option);
-            return props[propKey];
-        }).filter((value, index, self) =>
-            value !== null && value !== undefined && self.indexOf(value) === index
-        );
-
-        return values.sort();
     };
 
     return (

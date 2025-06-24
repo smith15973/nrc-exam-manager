@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { defaultQuestion, questionSchema } from '../../../data/db/schema';
-import { Box, Button, TextField, SxProps } from '@mui/material';
+import { Box, Button, TextField, SxProps, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import AnswerForm from './AnswerForm';
 import { FormDialog } from '../../../common/components/FormDialog';
@@ -79,7 +79,7 @@ export default function QuestionForm(props: QuestionFormProps) {
 
 
 
-    const handleChange = (key: string, value: any) => {
+    const handleChange = (key: string, value: unknown) => {
         setQuestionForm((prev) => ({ ...prev, [key]: value }));
     };
 
@@ -171,7 +171,7 @@ export default function QuestionForm(props: QuestionFormProps) {
                             <TextField
                                 fullWidth
                                 type={'text'}
-                                value={questionForm.question_text}
+                                value={questionForm.question_text || ''}
                                 onChange={(e) => handleChange('question_text', e.target.value)}
                                 label={"Question"}
                                 required={true}
@@ -183,7 +183,7 @@ export default function QuestionForm(props: QuestionFormProps) {
                             <TextField
                                 fullWidth
                                 type={'text'}
-                                value={questionForm.technical_references}
+                                value={questionForm.technical_references || ''}
                                 onChange={(e) => handleChange('technical_references', e.target.value)}
                                 label={"Technical References"}
                                 rows={2}
@@ -194,7 +194,7 @@ export default function QuestionForm(props: QuestionFormProps) {
                             <TextField
                                 fullWidth
                                 type={'text'}
-                                value={questionForm.references_provided}
+                                value={questionForm.references_provided || ''}
                                 onChange={(e) => handleChange('references_provided', e.target.value)}
                                 label={"References Provided"}
                                 rows={2}
@@ -205,11 +205,12 @@ export default function QuestionForm(props: QuestionFormProps) {
                             <TextField
                                 fullWidth
                                 type={'text'}
-                                value={questionForm.objective}
+                                value={questionForm.objective || ''}
                                 onChange={(e) => handleChange('objective', e.target.value)}
                                 label={"Objective"}
                             />
                         </Box>
+
                         <Box sx={{ pb: 2 }} >
                             <TextField
                                 fullWidth
@@ -221,8 +222,37 @@ export default function QuestionForm(props: QuestionFormProps) {
                                 InputLabelProps={{ shrink: true }}
                             />
                         </Box>
-                        <Box>RO or SRO exam level</Box>
-                        <Box>HIGH or LOW cog level</Box>
+
+                        <Box sx={{ pb: 2, display: 'flex' }}>
+                            <Box sx={{ flex: 1 }}>
+                                <FormControl>
+                                    <FormLabel id="exam-level-radio-group">Exam Level</FormLabel>
+                                    <RadioGroup
+                                        aria-labelledby="exam-level-radio-group"
+                                        name="controlled-exam-level-radio-group"
+                                        value={questionForm.exam_level || 0}
+                                        onChange={(e) => handleChange('exam_level', e.target.value)}
+                                    >
+                                        <FormControlLabel value={0} control={<Radio />} label="RO" />
+                                        <FormControlLabel value={1} control={<Radio />} label="SRO" />
+                                    </RadioGroup>
+                                </FormControl>
+                            </Box>
+                            <Box sx={{ flex: 1 }}>
+                                <FormControl>
+                                    <FormLabel id="cognitive-level-radio-group">Cognitive Level</FormLabel>
+                                    <RadioGroup
+                                        aria-labelledby="cognitive-level-radio-group"
+                                        name="controlled-cognitive-level-radio-group"
+                                        value={questionForm.cognitive_level || 0}
+                                        onChange={(e) => handleChange('cognitive_level', e.target.value)}
+                                    >
+                                        <FormControlLabel value={0} control={<Radio />} label="LOW" />
+                                        <FormControlLabel value={1} control={<Radio />} label="HIGH" />
+                                    </RadioGroup>
+                                </FormControl>
+                            </Box>
+                        </Box>
 
                         <Box sx={{ pb: 2 }} >
                             <CheckExams
