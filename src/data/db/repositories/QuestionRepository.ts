@@ -262,7 +262,7 @@ export class QuestionRepository {
     insertSystemRelations(questionId: number, systems: System[]): Promise<void> {
         return new Promise((resolve, reject) => {
             const placeholders = systems.map(() => '(?, ?)').join(', ');
-            const values = systems.flatMap(system => [questionId, system.number]);
+            const values = systems.flatMap(system => [questionId, system.system_number]);
 
             this.db.run(
                 `INSERT INTO question_systems (question_id, system_number) VALUES ${placeholders}`,
@@ -393,22 +393,22 @@ export class QuestionRepository {
     }
 
     async getMany(filters?: QuestionFilters): Promise<Question[]> {
-    return new Promise((resolve, reject) => {
-        if (this.isClosing()) {
-            reject(new Error('Database is closing'));
-            return;
-        }
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error('Database is closing'));
+                return;
+            }
 
-        console.log("IN THE SQL", filters);
+            console.log("IN THE SQL", filters);
 
-        let query: string;
-        let params: any[] = [];
-        const conditions: string[] = [];
+            let query: string;
+            let params: any[] = [];
+            const conditions: string[] = [];
 
-        if (filters?.query?.trim()) {
-            // Use LIKE for global search across all text columns in questions_search_view
-            const searchTerm = `%${filters.query.trim().replace(/"/g, '""')}%`;
-            query = `
+            if (filters?.query?.trim()) {
+                // Use LIKE for global search across all text columns in questions_search_view
+                const searchTerm = `%${filters.query.trim().replace(/"/g, '""')}%`;
+                query = `
                 SELECT q.*
                 FROM questions q
                 WHERE q.question_id IN (
@@ -427,100 +427,100 @@ export class QuestionRepository {
                        OR system_numbers LIKE ?
                 )
             `;
-            params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
-            console.log("LIKE Search Term:", searchTerm);
-        } else {
-            // No global search - use regular query
-            query = 'SELECT * FROM questions q';
-        }
-
-        if (filters) {
-            if (filters.question_text?.trim()) {
-                conditions.push('q.question_text LIKE ?');
-                params.push(`%${filters.question_text.trim()}%`);
+                params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
+                console.log("LIKE Search Term:", searchTerm);
+            } else {
+                // No global search - use regular query
+                query = 'SELECT * FROM questions q';
             }
 
-            if (filters.category?.trim()) {
-                conditions.push('q.category LIKE ?');
-                params.push(`%${filters.category.trim()}%`);
-            }
+            if (filters) {
+                if (filters.question_text?.trim()) {
+                    conditions.push('q.question_text LIKE ?');
+                    params.push(`%${filters.question_text.trim()}%`);
+                }
 
-            if (filters.objective?.trim()) {
-                conditions.push('q.objective LIKE ?');
-                params.push(`%${filters.objective.trim()}%`);
-            }
+                if (filters.category?.trim()) {
+                    conditions.push('q.category LIKE ?');
+                    params.push(`%${filters.category.trim()}%`);
+                }
 
-            if (filters.technical_references?.trim()) {
-                conditions.push('q.technical_references LIKE ?');
-                params.push(`%${filters.technical_references.trim()}%`);
-            }
+                if (filters.objective?.trim()) {
+                    conditions.push('q.objective LIKE ?');
+                    params.push(`%${filters.objective.trim()}%`);
+                }
 
-            if (filters.lastUsedStart?.trim()) {
-                conditions.push('q.last_used >= ?');
-                params.push(filters.lastUsedStart.trim());
-            }
-            if (filters.lastUsedEnd?.trim()) {
-                conditions.push('q.last_used <= ?');
-                params.push(filters.lastUsedEnd.trim());
-            }
+                if (filters.technical_references?.trim()) {
+                    conditions.push('q.technical_references LIKE ?');
+                    params.push(`%${filters.technical_references.trim()}%`);
+                }
 
-            if (filters.diffLevelStart?.trim()) {
-                conditions.push('q.difficulty_level >= ?');
-                params.push(parseInt(filters.diffLevelStart));
-            }
-            if (filters.diffLevelEnd?.trim()) {
-                conditions.push('q.difficulty_level <= ?');
-                params.push(parseInt(filters.diffLevelEnd));
-            }
+                if (filters.lastUsedStart?.trim()) {
+                    conditions.push('q.last_used >= ?');
+                    params.push(filters.lastUsedStart.trim());
+                }
+                if (filters.lastUsedEnd?.trim()) {
+                    conditions.push('q.last_used <= ?');
+                    params.push(filters.lastUsedEnd.trim());
+                }
 
-            if (filters.examIds?.length) {
-                const placeholders = filters.examIds.map(() => '?').join(',');
-                conditions.push(`q.question_id IN (
+                if (filters.diffLevelStart?.trim()) {
+                    conditions.push('q.difficulty_level >= ?');
+                    params.push(parseInt(filters.diffLevelStart));
+                }
+                if (filters.diffLevelEnd?.trim()) {
+                    conditions.push('q.difficulty_level <= ?');
+                    params.push(parseInt(filters.diffLevelEnd));
+                }
+
+                if (filters.examIds?.length) {
+                    const placeholders = filters.examIds.map(() => '?').join(',');
+                    conditions.push(`q.question_id IN (
                     SELECT question_id FROM exam_questions
                     WHERE exam_id IN (${placeholders})
                 )`);
-                params.push(...filters.examIds);
-            }
+                    params.push(...filters.examIds);
+                }
 
-            if (filters.kaNums?.length) {
-                const placeholders = filters.kaNums.map(() => '?').join(',');
-                conditions.push(`q.question_id IN (
+                if (filters.kaNums?.length) {
+                    const placeholders = filters.kaNums.map(() => '?').join(',');
+                    conditions.push(`q.question_id IN (
                     SELECT question_id FROM question_kas 
                     WHERE ka_number IN (${placeholders})
                 )`);
-                params.push(...filters.kaNums);
-            }
+                    params.push(...filters.kaNums);
+                }
 
-            if (filters.systemNums?.length) {
-                const placeholders = filters.systemNums.map(() => '?').join(',');
-                conditions.push(`q.question_id IN (
+                if (filters.systemNums?.length) {
+                    const placeholders = filters.systemNums.map(() => '?').join(',');
+                    conditions.push(`q.question_id IN (
                     SELECT question_id FROM question_systems 
                     WHERE system_number IN (${placeholders})
                 )`);
-                params.push(...filters.systemNums);
+                    params.push(...filters.systemNums);
+                }
             }
-        }
 
-        if (conditions.length > 0) {
-            query += (filters?.query?.trim() ? ' AND ' : ' WHERE ') + conditions.join(' AND ');
-        }
-
-        query += ' ORDER BY q.question_id';
-
-        console.log("Final Query:", query);
-        console.log("Params:", params);
-
-        this.db.all(query, params, (err, rows: Question[]) => {
-            if (err) {
-                console.error("Query Error:", err);
-                reject(err);
-            } else {
-                console.log("Returned Rows:", rows.length);
-                resolve(rows);
+            if (conditions.length > 0) {
+                query += (filters?.query?.trim() ? ' AND ' : ' WHERE ') + conditions.join(' AND ');
             }
+
+            query += ' ORDER BY q.question_id';
+
+            console.log("Final Query:", query);
+            console.log("Params:", params);
+
+            this.db.all(query, params, (err, rows: Question[]) => {
+                if (err) {
+                    console.error("Query Error:", err);
+                    reject(err);
+                } else {
+                    console.log("Returned Rows:", rows.length);
+                    resolve(rows);
+                }
+            });
         });
-    });
-}
+    }
 
     // Alternative: More efficient version that builds query with JOINs for better performance
     async getManyWithJoins(filters?: QuestionFilters): Promise<Question[]> {
@@ -845,7 +845,7 @@ export class QuestionRepository {
                                     const values: any[] = [];
 
                                     question.systems!.forEach(system => {
-                                        values.push(question.question_id, system.number);
+                                        values.push(question.question_id, system.system_number);
                                     });
 
                                     self.db.run(

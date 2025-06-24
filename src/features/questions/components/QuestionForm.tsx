@@ -51,7 +51,7 @@
 //     }, [questionForm.exams, examId, exams]);
 
 //     useEffect(() => {
-//         const systemNums = questionForm.systems?.map(system => system.number).filter((num): num is string => num !== undefined) || [];
+//         const systemNums = questionForm.systems?.map(system => system.system_number).filter((num): num is string => num !== undefined) || [];
 //         setSelectedSystems(systemNums);
 //     }, [questionForm.systems]);
 

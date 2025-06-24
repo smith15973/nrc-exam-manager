@@ -79,8 +79,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
           )}
         </TableCell>
         <TableCell sx={{ width: '40%' }}>Question</TableCell>
-        <TableCell align="right" sx={{ width: '15%' }}>K/A #s</TableCell>
-        <TableCell align="right" sx={{ width: '15%' }}>System #s</TableCell>
+        <TableCell align="right" sx={{ width: '15%' }}>System KA #s</TableCell>
         <TableCell align="right" sx={{ width: '15%' }}>Exams</TableCell>
         <TableCell align="right" sx={{ width: '10%' }}>Last Used</TableCell>
         <TableCell align="right" sx={{ width: '10%' }}>View</TableCell>
@@ -123,22 +122,12 @@ export default function QuestionsTable(props: QuestionTableProps) {
           {row.question_text}
         </TableCell>
         <TableCell align="right">
-          {row.kas && row.kas.length > 0 && (
+          {row.system_kas && row.system_kas.length > 0 && (
             <>
-              {row.kas.slice(0, 3).map((ka, index) => (
-                <div key={index}>{ka.ka_number}</div>
+              {row.system_kas.slice(0, 3).map((system_ka, index) => (
+                <div key={index}>{system_ka.system_ka_number}</div>
               ))}
-              {row.kas.length > 3 && ` +${row.kas.length - 3} more`}
-            </>
-          )}
-        </TableCell>
-        <TableCell align="right">
-          {row.systems && row.systems.length > 0 && (
-            <>
-              {row.systems.slice(0, 3).map((system, index) => (
-                <div key={index}>{system.number}</div>
-              ))}
-              {row.systems.length > 3 && ` +${row.systems.length - 3} more`}
+              {row.system_kas.length > 3 && ` +${row.system_kas.length - 3} more`}
             </>
           )}
         </TableCell>

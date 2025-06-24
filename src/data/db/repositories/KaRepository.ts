@@ -12,8 +12,8 @@ export class KaRepository {
       }
 
       this.db.run(
-        'INSERT INTO kas (ka_number, ka_description) VALUES (?, ?)',
-        [ka.ka_number, ka.ka_description],
+        'INSERT INTO kas (ka_number, category_number) VALUES (?, ?)',
+        [ka.ka_number, ka.category_number],
         function (err) {
           if (err) {
             reject(err);
@@ -93,14 +93,14 @@ export class KaRepository {
         reject(new Error('Ka Number is required for update'));
         return;
       }
-      if (!ka.ka_description) {
-        reject(new Error('Ka description is required for update'));
+      if (!ka.category_number) {
+        reject(new Error('Ka category number is required for update'));
         return;
       }
 
       this.db.run(
-        'UPDATE kas SET description = ? WHERE ka_number = ?',
-        [ka.ka_description, ka.ka_number],
+        'UPDATE kas SET category_number = ? WHERE ka_number = ?',
+        [ka.category_number, ka.ka_number],
         function (err) {
           if (err) {
             reject(err);
@@ -145,20 +145,20 @@ export class KaRepository {
       }
 
       const query = `
-      SELECT k.ka_number, k.ka_description
+      SELECT k.ka_number, k.category_number
       FROM kas k
       INNER JOIN question_kas qk ON k.ka_number = qk.ka_number
       WHERE qk.question_id = ?
       ORDER BY k.ka_number
     `;
 
-      this.db.all(query, [questionId], (err, rows: any[]) => {
+      this.db.all(query, [questionId], (err, rows: Ka[]) => {
         if (err) {
           reject(err);
         } else {
-          const kas = rows.map(row => ({
+          const kas: Ka[] = rows.map(row => ({
             ka_number: row.ka_number,
-            ka_description: row.ka_description,
+            category_number: row.category_number,
           }));
           resolve(kas);
         }

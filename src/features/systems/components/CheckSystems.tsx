@@ -12,9 +12,9 @@ export default function CheckSystems(props: CheckSystemsProps) {
         label: "Systems",
         placeholder: "Select Systems",
         dialogTitle: "Selected Systems",
-        getKey: (system: System) => system.number,
-        getDisplayLabel: (system: System) => system.number,
-        getDisplayText: (system: System) => `${system.name}`,
+        getKey: (system: System) => system.system_number,
+        getDisplayLabel: (system: System) => system.system_number,
+        getDisplayText: (system: System) => `${system.system_name}`,
     };
 
     return (

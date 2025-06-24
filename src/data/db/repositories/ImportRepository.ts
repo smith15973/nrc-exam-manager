@@ -470,7 +470,7 @@ export class ImportRepository {
 
     // Clean system references
     if (cleanedQuestion.systems && cleanedQuestion.systems.length > 0) {
-      const validSystemNumbers = systems.map(system => system.number);
+      const validSystemNumbers = systems.map(system => system.system_number);
       const rejectedSystems: string[] = [];
 
       cleanedQuestion.systems = cleanedQuestion.systems.filter(systemRef => {

@@ -1,10 +1,9 @@
-import { Checkbox } from "@mui/material";
-import { Card, CardContent, CardHeader, Typography } from "@mui/material";
+import { Card, CardContent, Checkbox, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 
 interface QuestionCardProps {
     question: Question;
-    sx?: any;
+    sx?: import('@mui/system').SxProps;
 }
 
 export default function QuestionCard(props: QuestionCardProps) {
@@ -39,7 +38,7 @@ export default function QuestionCard(props: QuestionCardProps) {
                     sx={{
                         color: 'text.secondary',
                     }}>
-                    {question.category}
+                    {question.img_url}
                 </Typography>
             </CardContent>
 

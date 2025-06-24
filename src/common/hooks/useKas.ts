@@ -7,7 +7,7 @@ export const useKas = () => {
     const [error, setError] = useState<string | null>(null);
 
     const addKa = async (ka: Ka): Promise<void> => {
-        if (!ka.ka_number || !ka.ka_description) {
+        if (!ka.ka_number || !ka.category_number) {
             setError('Please fill in all fields');
             return;
         }
@@ -60,7 +60,7 @@ export const useKas = () => {
 
 
     const updateKa = async (ka: Ka): Promise<void> => {
-        if (!ka.ka_number || !ka.ka_description) {
+        if (!ka.ka_number || !ka.category_number) {
             setError('Please fill in all fields');
             return
         }

@@ -9,11 +9,29 @@ type QuestionTemplateProps = {
 };
 
 export default function QuestionTemplate({ question, print = false, student = false, questionNumber, examName }: QuestionTemplateProps) {
-    const answerA = question.answers?.find(answer => answer.option === 'A');
-    const answerB = question.answers?.find(answer => answer.option === 'B');
-    const answerC = question.answers?.find(answer => answer.option === 'C');
-    const answerD = question.answers?.find(answer => answer.option === 'D');
-    const correctAnswer = question.answers?.find(answer => answer.is_correct === 1);
+
+    const answers = [
+        {
+            answer_text: question.answer_a,
+            justification: question.answer_a_justification,
+            isCorrect: question.correct_answer === "A",
+        },
+        {
+            answer_text: question.answer_b,
+            justification: question.answer_b_justification,
+            isCorrect: question.correct_answer === "B",
+        },
+        {
+            answer_text: question.answer_c,
+            justification: question.answer_c_justification,
+            isCorrect: question.correct_answer === "C",
+        },
+        {
+            answer_text: question.answer_d,
+            justification: question.answer_d_justification,
+            isCorrect: question.correct_answer === "D",
+        },
+    ]
 
     // Print-specific styles
     const printStyles = print ? {
@@ -130,7 +148,7 @@ export default function QuestionTemplate({ question, print = false, student = fa
 
             {/* Answer Options */}
             <Box sx={{ mb: 4 }}>
-                {[answerA, answerB, answerC, answerD].map((answer, index) => (
+                {answers.map((answer, index) => (
                     <Box
                         key={String.fromCharCode(65 + index)}
                         sx={{
@@ -139,15 +157,15 @@ export default function QuestionTemplate({ question, print = false, student = fa
                             mb: 2,
                             p: 1.5,
                             borderRadius: 1,
-                            bgcolor: !student && answer?.is_correct ? 'success.50' : 'grey.50',
-                            border: !student && answer?.is_correct ? '2px solid' : '1px solid',
-                            borderColor: !student && answer?.is_correct ? 'success.main' : 'grey.300',
+                            bgcolor: !student && answer?.isCorrect ? 'success.50' : 'grey.50',
+                            border: !student && answer?.isCorrect ? '2px solid' : '1px solid',
+                            borderColor: !student && answer?.isCorrect ? 'success.main' : 'grey.300',
                             ...printStyles
                         }}
                     >
                         <OptionLabel>{String.fromCharCode(65 + index)}.</OptionLabel>
                         <Typography sx={{ ml: 2, flex: 1, whiteSpace: 'pre-wrap', ...printStyles }}>
-                            {answer?.answer_text}
+                            {answer.answer_text}
                         </Typography>
                     </Box>
                 ))}
@@ -174,13 +192,13 @@ export default function QuestionTemplate({ question, print = false, student = fa
                         }}
                     >
                         <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'success.dark', ...printStyles }}>
-                            Correct Answer: {correctAnswer?.option}
+                            Correct Answer: {question.correct_answer}
                         </Typography>
                     </Box>
 
                     {/* Justifications */}
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, ...printStyles }}>
-                        {[answerA, answerB, answerC, answerD].map((answer, index) => (
+                        {answers.map((answer, index) => (
                             <Box
                                 key={String.fromCharCode(65 + index)}
                                 sx={{
@@ -188,14 +206,14 @@ export default function QuestionTemplate({ question, print = false, student = fa
                                     alignItems: 'flex-start',
                                     p: 1.5,
                                     borderRadius: 1,
-                                    bgcolor: answer?.is_correct ? 'success.50' : 'error.50',
+                                    bgcolor: answer?.isCorrect ? 'success.50' : 'error.50',
                                     ...printStyles
                                 }}
                             >
                                 <OptionLabel>{String.fromCharCode(65 + index)}.</OptionLabel>
                                 <Box sx={{ ml: 2, flex: 1 }}>
                                     <Typography sx={{ fontWeight: 'bold', mb: 0.5, ...printStyles }}>
-                                        {answer?.is_correct ? "Correct" : "Incorrect"}
+                                        {answer?.isCorrect ? "Correct" : "Incorrect"}
                                     </Typography>
                                     <Typography
                                         variant="body2"
@@ -223,29 +241,29 @@ export default function QuestionTemplate({ question, print = false, student = fa
                                 Systems
                             </Typography>
                             <Box sx={{ bgcolor: 'grey.50', borderRadius: 1, p: 1.5, ...printStyles }}>
-                                {question.systems?.map((system, index) => (
+                                {question.system_kas?.map((system_ka, index) => (
                                     <Box
-                                        key={system.number}
+                                        key={system_ka.system_ka_number}
                                         sx={{
                                             display: 'flex',
                                             justifyContent: 'space-between',
                                             ...printStyles,
-                                            borderBottom: index < question.systems!.length - 1 ? '1px solid' : 'none',
+                                            borderBottom: index < question.system_kas!.length - 1 ? '1px solid' : 'none',
                                             borderColor: 'grey.300',
                                             py: 0.5,
                                         }}
                                     >
                                         <Typography variant="body2" sx={{ fontWeight: 'bold', ...printStyles }}>
-                                            {system.number}
+                                            {system_ka.system_ka_number}
                                         </Typography>
-                                        <Typography variant="body2">{system.name}</Typography>
+                                        <Typography variant="body2">{system_ka.system_ka_number}</Typography>
                                     </Box>
                                 ))}
                             </Box>
                         </Box>
 
                         <Box sx={{ flex: 1, minWidth: '200px', ...printStyles }}>
-                            <InfoRow label="Category" value={question.category} />
+                            {/* <InfoRow label="Category" value={question.category} /> */}
                             <InfoRow
                                 label="KA Statement"
                                 value="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
@@ -260,9 +278,9 @@ export default function QuestionTemplate({ question, print = false, student = fa
                                 K/A Numbers
                             </Typography>
                             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', ...printStyles }}>
-                                {question.kas?.map((ka) => (
+                                {question.system_kas?.map((system_ka) => (
                                     <Box
-                                        key={ka.ka_number}
+                                        key={system_ka.system_ka_number}
                                         sx={{
                                             px: 1.5,
                                             py: 0.5,
@@ -274,7 +292,7 @@ export default function QuestionTemplate({ question, print = false, student = fa
                                         }}
                                     >
                                         <Typography variant="body2" sx={{ fontWeight: 'bold', ...printStyles }}>
-                                            {ka.ka_number}
+                                            {system_ka.system_ka_number}
                                         </Typography>
                                     </Box>
                                 ))}
@@ -293,7 +311,6 @@ export default function QuestionTemplate({ question, print = false, student = fa
                     {/* Fourth Row - Source, Difficulty */}
                     <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
                         <InfoRow label="Question Source" value="Bank DB 2015 NRC Exam Q2" />
-                        <InfoRow label="Level of Difficulty (1-5)" value={question.difficulty_level} />
                     </Box>
 
                     {/* Fifth Row - Cognitive Level, CFR Content */}

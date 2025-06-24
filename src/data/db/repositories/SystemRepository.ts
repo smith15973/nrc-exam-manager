@@ -13,7 +13,7 @@ export class SystemRepository {
 
       this.db.run(
         'INSERT INTO systems (number, name) VALUES (?, ?)',
-        [system.number, system.name],
+        [system.system_number, system.system_name],
         function (err) {
           if (err) {
             reject(err);
@@ -89,18 +89,18 @@ export class SystemRepository {
         return;
       }
 
-      if (!system.number) {
+      if (!system.system_number) {
         reject(new Error('System Number is required for update'));
         return;
       }
-      if (!system.name) {
+      if (!system.system_name) {
         reject(new Error('System Name is required for update'));
         return;
       }
 
       this.db.run(
         'UPDATE systems SET name = ? WHERE number = ?',
-        [system.name, system.number],
+        [system.system_name, system.system_number],
         function (err) {
           if (err) {
             reject(err);
@@ -145,20 +145,20 @@ export class SystemRepository {
       }
 
       const query = `
-      SELECT s.number, s.name
+      SELECT s.system_number, s.system_name
       FROM systems s
-      INNER JOIN question_systems qs ON s.number = qs.system_number
+      INNER JOIN question_systems qs ON s.system_number = qs.system_number
       WHERE qs.question_id = ?
-      ORDER BY s.number
+      ORDER BY s.system_number
     `;
 
-      this.db.all(query, [questionId], (err, rows: any[]) => {
+      this.db.all(query, [questionId], (err, rows: System[]) => {
         if (err) {
           reject(err);
         } else {
           const systems = rows.map(row => ({
-            number: row.number,
-            name: row.name,
+            system_number: row.system_number,
+            system_name: row.system_name,
           }));
           resolve(systems);
         }

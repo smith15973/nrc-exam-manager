@@ -26,7 +26,7 @@
 //   const currentQuestion = reviewedQuestions.find((q) => q.questionNumber === currentQuestionNumber) || defaultQuestion;
 
 //   const selectedExams = currentQuestion.exams?.map((exam) => exam.exam_id).filter((id): id is number => id !== undefined) || [];
-//   const selectedSystems = currentQuestion.systems?.map((system) => system.number).filter((num): num is string => num !== undefined) || [];
+//   const selectedSystems = currentQuestion.systems?.map((system) => system.system_number).filter((num): num is string => num !== undefined) || [];
 //   const selectedKas = currentQuestion.kas?.map((ka) => ka.ka_number).filter((num): num is string => num !== undefined) || [];
 
 //   const handleChange = (key: string, value: any) => {

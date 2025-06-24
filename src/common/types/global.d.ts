@@ -38,6 +38,12 @@ interface Question {
   system_kas?: SystemKa[];
 }
 
+interface Answer {
+  answer_text: string;
+  isCorrect: 0 | 1;
+  justification: string;
+}
+
 interface ExamQuestion {
   exam_id: number;
   question_id: number;

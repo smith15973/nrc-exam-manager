@@ -19,12 +19,12 @@ export default function SystemsList(props: SystemListProps) {
             {systems.map((system) => {
                 return (
                     <ListItem
-                        key={system.number}
+                        key={system.system_number}
                         secondaryAction={
                             <IconButton edge='end' aria-label='delete'>
                                 <ConfirmDelete
                                     message='Are you sure you want to delete this system? This action cannot be undone!'
-                                    onConfirmDelete={() => deleteSystem(system.number)}
+                                    onConfirmDelete={() => deleteSystem(system.system_number)}
                                     button={({ onClick, disabled }) => (
                                         <DeleteIcon
                                             onClick={onClick}
@@ -41,10 +41,10 @@ export default function SystemsList(props: SystemListProps) {
                         disablePadding
                     >
                         <ListItemAvatar>
-                            <Avatar variant='rounded' alt={system.name} />
+                            <Avatar variant='rounded' alt={system.system_name} />
                         </ListItemAvatar>
-                        <ListItemButton component={Link} to={`/systems/${system.number}`}>
-                            {system.number} {system.name}
+                        <ListItemButton component={Link} to={`/systems/${system.system_number}`}>
+                            {system.system_number} {system.system_name}
                         </ListItemButton>
                     </ListItem>
                 )

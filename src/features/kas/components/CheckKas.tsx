@@ -14,7 +14,7 @@ export default function CheckKas(props: CheckKasProps) {
     dialogTitle: "Selected Kas",
     getKey: (ka: Ka) => ka.ka_number,
     getDisplayLabel: (ka: Ka) => ka.ka_number,
-    getDisplayText: (ka: Ka) => `${ka.ka_description}`,
+    getDisplayText: (ka: Ka) => `${ka.ka_number}`,
   };
 
   return (
