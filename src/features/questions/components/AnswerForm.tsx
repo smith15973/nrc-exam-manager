@@ -3,15 +3,16 @@ import { Box, FormControlLabel, Switch, TextField } from "@mui/material";
 
 interface AnswerFormProps {
     answer: Answer
-    updateQuestionForm: (answer: Answer) => void
+    onChange: (key: string, value: any) => void
     letterChoice: string;
 }
 
 export default function AnswerForm(props: AnswerFormProps) {
-    const { answer, updateQuestionForm, letterChoice } = props;
+    const { answer, onChange, letterChoice } = props;
 
     const handleChange = (key: string, value: any) => {
-        updateQuestionForm({ ...answer, [key]: value });
+        key = key.replace('$', letterChoice.toLowerCase());
+        onChange(key, value);
     };
 
     return (
@@ -23,23 +24,23 @@ export default function AnswerForm(props: AnswerFormProps) {
                     rows={3}
                     label={`Answer ${letterChoice}`}
                     value={answer.answer_text}
-                    onChange={(e) => handleChange("answer_text", e.currentTarget.value)}
+                    onChange={(e) => handleChange("answer_$", e.target.value)}
                     sx={{ pb: 1 }}
                 />
                 <TextField
                     fullWidth
                     multiline
-                    rows={3}
-                    label={`Justifcation ${letterChoice}`}
+                    rows={2}
+                    label={`Justification ${letterChoice}`}
                     value={answer.justification || ''}
-                    onChange={(e) => handleChange("justification", e.currentTarget.value)}
+                    onChange={(e) => handleChange("answer_$_justification", e.target.value)}
                 />
             </Box>
             <FormControlLabel
                 control={
                     <Switch
                         checked={answer.isCorrect === 1}
-                        onChange={(e) => handleChange('is_correct', e.currentTarget.checked ? 1 : 0)}
+                        onChange={(e) => e.target.checked ? handleChange('correct_answer', letterChoice) : ''}
                     />
                 }
                 label="Correct"

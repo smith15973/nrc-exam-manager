@@ -76,18 +76,42 @@ export class QuestionRepository {
                         // Insert the question with all relations - same as single add
                         this.db.run(
                             `INSERT INTO questions 
-                         (question_text, category, exam_level, technical_references, 
-                          difficulty_level, cognitive_level, objective, last_used) 
-                         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                            (question_text, 
+                            img_url, 
+                            answer_a, 
+                            answer_a_justification, 
+                            answer_b, 
+                            answer_b_justification,
+                            answer_c,
+                            answer_c_justification,
+                            answer_d,
+                            answer_d_justification,
+                            correct_answer,
+                            exam_level,
+                            cognitive_level,
+                            technical_references,
+                            references_provided,
+                            objective,
+                            last_used) 
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                             [
                                 question.question_text,
-                                question.category,
+                                question.img_url,
+                                question.answer_a,
+                                question.answer_a_justification,
+                                question.answer_b,
+                                question.answer_b_justification,
+                                question.answer_c,
+                                question.answer_c_justification,
+                                question.answer_d,
+                                question.answer_d_justification,
+                                question.correct_answer,
                                 question.exam_level,
-                                question.technical_references,
-                                question.difficulty_level,
                                 question.cognitive_level,
+                                question.technical_references,
+                                question.references_provided,
                                 question.objective,
-                                question.last_used
+                                question.last_used,
                             ],
                             function (this: sqlite3.RunResult, err: any) {
                                 if (err) {
@@ -101,9 +125,7 @@ export class QuestionRepository {
                                 // Insert all relations - same logic as single add
                                 const insertOperations = [
                                     question.exams?.length ? QuestionRepository.prototype.insertExamRelations.call({ db: self.db }, questionId, question.exams) : Promise.resolve(),
-                                    question.answers?.length ? QuestionRepository.prototype.insertAnswers.call({ db: self.db }, questionId, question.answers) : Promise.resolve(),
-                                    question.kas?.length ? QuestionRepository.prototype.insertKaRelations.call({ db: self.db }, questionId, question.kas) : Promise.resolve(),
-                                    question.systems?.length ? QuestionRepository.prototype.insertSystemRelations.call({ db: self.db }, questionId, question.systems) : Promise.resolve()
+                                    question.system_kas?.length ? QuestionRepository.prototype.insertSystemRelations.call({ db: self.db }, questionId, question.system_kas) : Promise.resolve()
                                 ].filter(p => p !== Promise.resolve());
 
                                 Promise.all(insertOperations)
@@ -137,9 +159,7 @@ export class QuestionRepository {
     }
 
     private isDuplicate(existing: Question, newQuestion: Question): boolean {
-        return existing.question_text === newQuestion.question_text &&
-            existing.category === newQuestion.category &&
-            existing.exam_level === newQuestion.exam_level;
+        return existing.question_text === newQuestion.question_text
         // Add other fields as needed for your duplicate definition
     }
 
@@ -147,8 +167,8 @@ export class QuestionRepository {
         // Create a hash or use key fields to find potential duplicates
         return new Promise((resolve, reject) => {
             this.db.get(
-                'SELECT * FROM questions WHERE question_text = ? AND category = ?',
-                [question.question_text, question.category],
+                'SELECT * FROM questions WHERE question_text = ??',
+                [question.question_text],
                 (err, row) => {
                     if (err) reject(err);
                     else resolve(row as Question || null);
@@ -166,18 +186,42 @@ export class QuestionRepository {
 
                 db.run(
                     `INSERT INTO questions 
-                 (question_text, category, exam_level, technical_references, 
-                  difficulty_level, cognitive_level, objective, last_used) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                 (question_text, 
+                    img_url, 
+                    answer_a, 
+                    answer_a_justification, 
+                    answer_b, 
+                    answer_b_justification,
+                    answer_c,
+                    answer_c_justification,
+                    answer_d,
+                    answer_d_justification,
+                    correct_answer,
+                    exam_level,
+                    cognitive_level,
+                    technical_references,
+                    references_provided,
+                    objective,
+                    last_used) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                     [
                         question.question_text,
-                        question.category,
+                        question.img_url,
+                        question.answer_a,
+                        question.answer_a_justification,
+                        question.answer_b,
+                        question.answer_b_justification,
+                        question.answer_c,
+                        question.answer_c_justification,
+                        question.answer_d,
+                        question.answer_d_justification,
+                        question.correct_answer,
                         question.exam_level,
-                        question.technical_references,
-                        question.difficulty_level,
                         question.cognitive_level,
+                        question.technical_references,
+                        question.references_provided,
                         question.objective,
-                        question.last_used
+                        question.last_used,
                     ],
                     function (err) {
                         if (err) {
@@ -191,9 +235,7 @@ export class QuestionRepository {
                         // Use Promise.all with proper error handling
                         const insertOperations = [
                             question.exams?.length ? QuestionRepository.prototype.insertExamRelations.call({ db }, questionId, question.exams) : Promise.resolve(),
-                            question.answers?.length ? QuestionRepository.prototype.insertAnswers.call({ db }, questionId, question.answers) : Promise.resolve(),
-                            question.kas?.length ? QuestionRepository.prototype.insertKaRelations.call({ db }, questionId, question.kas) : Promise.resolve(),
-                            question.systems?.length ? QuestionRepository.prototype.insertSystemRelations.call({ db }, questionId, question.systems) : Promise.resolve()
+                            question.system_kas?.length ? QuestionRepository.prototype.insertSystemKaRelations.call({ db }, questionId, question.system_kas) : Promise.resolve(),
                         ].filter(p => p !== Promise.resolve()); // Remove empty promises
 
                         Promise.all(insertOperations)
@@ -227,29 +269,10 @@ export class QuestionRepository {
         });
     }
 
-    insertAnswers(questionId: number, answers: Answer[]): Promise<void> {
+    insertSystemKaRelations(questionId: number, system_kas: SystemKa[]): Promise<void> {
         return new Promise((resolve, reject) => {
-            const placeholders = answers.map(() => '(?, ?, ?, ?, ?)').join(', ');
-            const values = answers.flatMap(answer => [
-                questionId,
-                answer.answer_text,
-                answer.is_correct ? 1 : 0,
-                answer.justification,
-                answer.option
-            ]);
-
-            this.db.run(
-                `INSERT INTO answers (question_id, answer_text, is_correct, justification, option) VALUES ${placeholders}`,
-                values,
-                (err) => err ? reject(err) : resolve()
-            );
-        });
-    }
-
-    insertKaRelations(questionId: number, kas: Ka[]): Promise<void> {
-        return new Promise((resolve, reject) => {
-            const placeholders = kas.map(() => '(?, ?)').join(', ');
-            const values = kas.flatMap(ka => [questionId, ka.ka_number]);
+            const placeholders = system_kas.map(() => '(?, ?)').join(', ');
+            const values = system_kas.flatMap(system_ka => [questionId, system_ka.ka_number]);
 
             this.db.run(
                 `INSERT INTO question_kas (question_id, ka_number) VALUES ${placeholders}`,
@@ -402,7 +425,7 @@ export class QuestionRepository {
             console.log("IN THE SQL", filters);
 
             let query: string;
-            let params: any[] = [];
+            const params = [];
             const conditions: string[] = [];
 
             if (filters?.query?.trim()) {
@@ -689,14 +712,23 @@ export class QuestionRepository {
 
                 // First, update the main question record
                 self.db.run(
-                    'UPDATE questions SET question_text = ?, category = ?, exam_level = ?, technical_references = ?, difficulty_level = ?, cognitive_level = ?, objective = ?, last_used = ? WHERE question_id = ?',
+                    'UPDATE questions SET question_text = ?, img_url = ?, answer_a = ?, answer_a_justification = ?, answer_b = ?, answer_b_justification = ?, answer_c = ?, answer_c_justification = ?, answer_d = ?, answer_d_justification = ?, correct_answer = ?, exam_level = ?, cognitive_level = ?, technical_references = ?, references_provided = ?, objective = ?, last_used = ? WHERE question_id = ?',
                     [
                         question.question_text,
-                        question.category,
+                        question.img_url,
+                        question.answer_a,
+                        question.answer_a_justification,
+                        question.answer_b,
+                        question.answer_b_justification,
+                        question.answer_c,
+                        question.answer_c_justification,
+                        question.answer_d,
+                        question.answer_d_justification,
+                        question.correct_answer,
                         question.exam_level,
-                        question.technical_references,
-                        question.difficulty_level,
                         question.cognitive_level,
+                        question.technical_references,
+                        question.references_provided,
                         question.objective,
                         question.last_used,
                         question.question_id
@@ -788,77 +820,28 @@ export class QuestionRepository {
                                 insertOperations.push(examPromise);
                             }
 
-                            // Handle answers
-                            if (question.answers?.length) {
-                                const answerPromise = new Promise<void>((resolveAnswer, rejectAnswer) => {
-                                    const placeholders = question.answers!.map(() => '(?, ?, ?, ?, ?)').join(', ');
+                            // Handle system_ka relationships
+                            if (question.system_kas?.length) {
+                                const systemKaPromise = new Promise<void>((resolveSystemKa, rejectSystemKa) => {
+                                    const placeholders = question.system_kas?.map(() => '(?, ?)').join(', ');
                                     const values: any[] = [];
 
-                                    question.answers!.forEach(answer => {
-                                        values.push(
-                                            question.question_id,
-                                            answer.answer_text,
-                                            answer.is_correct ? 1 : 0,
-                                            answer.justification,
-                                            answer.option
-                                        );
-                                    });
-
-                                    self.db.run(
-                                        `INSERT INTO answers (question_id, answer_text, is_correct, justification, option) VALUES ${placeholders}`,
-                                        values,
-                                        (answerErr) => {
-                                            if (answerErr) rejectAnswer(answerErr);
-                                            else resolveAnswer();
-                                        }
-                                    );
-                                });
-                                insertOperations.push(answerPromise);
-                            }
-
-                            // Handle ka relationships
-                            if (question.kas?.length) {
-                                const kaPromise = new Promise<void>((resolveKa, rejectKa) => {
-                                    const placeholders = question.kas!.map(() => '(?, ?)').join(', ');
-                                    const values: any[] = [];
-
-                                    question.kas!.forEach(ka => {
+                                    question.system_kas?.forEach(ka => {
                                         values.push(question.question_id, ka.ka_number);
                                     });
 
                                     self.db.run(
                                         `INSERT INTO question_kas (question_id, ka_number) VALUES ${placeholders}`,
                                         values,
-                                        (kaErr) => {
-                                            if (kaErr) rejectKa(kaErr);
-                                            else resolveKa();
+                                        (systemKaErr) => {
+                                            if (systemKaErr) rejectSystemKa(systemKaErr);
+                                            else resolveSystemKa();
                                         }
                                     );
                                 });
-                                insertOperations.push(kaPromise);
+                                insertOperations.push(systemKaPromise);
                             }
 
-                            // Handle system relationships
-                            if (question.systems?.length) {
-                                const systemPromise = new Promise<void>((resolveSystem, rejectSystem) => {
-                                    const placeholders = question.systems!.map(() => '(?, ?)').join(', ');
-                                    const values: any[] = [];
-
-                                    question.systems!.forEach(system => {
-                                        values.push(question.question_id, system.system_number);
-                                    });
-
-                                    self.db.run(
-                                        `INSERT INTO question_systems (question_id, system_number) VALUES ${placeholders}`,
-                                        values,
-                                        (systemErr) => {
-                                            if (systemErr) rejectSystem(systemErr);
-                                            else resolveSystem();
-                                        }
-                                    );
-                                });
-                                insertOperations.push(systemPromise);
-                            }
 
                             Promise.all(insertOperations).then(() => {
                                 self.db.run('COMMIT', (commitErr) => {
@@ -903,33 +886,6 @@ export class QuestionRepository {
                     }
                 }
             );
-        });
-    }
-
-    async getAnswersByQuestionId(questionId: number): Promise<Answer[]> {
-        return new Promise((resolve, reject) => {
-            if (this.isClosing()) {
-                reject(new Error('Database is closing'));
-                return;
-            }
-
-            const query = 'SELECT * FROM answers WHERE question_id = ? ORDER BY answer_id';
-
-            this.db.all(query, [questionId], (err, rows: any[]) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    const answers: Answer[] = rows.map(row => ({
-                        answer_id: row.answer_id,
-                        question_id: row.question_id,
-                        answer_text: row.answer_text,
-                        is_correct: row.is_correct,
-                        option: row.option,
-                        justification: row.justification
-                    }));
-                    resolve(answers);
-                }
-            });
         });
     }
 

@@ -19,7 +19,7 @@ export class ImportRepository {
       filters
     });
 
-    return result.canceled ? null : result.filePath!;
+    return result.canceled ? null : result.filePath;
   }
 
   async openFileDialog(filters: Electron.FileFilter[], allowMultiple = false): Promise<string[] | null> {
@@ -37,7 +37,7 @@ export class ImportRepository {
   }
 
   // Unified import function that handles JSON, CSV, and XLSX files
-  async importFiles(allowMultiple: boolean = true): Promise<any[] | { success: boolean; error: string }> {
+  async importFiles(allowMultiple = true): Promise<any[] | { success: boolean; error: string }> {
     const filePaths = await this.openFileDialog([
       { name: 'All Supported Files', extensions: ['json', 'csv', 'xlsx'] },
       { name: 'JSON Files', extensions: ['json'] },
@@ -155,7 +155,7 @@ export class ImportRepository {
   }
 
   // Alternative version that returns just the data without metadata
-  async importFilesSimple(allowMultiple: boolean = true): Promise<any[] | { success: boolean; error: string }> {
+  async importFilesSimple(allowMultiple = true): Promise<any[] | { success: boolean; error: string }> {
     const result = await this.importFiles(allowMultiple);
 
     if ('success' in result && !result.success) {
@@ -226,34 +226,32 @@ export class ImportRepository {
     const question: Question = {
       question_id: this.extractNumber(rawData.question_id || rawData.questionId || rawData.id) || 0,
       question_text: this.extractString(rawData.question_text || rawData.questionText || rawData.text) || '',
-      category: this.extractString(rawData.category) || null,
-      exam_level: this.extractString(rawData.exam_level || rawData.examLevel || rawData.level) || null,
+      img_url: this.extractString(rawData.img_url || rawData.image || rawData.imgUrl) || null,
+      answer_a: this.extractString(rawData.answer_a || rawData.a || rawData.option_a) || '',
+      answer_a_justification: this.extractString(rawData.answer_a_justification || rawData.a_justification || rawData.justification_a) || '',
+      answer_b: this.extractString(rawData.answer_b || rawData.b || rawData.option_b) || '',
+      answer_b_justification: this.extractString(rawData.answer_b_justification || rawData.b_justification || rawData.justification_b) || '',
+      answer_c: this.extractString(rawData.answer_c || rawData.c || rawData.option_c) || '',
+      answer_c_justification: this.extractString(rawData.answer_c_justification || rawData.c_justification || rawData.justification_c) || '',
+      answer_d: this.extractString(rawData.answer_d || rawData.d || rawData.option_d) || '',
+      answer_d_justification: this.extractString(rawData.answer_d_justification || rawData.d_justification || rawData.justification_d) || '',
+      correct_answer: (this.extractString(rawData.correct_answer || rawData.correct || rawData.answer) || 'A').toUpperCase() as "A" | "B" | "C" | "D",
+      exam_level: (this.extractNumber(rawData.exam_level || rawData.examLevel || rawData.level) === 1 ? 1 : 0),
+      cognitive_level: (this.extractNumber(rawData.cognitive_level || rawData.cognitiveLevel) === 1 ? 1 : 0),
       technical_references: this.extractString(rawData.technical_references || rawData.technicalReferences || rawData.references) || null,
-      difficulty_level: this.extractNumber(rawData.difficulty_level || rawData.difficultyLevel || rawData.difficulty) || null,
-      cognitive_level: this.extractString(rawData.cognitive_level || rawData.cognitiveLevel) || null,
+      references_provided: this.extractString(rawData.references_provided || rawData.referencesProvided) || null,
       objective: this.extractString(rawData.objective) || null,
       last_used: this.extractString(rawData.last_used || rawData.lastUsed) || null
     };
 
-    // Handle answers if they exist
-    if (rawData.answers || rawData.choices || rawData.options) {
-      const answersData = rawData.answers || rawData.choices || rawData.options;
-      question.answers = this.transformAnswers(answersData, question.question_id);
-    }
 
     // Handle relationships if they exist
     if (rawData.exams) {
       question.exams = Array.isArray(rawData.exams) ? rawData.exams : [rawData.exams];
     }
 
-    if (rawData.kas || rawData.knowledge_areas) {
-      question.kas = Array.isArray(rawData.kas || rawData.knowledge_areas)
-        ? (rawData.kas || rawData.knowledge_areas)
-        : [rawData.kas || rawData.knowledge_areas];
-    }
-
     if (rawData.systems) {
-      question.systems = Array.isArray(rawData.systems) ? rawData.systems : [rawData.systems];
+      question.system_kas = Array.isArray(rawData.system_kas) ? rawData.system_kas : [rawData.system_kas];
     }
 
     return question;

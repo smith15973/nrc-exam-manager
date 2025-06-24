@@ -59,7 +59,7 @@ export const schema = {
     columns: [
       'system_number TEXT NOT NULL',
       'ka_number TEXT NOT NULL',
-      'system_ka_number TEXT GENERATED ALWAYS AS (system_number || ka_number) STORED',
+      'system_ka_number TEXT GENERATED ALWAYS AS (system_number || "_" || ka_number) STORED',
       'ka_statement TEXT',
       'ro_importance REAL',
       'sro_importance REAL',

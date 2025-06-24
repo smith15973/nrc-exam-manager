@@ -10,7 +10,7 @@ import { KaRepository } from './repositories/KaRepository';
 
 export class Database {
     private db: sqlite3.Database;
-    private isClosing: boolean = false;
+    private isClosing = false;
 
     // Repository instances
     public plants: PlantRepository;
@@ -73,7 +73,7 @@ export class Database {
     // Current version is the highest migration number
     private readonly currentSchemaVersion = Math.max(...Object.keys(Database.MIGRATIONS).map(Number));
 
-    constructor(dbPath: string, sb: boolean = false) {
+    constructor(dbPath: string, sb = false) {
         console.log('Database location:', dbPath);
         console.log('Target schema version:', this.currentSchemaVersion);
 
