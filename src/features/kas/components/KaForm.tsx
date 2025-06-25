@@ -40,7 +40,7 @@ export default function KaForm(props: KaFormProps) {
     }
 
     const validateForm = () => {
-        return !!kaForm.ka_number && !!kaForm.category_number
+        return !!kaForm.ka_number && !!kaForm.stem_id
     }
 
     const formContent = (
@@ -60,9 +60,9 @@ export default function KaForm(props: KaFormProps) {
                 <TextField
                     fullWidth
                     type={'text'}
-                    value={kaForm.category_number || ''}
-                    onChange={(e) => handleChange('category_number', e.target.value)}
-                    label={"Category Number"}
+                    value={kaForm.stem_id || ''}
+                    onChange={(e) => handleChange('stem_id', e.target.value)}
+                    label={"Stem ID"}
                     required={true}
                 />
             </Box>

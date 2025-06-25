@@ -29,6 +29,7 @@ const navItems = [
   { label: 'Plants', link: '/plants' },
   { label: 'Exams', link: '/exams' },
   { label: 'Systems', link: '/systems' },
+  { label: 'Stems', link: '/stems' },
   { label: 'Kas', link: '/kas' },
   { label: 'Sandbox', link: '/sandbox' },
 ];

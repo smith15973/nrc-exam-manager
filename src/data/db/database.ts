@@ -8,6 +8,7 @@ import { QuestionService } from './services/QuestionService';
 import { SystemRepository } from './repositories/SystemRepository';
 import { KaRepository } from './repositories/KaRepository';
 import { SystemKaRepository } from './repositories/SystemKaRepository';
+import { StemRepository } from './repositories/StemRepository';
 
 export class Database {
     private db: sqlite3.Database;
@@ -18,6 +19,7 @@ export class Database {
     public exams: ExamRepository;
     public questions: QuestionRepository;
     public systems: SystemRepository;
+    public stems: StemRepository;
     public kas: KaRepository;
     public system_kas: SystemKaRepository;
 
@@ -97,6 +99,7 @@ export class Database {
         this.exams = new ExamRepository(this.db, () => this.isClosing);
         this.questions = new QuestionRepository(this.db, () => this.isClosing);
         this.systems = new SystemRepository(this.db, () => this.isClosing);
+        this.stems = new StemRepository(this.db, () => this.isClosing);
         this.kas = new KaRepository(this.db, () => this.isClosing);
         this.system_kas = new SystemKaRepository(this.db, () => this.isClosing);
 

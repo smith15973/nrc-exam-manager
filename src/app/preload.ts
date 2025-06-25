@@ -63,6 +63,13 @@ contextBridge.exposeInMainWorld('db', {
     update: (system: System) => dbCall('update-system', system),
     delete: (systemNum: number) => dbCall('delete-system', systemNum),
   },
+  stems: {
+    add: (stem: Stem) => dbCall('add-stem', stem),
+    get: (params?: DBSearchParams) => dbCall('get-stem', params),
+    getMany: (params?: DBSearchParams) => dbCall('get-stems', params),
+    update: (stem: Stem) => dbCall('update-stem', stem),
+    delete: (stemId: number) => dbCall('delete-stem', stemId),
+  },
   kas: {
     add: (ka: System) => dbCall('add-ka', ka),
     get: (params?: DBSearchParams) => dbCall('get-ka', params),

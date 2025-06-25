@@ -3,6 +3,7 @@ import { usePlants } from './usePlants';
 import { useExams } from './useExams';
 import { useQuestions } from './useQuestions';
 import { useSystems } from './useSystems';
+import { useStems } from './useStems';
 import { useKas } from './useKas';
 
 export const useDatabase = () => {
@@ -10,6 +11,7 @@ export const useDatabase = () => {
     const examsHook = useExams();
     const questionsHook = useQuestions();
     const systemsHook = useSystems();
+    const stemsHook = useStems();
     const kasHook = useKas();
 
     return {
@@ -18,6 +20,7 @@ export const useDatabase = () => {
         ...examsHook,
         ...questionsHook,
         ...systemsHook,
+        ...stemsHook,
         ...kasHook,
 
         // If you want to namespace errors to avoid conflicts:

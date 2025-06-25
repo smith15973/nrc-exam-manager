@@ -21,7 +21,7 @@ interface QuestionTableProps {
   checkable?: boolean;
   selectedIds?: number[];
   onSelectionChange?: (selectedIds: number[]) => void;
-  onFilterChange: (key: string, value: any) => void;
+  onFilterChange: (key: string, value: unknown) => void;
   filters?: QuestionFilters;
   onResetFilters: () => void;
 }

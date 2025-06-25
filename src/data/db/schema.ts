@@ -36,10 +36,11 @@ export const schema = {
       'last_used TEXT',
     ],
   },
-  categories: {
+  stems: {
     columns: [
-      'category_number TEXT PRIMARY KEY',
-      'category_description TEXT NOT NULL'
+      'stem_id TEXT PRIMARY KEY',
+      'stem_statement TEXT NOT NULL',
+      'cfr_content TEXT',
     ]
   },
   systems: {
@@ -51,19 +52,19 @@ export const schema = {
   kas: {
     columns: [
       'ka_number TEXT PRIMARY KEY',
-      'category_number TEXT NOT NULL',
-      'FOREIGN KEY (category_number) REFERENCES categories(category_number) ON DELETE CASCADE',
+      'stem_id TEXT NOT NULL',
+      'FOREIGN KEY (stem_id) REFERENCES stems(stem_id) ON DELETE CASCADE',
     ]
   },
   system_kas: {
     columns: [
       'system_number TEXT NOT NULL',
       'ka_number TEXT NOT NULL',
+      'category TEXT NOT NULL',
       'system_ka_number TEXT GENERATED ALWAYS AS (system_number || "_" || ka_number) STORED',
       'ka_statement TEXT',
       'ro_importance REAL',
       'sro_importance REAL',
-      'cfr_content TEXT',
       'PRIMARY KEY (system_number, ka_number)',
       'FOREIGN KEY (system_number) REFERENCES systems(system_number) ON DELETE CASCADE',
       'FOREIGN KEY (ka_number) REFERENCES kas(ka_number) ON DELETE CASCADE',
@@ -179,26 +180,27 @@ export const defaultExamQuestion: ExamQuestion = {
 
 export const defaultKa: Ka = {
   ka_number: '',
-  category_number: '',
+  stem_id: '',
 }
 
 export const defaultSystem: System = {
   system_number: '',
   system_name: '',
 }
-export const defaultCategory: Category = {
-  category_number: '',
-  category_description: '',
+export const defaultStem: Stem = {
+  stem_id: '',
+  stem_statement: '',
+  cfr_content: '',
 }
 
 export const defaultSystemKa: SystemKa = {
   system_number: '',
   ka_number: '',
+  category: '',
   system_ka_number: '',
   ka_statement: null,
   ro_importance: 0,
   sro_importance: 0,
-  cfr_content: '',
 }
 
 export const defaultQuestionSystemKa: QuestionSystemKa = {

@@ -12,8 +12,8 @@ export class SystemKaRepository {
       }
 
       this.db.run(
-        'INSERT INTO system_kas (system_number, ka_number, ka_statement , ro_importance, sro_importance, cfr_content) VALUES (?, ?, ?, ?, ?, ?)',
-        [system_ka.system_number, system_ka.ka_number, system_ka.ka_statement, system_ka.ro_importance, system_ka.sro_importance, system_ka.cfr_content],
+        'INSERT INTO system_kas (system_number, ka_number, ka_statement , ro_importance, sro_importance) VALUES (?, ?, ?, ?, ?)',
+        [system_ka.system_number, system_ka.ka_number, system_ka.ka_statement, system_ka.ro_importance, system_ka.sro_importance],
         function (err) {
           if (err) {
             reject(err);
@@ -109,19 +109,14 @@ export class SystemKaRepository {
         reject(new Error('SRO importance is required for update'));
         return;
       }
-      if (!system_ka.cfr_content) {
-        reject(new Error('CFR content is required for update'));
-        return;
-      }
 
       this.db.run(
         `UPDATE system_kas SET
           ka_statement = ?, 
           ro_importance = ?, 
           sro_importance = ?, 
-          cfr_content = ? 
          WHERE system_number = ? AND ka_number = ?`,
-        [system_ka.ka_statement, system_ka.ro_importance, system_ka.sro_importance, system_ka.cfr_content, system_ka.system_number, system_ka.ka_number],
+        [system_ka.ka_statement, system_ka.ro_importance, system_ka.sro_importance, system_ka.system_number, system_ka.ka_number],
         function (err) {
           if (err) {
             reject(err);
@@ -179,11 +174,11 @@ export class SystemKaRepository {
           const systemKas: SystemKa[] = rows.map(row => ({
             system_number: row.system_number,
             ka_number: row.ka_number,
+            category: row.category,
             system_ka_number: row.system_ka_number,
             ka_statement: row.ka_statement,
             ro_importance: row.ro_importance,
             sro_importance: row.sro_importance,
-            cfr_content: row.cfr_content
           }));
           resolve(systemKas);
         }

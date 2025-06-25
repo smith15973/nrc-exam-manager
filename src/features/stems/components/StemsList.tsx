@@ -6,25 +6,25 @@ import ConfirmDelete from '../../../common/components/ConfirmDelete';
 
 
 
-interface KaListProps {
-    kas: Ka[];
-    deleteKa: (kaNum: string) => void;
+interface StemListProps {
+    stems: Stem[];
+    deleteStem: (stemNum: string) => void;
     sx?: SxProps
 }
 
-export default function KasList(props: KaListProps) {
-    const { kas, deleteKa, sx } = props
+export default function StemsList(props: StemListProps) {
+    const { stems, deleteStem, sx } = props
     return (
         <List sx={sx}>
-            {kas.map((ka) => {
+            {stems.map((stem) => {
                 return (
                     <ListItem
-                        key={ka.ka_number}
+                        key={stem.stem_id}
                         secondaryAction={
                             <IconButton edge='end' aria-label='delete'>
                                 <ConfirmDelete
-                                    message='Are you sure you want to delete this KA? This action cannot be undone!'
-                                    onConfirmDelete={() => deleteKa(ka.ka_number)}
+                                    message='Are you sure you want to delete this stem? This action cannot be undone!'
+                                    onConfirmDelete={() => deleteStem(stem.stem_id)}
                                     button={({ onClick, disabled }) => (
                                         <DeleteIcon
                                             onClick={onClick}
@@ -35,17 +35,16 @@ export default function KasList(props: KaListProps) {
                                         />
                                     )}
                                 />
-
                             </IconButton>
                         }
                         divider
                         disablePadding
                     >
                         <ListItemAvatar>
-                            <Avatar variant='rounded' alt={ka.stem_id} />
+                            <Avatar variant='rounded' alt={stem.stem_statement} />
                         </ListItemAvatar>
-                        <ListItemButton component={Link} to={`/kas/${ka.ka_number}`}>
-                            {ka.ka_number} {ka.stem_id}
+                        <ListItemButton component={Link} to={`/stems/${stem.stem_id}`}>
+                            {stem.stem_id} {stem.stem_statement} {`(CFR${stem.cfr_content})`}
                         </ListItemButton>
                     </ListItem>
                 )

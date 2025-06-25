@@ -24,7 +24,7 @@ export default function KaSelect(props: KaSelectProps) {
                 <MenuItem value={0}>Select a KA</MenuItem>
                 {kas.map((ka: Ka) => (
                     <MenuItem key={ka.ka_number} value={ka.ka_number}>
-                        {ka.category_number}
+                        {ka.stem_id}
                     </MenuItem>
                 ))}
             </Select>

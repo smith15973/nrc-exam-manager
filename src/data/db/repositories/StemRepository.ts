@@ -1,10 +1,10 @@
-// db/repositories/KaRepository.ts
+// db/repositories/StemRepository.ts
 import sqlite3 from 'sqlite3';
 
-export class KaRepository {
+export class StemRepository {
   constructor(private db: sqlite3.Database, private isClosing: () => boolean) { }
 
-  async add(ka: Ka): Promise<number> {
+  async add(stem: Stem): Promise<number> {
     return new Promise((resolve, reject) => {
       if (this.isClosing()) {
         reject(new Error('Database is closing'));
@@ -12,8 +12,8 @@ export class KaRepository {
       }
 
       this.db.run(
-        'INSERT INTO kas (ka_number, stem_id) VALUES (?, ?)',
-        [ka.ka_number, ka.stem_id],
+        'INSERT INTO stems (stem_id, stem_statement, cfr_content) VALUES (?, ?, ?)',
+        [stem.stem_id, stem.stem_statement, stem.cfr_content],
         function (err) {
           if (err) {
             reject(err);
@@ -25,7 +25,7 @@ export class KaRepository {
     });
   }
 
-  async getMany(params?: DBSearchParams): Promise<Ka[]> {
+  async getMany(params?: DBSearchParams): Promise<Stem[]> {
     return new Promise((resolve, reject) => {
       if (this.isClosing()) {
         reject(new Error('Database is closing'));
@@ -36,13 +36,13 @@ export class KaRepository {
       const keys = Object.keys(params || {});
       const values = Object.values(params || {});
 
-      let sql = 'SELECT * FROM kas';
+      let sql = 'SELECT * FROM stems';
       if (keys.length > 0) {
         const conditions = keys.map(key => `${key} = ?`).join(' AND ');
         sql += ` WHERE ${conditions}`;
       }
 
-      this.db.all(sql, values, (err, rows: Ka[]) => {
+      this.db.all(sql, values, (err, rows: Stem[]) => {
         if (err) {
           reject(err);
         } else {
@@ -52,7 +52,7 @@ export class KaRepository {
     });
   }
 
-  async get(params: DBSearchParams): Promise<Ka> {
+  async get(params: DBSearchParams): Promise<Stem> {
     return new Promise((resolve, reject) => {
       if (this.isClosing()) {
         reject(new Error("Database is closing"));
@@ -68,13 +68,13 @@ export class KaRepository {
       }
 
       const conditions = keys.map(key => `${key} = ?`).join(' AND ');
-      const sql = `SELECT * FROM kas WHERE ${conditions}`;
+      const sql = `SELECT * FROM stems WHERE ${conditions}`;
 
-      this.db.get(sql, values, (err, row: Ka) => {
+      this.db.get(sql, values, (err, row: Stem) => {
         if (err) {
           reject(err);
         } else if (!row) {
-          reject(new Error('Ka not found'));
+          reject(new Error('Stem not found'));
         } else {
           resolve(row);
         }
@@ -82,30 +82,30 @@ export class KaRepository {
     });
   }
 
-  async update(ka: Ka): Promise<void> {
+  async update(stem: Stem): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.isClosing()) {
         reject(new Error("Database is closing"));
         return;
       }
 
-      if (!ka.ka_number) {
-        reject(new Error('Ka Number is required for update'));
+      if (!stem.stem_id) {
+        reject(new Error('Stem Number is required for update'));
         return;
       }
-      if (!ka.stem_id) {
-        reject(new Error('Stem Id number is required for update'));
+      if (!stem.stem_statement) {
+        reject(new Error('Stem Name is required for update'));
         return;
       }
 
       this.db.run(
-        'UPDATE kas SET stem_id = ? WHERE ka_number = ?',
-        [ka.stem_id, ka.ka_number],
+        'UPDATE stems SET stem_statement = ?, cfr_content = ?, WHERE stem_id = ?',
+        [stem.stem_statement, stem.cfr_content, stem.stem_id],
         function (err) {
           if (err) {
             reject(err);
           } else if (this.changes === 0) {
-            reject(new Error('Ka not found'));
+            reject(new Error('Stem not found'));
           } else {
             resolve();
           }
@@ -114,7 +114,7 @@ export class KaRepository {
     });
   }
 
-  async delete(kaNumber: number): Promise<void> {
+  async delete(stemNum: number): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.isClosing()) {
         reject(new Error("Database is closing"));
@@ -122,13 +122,13 @@ export class KaRepository {
       }
 
       this.db.run(
-        'DELETE FROM kas WHERE ka_number = ?',
-        [kaNumber],
+        'DELETE FROM stems WHERE stem_id = ?',
+        [stemNum],
         function (err) {
           if (err) {
             reject(err);
           } else if (this.changes === 0) {
-            reject(new Error('Ka not found'));
+            reject(new Error('Stem not found'));
           } else {
             resolve();
           }
@@ -137,7 +137,7 @@ export class KaRepository {
     });
   }
 
-  async getByQuestionId(questionId: number): Promise<Ka[]> {
+  async getByQuestionId(questionId: number): Promise<Stem[]> {
     return new Promise((resolve, reject) => {
       if (this.isClosing()) {
         reject(new Error('Database is closing'));
@@ -145,22 +145,23 @@ export class KaRepository {
       }
 
       const query = `
-      SELECT k.ka_number, k.stem_id
-      FROM kas k
-      INNER JOIN question_kas qk ON k.ka_number = qk.ka_number
-      WHERE qk.question_id = ?
-      ORDER BY k.ka_number
+      SELECT s.stem_id, s.stem_statement
+      FROM stems s
+      INNER JOIN question_stems qs ON s.stem_id = qs.stem_id
+      WHERE qs.question_id = ?
+      ORDER BY s.stem_id
     `;
 
-      this.db.all(query, [questionId], (err, rows: Ka[]) => {
+      this.db.all(query, [questionId], (err, rows: Stem[]) => {
         if (err) {
           reject(err);
         } else {
-          const kas: Ka[] = rows.map(row => ({
-            ka_number: row.ka_number,
+          const stems: Stem[] = rows.map(row => ({
             stem_id: row.stem_id,
+            stem_statement: row.stem_statement,
+            cfr_content: row.cfr_content
           }));
-          resolve(kas);
+          resolve(stems);
         }
       });
     });

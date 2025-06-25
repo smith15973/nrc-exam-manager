@@ -58,15 +58,16 @@ interface ExamQuestion {
   question?: Question;
 }
 
-interface Category {
-  category_number: string;
-  category_description: string;
+interface Stem {
+  stem_id: string;
+  stem_statement: string;
+  cfr_content: string | null;
 }
 interface Ka {
   ka_number: string;
-  category_number: string;
+  stem_id: string;
 
-  category?: Category;
+  stem?: Stem;
 }
 interface System {
   system_number: string;
@@ -76,11 +77,11 @@ interface System {
 interface SystemKa {
   system_number: string;
   ka_number: string;
+  category: string,
   system_ka_number: string;
   ka_statement: string | null;
   ro_importance: number;
   sro_importance: number;
-  cfr_content: string | null;
 
   system?: System;
   ka?: Ka;
@@ -136,9 +137,9 @@ interface SystemResponse extends ApiResponse {
   systems?: System[];
 }
 
-interface CategoryResponse extends ApiResponse {
-  category?: Category;
-  categories?: Category[];
+interface StemResponse extends ApiResponse {
+  stem?: Stem;
+  stems?: Stem[];
 }
 
 interface SystemKaResponse extends ApiResponse {
@@ -210,6 +211,13 @@ interface Window {
       getMany: (params?: DBSearchParams) => Promise<SystemResponse>;
       update: (system: System) => Promise<SystemResponse>;
       delete: (systemNum: string) => Promise<SystemResponse>;
+    },
+    stems: {
+      add: (stem: Stem) => Promise<StemResponse>;
+      get: (params?: DBSearchParams) => Promise<StemResponse>;
+      getMany: (params?: DBSearchParams) => Promise<StemResponse>;
+      update: (stem: Stem) => Promise<StemResponse>;
+      delete: (stemId: string) => Promise<StemResponse>;
     },
     kas: {
       add: (ka: Ka) => Promise<KaResponse>;

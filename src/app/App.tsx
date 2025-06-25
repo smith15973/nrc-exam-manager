@@ -4,7 +4,7 @@ import { HashRouter, Routes, Route } from 'react-router-dom';
 import PlantPage from '../features/plants/pages/PlantPage';
 import DrawerAppBar from '../common/components/DrawerAppbar';
 import HomePage from '../pages/HomePage';
-import { Box, Container, CssBaseline } from '@mui/material';
+import { CssBaseline } from '@mui/material';
 import ExamsPage from '../features/exams/pages/ExamsPage';
 import ExamPage from '../features/exams/pages/ExamPage';
 import QuestionsPage from '../features/questions/pages/QuestionsPage';
@@ -16,6 +16,8 @@ import KasPage from '../features/kas/pages/KasPage';
 import KaPage from '../features/kas/pages/KaPage';
 import { DialogsProvider } from '@toolpad/core/useDialogs';
 import SandboxPage from '../pages/SandboxPage';
+import StemPage from '../features/stems/pages/StemPage';
+import StemsPage from '../features/stems/pages/StemsPage';
 
 
 
@@ -35,6 +37,8 @@ const App = () => {
                         <Route path='/questions/:questionId' element={<QuestionPage />} />
                         <Route path='/systems' element={<SystemsPage />} />
                         <Route path='/systems/:systemNum' element={<SystemPage />} />
+                        <Route path='/stems' element={<StemsPage />} />
+                        <Route path='/stems/:stemId' element={<StemPage />} />
                         <Route path='/kas' element={<KasPage />} />
                         <Route path='/kas/:kaNum' element={<KaPage />} />
                         <Route path='/sandbox' element={<SandboxPage />} />

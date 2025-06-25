@@ -680,6 +680,28 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         return { success: true }
       }
 
+      case 'add-stem': {
+        await db.stems.add(data);
+        return { success: true }
+      }
+      case 'get-stem': {
+        const stem = await db.stems.get(data);
+        return { success: true, stem }
+      }
+      case 'get-stems': {
+        const stems = await db.stems.getMany(data);
+        return { success: true, stems }
+
+      }
+      case 'update-stem': {
+        await db.stems.update(data);
+        return { success: true }
+      }
+      case 'delete-stem': {
+        await db.stems.delete(data);
+        return { success: true }
+      }
+
       case 'add-ka': {
         await db.kas.add(data);
         return { success: true }

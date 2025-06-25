@@ -81,12 +81,12 @@ export default function QuestionTemplate({ question, print = false, student = fa
         </Typography>
     );
 
-    const InfoRow = ({ label, value, flex = 1 }: { label: string; value: any; flex?: number }) => (
+    const InfoRow = ({ label, value, flex = 1 }: { label: string; value: unknown; flex?: number }) => (
         <Box sx={{ flex, mb: 1.5, ...printStyles }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: 'text.secondary', mb: 0.5, ...printStyles }}>
                 {label}
             </Typography>
-            <Typography variant="body2">{value || 'N/A'}</Typography>
+            <Typography variant="body2">{value != null ? String(value) : 'N/A'}</Typography>
         </Box>
     );
 
@@ -248,7 +248,7 @@ export default function QuestionTemplate({ question, print = false, student = fa
                                             display: 'flex',
                                             justifyContent: 'space-between',
                                             ...printStyles,
-                                            borderBottom: index < question.system_kas!.length - 1 ? '1px solid' : 'none',
+                                            borderBottom: question.system_kas && index < question.system_kas.length - 1 ? '1px solid' : 'none',
                                             borderColor: 'grey.300',
                                             py: 0.5,
                                         }}
