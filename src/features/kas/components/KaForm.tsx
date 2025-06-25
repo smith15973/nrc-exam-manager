@@ -1,8 +1,9 @@
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { defaultKa } from '../../../data/db/schema';
 import { Alert, Box, Button, TextField } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import { FormDialog } from '../../../common/components/FormDialog';
+import StemSelect from '../../../features/stems/components/StemSelect';
 
 interface KaFormProps {
     ka?: Ka;
@@ -13,7 +14,7 @@ export default function KaForm(props: KaFormProps) {
     const { ka, handleSubmit } = props;
     const [kaForm, setKaForm] = useState<Ka>(ka || defaultKa);
     const [open, setOpen] = useState(false);
-    const { errors } = useDatabase();
+    const { errors, stems } = useDatabase();
 
     useEffect(() => {
         if (ka) {
@@ -56,15 +57,9 @@ export default function KaForm(props: KaFormProps) {
                         required={true}
                     />
                 </Box> : null}
+
             <Box sx={{ pt: 2 }}>
-                <TextField
-                    fullWidth
-                    type={'text'}
-                    value={kaForm.stem_id || ''}
-                    onChange={(e) => handleChange('stem_id', e.target.value)}
-                    label={"Stem ID"}
-                    required={true}
-                />
+                <StemSelect handleChange={handleChange} stemId={kaForm.stem_id} stems={stems} />
             </Box>
         </>
     )

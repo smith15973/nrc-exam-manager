@@ -68,17 +68,7 @@ export default function ExamForm(props: ExamFormProps) {
             })}
 
             <Box sx={{ pt: 2 }}>
-                {plant ? (
-                    <TextField
-                        fullWidth
-                        type="text"
-                        value={plant.name}
-                        label="Plant"
-                        disabled
-                    />
-                ) :
-                    <PlantSelect handleChange={handleChange} plant_id={examForm.plant_id} plants={plants} />
-                }
+                <PlantSelect handleChange={handleChange} plant_id={examForm.plant_id} plants={plants} />
             </Box>
         </>
     )

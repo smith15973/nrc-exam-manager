@@ -40,7 +40,6 @@ export const schema = {
     columns: [
       'stem_id TEXT PRIMARY KEY',
       'stem_statement TEXT NOT NULL',
-      'cfr_content TEXT',
     ]
   },
   systems: {
@@ -65,6 +64,7 @@ export const schema = {
       'ka_statement TEXT',
       'ro_importance REAL',
       'sro_importance REAL',
+      'cfr_content TEXT',
       'PRIMARY KEY (system_number, ka_number)',
       'FOREIGN KEY (system_number) REFERENCES systems(system_number) ON DELETE CASCADE',
       'FOREIGN KEY (ka_number) REFERENCES kas(ka_number) ON DELETE CASCADE',
@@ -190,7 +190,6 @@ export const defaultSystem: System = {
 export const defaultStem: Stem = {
   stem_id: '',
   stem_statement: '',
-  cfr_content: '',
 }
 
 export const defaultSystemKa: SystemKa = {
@@ -201,6 +200,7 @@ export const defaultSystemKa: SystemKa = {
   ka_statement: null,
   ro_importance: 0,
   sro_importance: 0,
+  cfr_content: '',
 }
 
 export const defaultQuestionSystemKa: QuestionSystemKa = {

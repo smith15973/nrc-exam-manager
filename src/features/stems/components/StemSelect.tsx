@@ -2,14 +2,13 @@
 import { MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 
 interface StemSelectProps {
-    stemNumber: string;
+    stemId: string;
     stems: Stem[];
-    handleChange: (idx: number, value: string) => void
-    idx: number;
+    handleChange: (idx: string, value: string) => void
 }
 
 export default function StemSelect(props: StemSelectProps) {
-    const { stemNumber, stems, handleChange, idx } = props;
+    const { stemId, stems, handleChange } = props;
 
     return (
         <FormControl sx={{ pb: 2 }} fullWidth required>
@@ -17,14 +16,14 @@ export default function StemSelect(props: StemSelectProps) {
             <Select
                 labelId="stem-select-label"
                 id="stem-select"
-                value={stemNumber}
+                value={stemId}
                 label="Stem"
-                onChange={(e) => handleChange(idx, e.target.value)}
+                onChange={(e) => handleChange('stem_id', e.target.value)}
             >
                 <MenuItem value={0}>Select an Stem</MenuItem>
                 {stems.map((stem: Stem) => (
                     <MenuItem key={stem.stem_id} value={stem.stem_id}>
-                        {stem.stem_statement}
+                        {stem.stem_id} - {stem.stem_statement}
                     </MenuItem>
                 ))}
             </Select>

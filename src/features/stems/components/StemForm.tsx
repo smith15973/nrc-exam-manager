@@ -64,15 +64,6 @@ export default function StemForm(props: StemFormProps) {
                     required={true}
                 />
             </Box>
-            <Box sx={{ pt: 2 }}>
-                <TextField
-                    fullWidth
-                    type={'text'}
-                    value={stemForm.cfr_content || ''}
-                    onChange={(e) => handleChange('cfr_content', e.target.value)}
-                    label={"CFR Content"}
-                />
-            </Box>
         </>
     )
 

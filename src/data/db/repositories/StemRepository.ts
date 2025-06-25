@@ -12,8 +12,8 @@ export class StemRepository {
       }
 
       this.db.run(
-        'INSERT INTO stems (stem_id, stem_statement, cfr_content) VALUES (?, ?, ?)',
-        [stem.stem_id, stem.stem_statement, stem.cfr_content],
+        'INSERT INTO stems (stem_id, stem_statement) VALUES (?, ?)',
+        [stem.stem_id, stem.stem_statement],
         function (err) {
           if (err) {
             reject(err);
@@ -99,8 +99,8 @@ export class StemRepository {
       }
 
       this.db.run(
-        'UPDATE stems SET stem_statement = ?, cfr_content = ?, WHERE stem_id = ?',
-        [stem.stem_statement, stem.cfr_content, stem.stem_id],
+        'UPDATE stems SET stem_statement = ? WHERE stem_id = ?',
+        [stem.stem_statement, stem.stem_id],
         function (err) {
           if (err) {
             reject(err);
@@ -159,7 +159,6 @@ export class StemRepository {
           const stems: Stem[] = rows.map(row => ({
             stem_id: row.stem_id,
             stem_statement: row.stem_statement,
-            cfr_content: row.cfr_content
           }));
           resolve(stems);
         }

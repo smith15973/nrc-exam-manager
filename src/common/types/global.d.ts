@@ -61,7 +61,6 @@ interface ExamQuestion {
 interface Stem {
   stem_id: string;
   stem_statement: string;
-  cfr_content: string | null;
 }
 interface Ka {
   ka_number: string;
@@ -82,6 +81,7 @@ interface SystemKa {
   ka_statement: string | null;
   ro_importance: number;
   sro_importance: number;
+  cfr_content: string | null;
 
   system?: System;
   ka?: Ka;

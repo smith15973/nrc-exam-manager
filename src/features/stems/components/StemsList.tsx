@@ -44,7 +44,7 @@ export default function StemsList(props: StemListProps) {
                             <Avatar variant='rounded' alt={stem.stem_statement} />
                         </ListItemAvatar>
                         <ListItemButton component={Link} to={`/stems/${stem.stem_id}`}>
-                            {stem.stem_id} {stem.stem_statement} {`(CFR${stem.cfr_content})`}
+                            {stem.stem_id} {stem.stem_statement}
                         </ListItemButton>
                     </ListItem>
                 )
