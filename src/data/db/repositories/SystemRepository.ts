@@ -12,7 +12,7 @@ export class SystemRepository {
       }
 
       this.db.run(
-        'INSERT INTO systems (number, name) VALUES (?, ?)',
+        'INSERT INTO systems (system_number, system_name) VALUES (?, ?)',
         [system.system_number, system.system_name],
         function (err) {
           if (err) {
@@ -99,7 +99,7 @@ export class SystemRepository {
       }
 
       this.db.run(
-        'UPDATE systems SET name = ? WHERE number = ?',
+        'UPDATE systems SET system_name = ? WHERE system_number = ?',
         [system.system_name, system.system_number],
         function (err) {
           if (err) {
@@ -122,7 +122,7 @@ export class SystemRepository {
       }
 
       this.db.run(
-        'DELETE FROM systems WHERE num = ?',
+        'DELETE FROM systems WHERE system_number = ?',
         [systemNum],
         function (err) {
           if (err) {

@@ -7,8 +7,12 @@ export const useSystems = () => {
     const [error, setError] = useState<string | null>(null);
 
     const addSystem = async (system: System): Promise<void> => {
+        if (!system.system_number) {
+            setError('Please fill in system number');
+            return;
+        }
         if (!system.system_name) {
-            setError('Please fill in all fields');
+            setError('Please fill in system name');
             return;
         }
         try {
