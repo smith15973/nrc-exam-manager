@@ -37,7 +37,7 @@ export class QuestionRepository {
             throw new Error("Existing question content does not have a question_id");
         }
 
-console.log("Here3")
+        console.log("Here3")
 
         return this.insertQuestion(question);
     }
@@ -242,10 +242,20 @@ console.log("Here3")
 
                         console.log("Here5")
                         const questionId = this.lastID;
+                        const examQuestions: ExamQuestion[] = question.exams?.map(exam => ({
+                            question_id: questionId,
+                            exam_id: exam.exam_id,
+                            question_number: 0,
+                            main_system_ka_ka: null,
+                            main_system_ka_system: null,
+                            ka_match_justification: null,
+                            sro_match_justification: null,
+                            answers_order: null
+                        })) ?? [];
 
                         // Use Promise.all with proper error handling
                         const insertOperations = [
-                            question.exams?.length ? QuestionRepository.prototype.insertExamRelations.call({ db }, questionId, question.exams) : Promise.resolve(),
+                            question.exams?.length ? QuestionRepository.prototype.insertExamRelations.call({ db }, examQuestions) : Promise.resolve(),
                             question.system_kas?.length ? QuestionRepository.prototype.insertSystemKaRelations.call({ db }, questionId, question.system_kas) : Promise.resolve(),
                         ].filter(p => p !== Promise.resolve()); // Remove empty promises
 
@@ -270,17 +280,31 @@ console.log("Here3")
     }
 
     // Extract repetitive insertion logic into separate methods
-    insertExamRelations(questionId: number, exams: Exam[]): Promise<void> {
-        return new Promise((resolve, reject) => {
-            const placeholders = exams.map(() => '(?, ?)').join(', ');
-            const values = exams.flatMap(exam => [exam.exam_id, questionId]);
+    async insertExamRelations(examQuestions: ExamQuestion[]): Promise<void> {
 
-            this.db.run(
-                `INSERT INTO exam_questions (exam_id, question_id) VALUES ${placeholders}`,
-                values,
-                (err) => err ? reject(err) : resolve()
-            );
-        });
+        console.log("EQs", examQuestions)
+        const insertPromises = examQuestions.map(examQ =>
+            new Promise<void>((resolve, reject) => {
+                this.db.run(
+                    `INSERT INTO exam_questions (
+          exam_id, question_id, question_number, main_system_ka_system, main_system_ka_ka, 
+          ka_match_justification, sro_match_justification, answers_order
+        ) VALUES (
+          ?, ?, 
+          COALESCE(NULLIF(?, 0), (SELECT COALESCE(MAX(question_number), 0) FROM exam_questions WHERE exam_id = ?) + 1), 
+          ?, ?, ?, ?, ?
+        )`,
+                    [
+                        examQ.exam_id, examQ.question_id, examQ.question_number || 0, examQ.exam_id,
+                        examQ.main_system_ka_system, examQ.main_system_ka_ka, examQ.ka_match_justification,
+                        examQ.sro_match_justification, examQ.answers_order
+                    ],
+                    (err) => err ? reject(err) : resolve()
+                );
+            })
+        );
+
+        return Promise.all(insertPromises).then(() => { console.log("DONE INSERTING EXAM RELATIONS") });
     }
 
     insertSystemKaRelations(questionId: number, system_kas: SystemKa[]): Promise<void> {

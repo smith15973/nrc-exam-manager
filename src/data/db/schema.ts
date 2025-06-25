@@ -76,7 +76,7 @@ export const schema = {
       'question_number INTEGER NOT NULL',
       'main_system_ka_system TEXT',
       'main_system_ka_ka TEXT',
-      'ka_match_justification TEXT NOT NULL',
+      'ka_match_justification TEXT',
       'sro_match_justification TEXT',
       'answers_order TEXT',
       'PRIMARY KEY (exam_id, question_id)',

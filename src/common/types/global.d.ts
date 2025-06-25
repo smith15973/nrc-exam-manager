@@ -48,11 +48,11 @@ interface ExamQuestion {
   exam_id: number;
   question_id: number;
   question_number: number;
-  main_system_ka_system: string;
-  main_system_ka_ka: string;
-  ka_match_justification: string;
+  main_system_ka_system: string | null;
+  main_system_ka_ka: string | null;
+  ka_match_justification: string | null;
   sro_match_justification: string | null;
-  answers_order: string;
+  answers_order: string | null;
   // Optional relationship properties
   exam?: Exam;
   question?: Question;
