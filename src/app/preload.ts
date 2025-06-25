@@ -61,21 +61,28 @@ contextBridge.exposeInMainWorld('db', {
     get: (params?: DBSearchParams) => dbCall('get-system', params),
     getMany: (params?: DBSearchParams) => dbCall('get-systems', params),
     update: (system: System) => dbCall('update-system', system),
-    delete: (systemNum: number) => dbCall('delete-system', systemNum),
+    delete: (systemNum: string) => dbCall('delete-system', systemNum),
+  },
+  system_kas: {
+    add: (system_ka: SystemKa) => dbCall('add-system', system_ka),
+    get: (params?: DBSearchParams) => dbCall('get-system', params),
+    getMany: (params?: DBSearchParams) => dbCall('get-systems', params),
+    update: (system_ka: SystemKa) => dbCall('update-system', system_ka),
+    delete: (system_ka_number: string) => dbCall('delete-system', system_ka_number),
   },
   stems: {
     add: (stem: Stem) => dbCall('add-stem', stem),
     get: (params?: DBSearchParams) => dbCall('get-stem', params),
     getMany: (params?: DBSearchParams) => dbCall('get-stems', params),
     update: (stem: Stem) => dbCall('update-stem', stem),
-    delete: (stemId: number) => dbCall('delete-stem', stemId),
+    delete: (stemId: string) => dbCall('delete-stem', stemId),
   },
   kas: {
     add: (ka: System) => dbCall('add-ka', ka),
     get: (params?: DBSearchParams) => dbCall('get-ka', params),
     getMany: (params?: DBSearchParams) => dbCall('get-kas', params),
     update: (ka: System) => dbCall('update-ka', ka),
-    delete: (kaNum: number) => dbCall('delete-ka', kaNum),
+    delete: (kaNum: string) => dbCall('delete-ka', kaNum),
   }
 });
 

@@ -4,12 +4,11 @@ import { MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 interface SystemSelectProps {
     systemNumber: string;
     systems: System[];
-    handleChange: (idx: number, value: string) => void
-    idx: number;
+    handleChange: (key: string, value: string) => void;
 }
 
 export default function SystemSelect(props: SystemSelectProps) {
-    const { systemNumber, systems, handleChange, idx } = props;
+    const { systemNumber, systems, handleChange } = props;
 
     return (
         <FormControl sx={{ pb: 2 }} fullWidth required>
@@ -19,7 +18,7 @@ export default function SystemSelect(props: SystemSelectProps) {
                 id="system-select"
                 value={systemNumber}
                 label="System"
-                onChange={(e) => handleChange(idx, e.target.value)}
+                onChange={(e) => handleChange('system_number', e.target.value)}
             >
                 <MenuItem value={0}>Select an System</MenuItem>
                 {systems.map((system: System) => (

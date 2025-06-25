@@ -5,12 +5,14 @@ import { useQuestions } from './useQuestions';
 import { useSystems } from './useSystems';
 import { useStems } from './useStems';
 import { useKas } from './useKas';
+import { useSystemKas } from './useSystemKas';
 
 export const useDatabase = () => {
     const plantsHook = usePlants();
     const examsHook = useExams();
     const questionsHook = useQuestions();
     const systemsHook = useSystems();
+    const systemKasHook = useSystemKas();
     const stemsHook = useStems();
     const kasHook = useKas();
 
@@ -20,6 +22,7 @@ export const useDatabase = () => {
         ...examsHook,
         ...questionsHook,
         ...systemsHook,
+        ...systemKasHook,
         ...stemsHook,
         ...kasHook,
 

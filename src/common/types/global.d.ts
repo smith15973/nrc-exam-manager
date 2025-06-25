@@ -212,6 +212,13 @@ interface Window {
       update: (system: System) => Promise<SystemResponse>;
       delete: (systemNum: string) => Promise<SystemResponse>;
     },
+    system_kas: {
+      add: (system_ka: SystemKa) => Promise<SystemKaResponse>;
+      get: (params?: DBSearchParams) => Promise<SystemKaResponse>;
+      getMany: (params?: DBSearchParams) => Promise<SystemKaResponse>;
+      update: (system_ka: SystemKa) => Promise<SystemKaResponse>;
+      delete: (system_ka_number: string) => Promise<SystemKaResponse>;
+    },
     stems: {
       add: (stem: Stem) => Promise<StemResponse>;
       get: (params?: DBSearchParams) => Promise<StemResponse>;

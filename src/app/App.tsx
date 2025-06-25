@@ -18,6 +18,8 @@ import { DialogsProvider } from '@toolpad/core/useDialogs';
 import SandboxPage from '../pages/SandboxPage';
 import StemPage from '../features/stems/pages/StemPage';
 import StemsPage from '../features/stems/pages/StemsPage';
+import SystemKasPage from '../features/system_kas/pages/SystemKasPage';
+import SystemKaPage from '../features/system_kas/pages/SystemKaPage';
 
 
 
@@ -41,6 +43,8 @@ const App = () => {
                         <Route path='/stems/:stemId' element={<StemPage />} />
                         <Route path='/kas' element={<KasPage />} />
                         <Route path='/kas/:kaNum' element={<KaPage />} />
+                        <Route path='/system_kas' element={<SystemKasPage />} />
+                        <Route path='/system_kas/:system_kaNum' element={<SystemKaPage />} />
                         <Route path='/sandbox' element={<SandboxPage />} />
                         <Route path="*" element={<HomePage />} />
                     </Routes>

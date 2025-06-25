@@ -32,6 +32,12 @@ export default function HomePage() {
                 <Link to={"/kas"}>Kas</Link>
             </Box>
             <Box>
+                <Link to={"/system_kas"}>SystemKas</Link>
+            </Box>
+            <Box>
+                <Link to={"/stems"}>Stems</Link>
+            </Box>
+            <Box>
                 <Link to={"/sandbox"}>Sandbox</Link>
             </Box>
             <Button onClick={handleChangeDatabase}>Change Database</Button>

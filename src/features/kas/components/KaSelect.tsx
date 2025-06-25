@@ -4,12 +4,11 @@ import { MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 interface KaSelectProps {
     kaNumber: string;
     kas: Ka[];
-    handleChange: (idx: number, value: string) => void
-    idx: number;
+    handleChange: (key: string, value: string) => void
 }
 
 export default function KaSelect(props: KaSelectProps) {
-    const { kaNumber, kas, handleChange, idx } = props;
+    const { kaNumber, kas, handleChange } = props;
 
     return (
         <FormControl sx={{ pb: 2 }} fullWidth required>
@@ -19,7 +18,7 @@ export default function KaSelect(props: KaSelectProps) {
                 id="ka-select"
                 value={kaNumber}
                 label="KA"
-                onChange={(e) => handleChange(idx, e.target.value)}
+                onChange={(e) => handleChange("ka_number", e.target.value)}
             >
                 <MenuItem value={0}>Select a KA</MenuItem>
                 {kas.map((ka: Ka) => (
