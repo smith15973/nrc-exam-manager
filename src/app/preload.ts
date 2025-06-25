@@ -3,7 +3,6 @@ import { contextBridge, ipcRenderer } from 'electron';
 
 // Helper function to make database calls
 const dbCall = (operation: string, data?: unknown) => {
-  console.log("Preload DATA", data)
   return ipcRenderer.invoke('db-operation', { operation, data });
 };
 // Helper function to make file calls
@@ -64,11 +63,11 @@ contextBridge.exposeInMainWorld('db', {
     delete: (systemNum: string) => dbCall('delete-system', systemNum),
   },
   system_kas: {
-    add: (system_ka: SystemKa) => dbCall('add-system', system_ka),
-    get: (params?: DBSearchParams) => dbCall('get-system', params),
-    getMany: (params?: DBSearchParams) => dbCall('get-systems', params),
-    update: (system_ka: SystemKa) => dbCall('update-system', system_ka),
-    delete: (system_ka_number: string) => dbCall('delete-system', system_ka_number),
+    add: (system_ka: SystemKa) => dbCall('add-system-ka', system_ka),
+    get: (params?: DBSearchParams) => dbCall('get-system-ka', params),
+    getMany: (params?: DBSearchParams) => dbCall('get-system-kas', params),
+    update: (system_ka: SystemKa) => dbCall('update-system-ka', system_ka),
+    delete: (system_ka_number: string) => dbCall('delete-system-ka', system_ka_number),
   },
   stems: {
     add: (stem: Stem) => dbCall('add-stem', stem),

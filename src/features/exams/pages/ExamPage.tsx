@@ -56,7 +56,6 @@ export default function ExamPage() {
 
     const loadQuestions = async () => {
         try {
-            console.log("Loading Questions", filters)
             const questions = await getQuestionsComplete(filters);
             setExamQuestions(questions)
 

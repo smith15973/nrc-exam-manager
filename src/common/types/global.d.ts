@@ -143,8 +143,8 @@ interface StemResponse extends ApiResponse {
 }
 
 interface SystemKaResponse extends ApiResponse {
-  systemKa?: SystemKa;
-  systemKas?: SystemKa[];
+  system_ka?: SystemKa;
+  system_kas?: SystemKa[];
 }
 
 interface QuestionSystemKasResponse extends ApiResponse {

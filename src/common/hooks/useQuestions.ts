@@ -67,7 +67,6 @@ const getQuestions = async (): Promise<Question[]> => {
 
 const getQuestionsComplete = async (filters?: QuestionFilters): Promise<Question[]> => {
     try {
-        console.log("HOOK getQuestionsComplete", filters)
         const result = await window.db.questions.getComplete(filters);
         if (result.success) {
             setQuestions(result.questions || []);

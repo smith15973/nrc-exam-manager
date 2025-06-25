@@ -8,7 +8,6 @@ export class QuestionRepository {
         if (this.isClosing()) {
             throw new Error('Database is closing');
         }
-        console.log("Here1")
 
         // Check for duplicates first
         if (question.question_id) {
@@ -25,8 +24,6 @@ export class QuestionRepository {
                 // Question doesn't exist, continue with insertion
             }
         }
-
-        console.log("Here2")
         // Also check by text/content hash to catch duplicates with different IDs
         const existingByContent = await this.findByContentHash(question);
         if (existingByContent) {
@@ -36,8 +33,6 @@ export class QuestionRepository {
             }
             throw new Error("Existing question content does not have a question_id");
         }
-
-        console.log("Here3")
 
         return this.insertQuestion(question);
     }
@@ -123,7 +118,6 @@ export class QuestionRepository {
                             ],
                             function (this: sqlite3.RunResult, err: Error | null) {
                                 if (err) {
-                                    console.log("THERE IS AN ERROR1", err);
                                     finishTransaction(false, err);
                                     return;
                                 }
@@ -146,14 +140,14 @@ export class QuestionRepository {
                                         }
                                     })
                                     .catch((insertErr) => {
-                                        console.log("THERE IS AN ERROR2", insertErr); // Fixed: was logging 'err' instead of 'insertErr'
+                                        console.error(insertErr); // Fixed: was logging 'err' instead of 'insertErr'
                                         finishTransaction(false, insertErr);
                                     });
                             }
                         );
 
                     } catch (error) {
-                        console.log("THERE IS AN ERROR3", error);
+                        console.error(error);
                         finishTransaction(false, error);
                     }
                 };
@@ -187,8 +181,6 @@ export class QuestionRepository {
 
 
     async insertQuestion(question: Question): Promise<number> {
-
-        console.log("Here4")
         return new Promise((resolve, reject) => {
             const db = this.db;
             db.serialize(() => {
@@ -239,8 +231,6 @@ export class QuestionRepository {
                             reject(err);
                             return;
                         }
-
-                        console.log("Here5")
                         const questionId = this.lastID;
                         const examQuestions: ExamQuestion[] = question.exams?.map(exam => ({
                             question_id: questionId,
@@ -259,17 +249,15 @@ export class QuestionRepository {
                             question.system_kas?.length ? QuestionRepository.prototype.insertSystemKaRelations.call({ db }, questionId, question.system_kas) : Promise.resolve(),
                         ].filter(p => p !== Promise.resolve()); // Remove empty promises
 
-                        console.log("Here6")
                         Promise.all(insertOperations)
                             .then(() => {
                                 db.run('COMMIT', (commitErr) => {
-                                    console.log("Here7")
                                     if (commitErr) reject(commitErr);
                                     else resolve(questionId);
                                 });
                             })
                             .catch((insertErr) => {
-                                console.log("Here8", insertErr)
+                                console.error(insertErr)
                                 db.run('ROLLBACK');
                                 reject(insertErr);
                             });
@@ -281,8 +269,6 @@ export class QuestionRepository {
 
     // Extract repetitive insertion logic into separate methods
     async insertExamRelations(examQuestions: ExamQuestion[]): Promise<void> {
-
-        console.log("EQs", examQuestions)
         const insertPromises = examQuestions.map(examQ =>
             new Promise<void>((resolve, reject) => {
                 this.db.run(
@@ -304,7 +290,7 @@ export class QuestionRepository {
             })
         );
 
-        return Promise.all(insertPromises).then(() => { console.log("DONE INSERTING EXAM RELATIONS") });
+        return Promise.all(insertPromises).then(() => undefined);
     }
 
     insertSystemKaRelations(questionId: number, system_kas: SystemKa[]): Promise<void> {
@@ -340,8 +326,6 @@ export class QuestionRepository {
                 reject(new Error('Database is closing'));
                 return;
             }
-
-            console.log("IN THE SQL getOne", filters);
 
             // Build the base query
             let query = 'SELECT * FROM questions';
@@ -460,8 +444,6 @@ export class QuestionRepository {
                 return;
             }
 
-            console.log("IN THE SQL", filters);
-
             let query: string;
             const params = [];
             const conditions: string[] = [];
@@ -489,7 +471,6 @@ export class QuestionRepository {
                 )
             `;
                 params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
-                console.log("LIKE Search Term:", searchTerm);
             } else {
                 // No global search - use regular query
                 query = 'SELECT * FROM questions q';
@@ -568,15 +549,14 @@ export class QuestionRepository {
 
             query += ' ORDER BY q.question_id';
 
-            console.log("Final Query:", query);
-            console.log("Params:", params);
+            // console.log("Final Query:", query);
+            // console.log("Params:", params);
 
             this.db.all(query, params, (err, rows: Question[]) => {
                 if (err) {
                     console.error("Query Error:", err);
                     reject(err);
                 } else {
-                    console.log("Returned Rows:", rows.length);
                     resolve(rows);
                 }
             });

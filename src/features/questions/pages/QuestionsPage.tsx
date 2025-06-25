@@ -29,7 +29,6 @@ export default function QuestionsPage() {
 
     const loadQuestions = async () => {
         try {
-            console.log("Loading Questions", filters)
             const questions = await getQuestionsComplete(filters);
             setQuestions(questions)
 

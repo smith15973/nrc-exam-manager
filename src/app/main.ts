@@ -38,7 +38,6 @@ const loadConfig = (): Config => {
     const configPath = getConfigPath();
     if (fs.existsSync(configPath)) {
       const configContent = fs.readFileSync(configPath, 'utf8');
-      console.log('Config content:', configContent);
 
       // Check if the content is empty or only whitespace
       if (!configContent.trim()) {
@@ -52,7 +51,6 @@ const loadConfig = (): Config => {
       }
 
       const config = JSON.parse(configContent);
-      console.log('Parsed config:', config);
 
       // Ensure windowState is always present
       return {
@@ -616,7 +614,6 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
       }
 
       case 'get-questions': {
-        console.log("IN main get-questions", data)
         const questions = await db.questions.getMany(data);
         return { success: true, questions };
       }
@@ -631,19 +628,16 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
       }
 
       case 'get-question-by-id': {
-        console.log("IN main get-question-by-id", data)
         const question = await db.questions.getById(data);
         return { success: true, question };
       }
 
       case 'get-question-complete': {
-        console.log("IN main get-question-complete", data)
         const questionWithAll = await db.questionService.getCompleteQuestion(data);
         return { success: true, question: questionWithAll };
       }
 
       case 'get-questions-complete': {
-        console.log("IN main get-questions-complete", data)
         const questionsComplete = await db.questionService.getQuestionsComplete(data);
         return { success: true, questions: questionsComplete };
       }
@@ -677,6 +671,27 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
       }
       case 'delete-system': {
         await db.systems.delete(data);
+        return { success: true }
+      }
+      case 'add-system-ka': {
+        await db.system_kas.add(data);
+        return { success: true }
+      }
+      case 'get-system-ka': {
+        const system_ka = await db.system_kas.get(data);
+        return { success: true, system_ka }
+      }
+      case 'get-system-kas': {
+        const system_kas = await db.system_kas.getMany(data);
+        return { success: true, system_kas }
+
+      }
+      case 'update-system-ka': {
+        await db.system_kas.update(data);
+        return { success: true }
+      }
+      case 'delete-system-ka': {
+        await db.system_kas.delete(data);
         return { success: true }
       }
 

@@ -23,7 +23,7 @@ export default function SystemSelect(props: SystemSelectProps) {
                 <MenuItem value={0}>Select an System</MenuItem>
                 {systems.map((system: System) => (
                     <MenuItem key={system.system_number} value={system.system_number}>
-                        {system.system_name}
+                        {system.system_number} - {system.system_name}
                     </MenuItem>
                 ))}
             </Select>

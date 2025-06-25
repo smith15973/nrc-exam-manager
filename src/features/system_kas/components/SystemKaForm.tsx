@@ -89,6 +89,16 @@ export default function SystemKaForm(props: SystemKaFormProps) {
                 <TextField
                     fullWidth
                     type={'text'}
+                    value={system_kaForm.ka_statement || ''}
+                    onChange={(e) => handleChange('ka_statement', e.target.value)}
+                    label={"KA Statement"}
+                    required={true}
+                />
+            </Box>
+            <Box sx={{ pt: 2 }}>
+                <TextField
+                    fullWidth
+                    type={'text'}
                     value={system_kaForm.cfr_content || ''}
                     onChange={(e) => handleChange('cfr_content', e.target.value)}
                     label={"CFR Content"}

@@ -7,6 +7,7 @@ export const useSystemKas = () => {
     const [error, setError] = useState<string | null>(null);
 
     const addSystemKa = async (system_ka: SystemKa): Promise<void> => {
+        console.log(system_ka)
         if (!system_ka.system_number) {
             setError('Please fill in system number');
             return;
@@ -38,8 +39,8 @@ export const useSystemKas = () => {
         try {
             const result = await window.db.system_kas.get(params);
             if (result.success) {
-                setSystemKas(result.systemKas || []);
-                return result.systemKa || null;
+                setSystemKas(result.system_kas || []);
+                return result.system_ka || null;
             } else {
                 setError(result.error || 'Failed to fetch system_kas');
                 return null;
@@ -53,9 +54,10 @@ export const useSystemKas = () => {
     const getSystemKas = async (params?: DBSearchParams): Promise<SystemKa[]> => {
         try {
             const result = await window.db.system_kas.getMany(params);
+            console.log(result)
             if (result.success) {
-                setSystemKas(result.systemKas || []);
-                return result.systemKas || [];
+                setSystemKas(result.system_kas || []);
+                return result.system_kas || [];
             } else {
                 setError(result.error || 'Failed to fetch system_kas');
                 return [];
