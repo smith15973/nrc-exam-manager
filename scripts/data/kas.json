@@ -1,0 +1,6710 @@
+[
+  {
+    "ka_number": "EA1.01",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.16",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA2.03",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EK1.03",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.05",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK2.01",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.02",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.04",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.10",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EA1.02a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.03a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.04",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.04a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.04b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.04c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.05",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.05a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.05b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.05c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.06",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.06a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.06b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.06c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.07",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.07a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.07b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.07c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.08",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.08a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.08b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.08c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.09",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.09a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.09b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.09c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.10",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.10a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.10b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.10c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.11",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.11a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.11b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.11c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.12",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.12a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.12b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.12c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.13",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.13a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.14",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.14a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.15",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.15a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.16a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.17",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.17a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.18",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.18a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.19",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.20",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.21",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA2.01a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.01b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.02a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.02b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.03a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.03b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.03c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.04",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.04a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.04b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.04c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.05",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.05a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.05b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.05c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.06",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.06a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.06b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.06c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.07",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.07a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.07b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.07c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.08",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.08a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.08b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.08c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.09",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.09a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.09b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.09c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.10",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.10a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.10b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.10c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.11",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.11a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.11b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.11c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.12",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.12a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.12b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.12c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.13",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.13a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.13b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.14",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.14a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.15",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.15a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.16",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.16a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.17",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.17a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EK1.01a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.02a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.04",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.04a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.04b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.04c",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.05a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.05b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.05c",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.06",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.06a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.06b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.06c",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.07",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.07a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.07b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.08",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.08a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.08b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.09",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.09a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.09b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.10",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.10a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.10b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.11",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.11a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.11b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.12",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK2.03",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.03a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.03b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.03c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.04a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.04b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.04c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.05",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.05a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.05b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.05c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.06",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.06a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.06b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.06c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.07",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.07a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.07b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.07c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.08",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.08a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.08b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.08c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.09",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.09a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.09b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.09c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.10a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.10b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.10c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.11",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.11a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.11b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.11c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.12",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.12a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.13",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.13a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.14",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.14a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.15",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.15a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.16",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.16a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.17",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.18",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.19",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.20",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK3.01a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.02a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.03a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.04a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.05",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.05a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.05b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.05c",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.06",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.06a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.06b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.06c",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.07",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.07a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.07b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.07c",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.08",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.08a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.08b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.09",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.09a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.09b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.10",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.10a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.10b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.11",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.11a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.11b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.12",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.12a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.12b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.13",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.13a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.13b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.14",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.14a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.14b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.15",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.15a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.15b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.16",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.16a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.16b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.17",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.17a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.17b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.18",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.18a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.18b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.19",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.19a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.20",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.20a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.21",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.21a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.22",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.22a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.23",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.23a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EA1.02",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.03",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA2.01",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.02",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EK1.01",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.02",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK3.01",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.02",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.03",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.04",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AA1.03",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.04",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.07",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.08",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA2.07",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.08",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.09",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.10",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.11",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.13",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.17",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.18",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.19",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.21",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.22",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.24",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.25",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.26",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.28",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.29",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.30",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AK1.02",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK2.01",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.02",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.03",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.04",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK3.01",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.02",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AA1.01",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.02",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.05",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.06",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA2.01",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.02",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.03",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.04",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.05",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.06",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.12",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.14",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.15",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.16",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.20",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.23",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.27",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.31",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.32",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AK1.01",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.03",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.04",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.05",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.06",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.07",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK2.05",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.06",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.07",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.08",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.09",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.10",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.11",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.12",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK3.03",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.04",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.05",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EA2.18",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.21",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.22",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.25",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.26",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.27",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.28",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.30",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.31",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.32",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.33",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.35",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.19",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.20",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.23",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.24",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.29",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.34",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.36",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.37",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.38",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EA2.39",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "EK3.24",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.25",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.26",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.27",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.28",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EA1.22",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.23",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.09",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.10",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.12",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.13",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.14",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.17",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.19",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.20",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.21",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.23",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.11",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.15",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.16",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.18",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.22",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.24",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AK2.13",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.14",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK3.06",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.07",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.08",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AA1.25",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.26",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.27",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.28",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.29",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.30",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.31",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AK2.15",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.16",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.17",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.18",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.19",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.20",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.21",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.22",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.23",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.24",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK3.09",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.10",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.11",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EA1.25",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.26",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.28",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.29",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.32",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.33",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.34",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.35",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.37",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.38",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.39",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.40",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.41",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.42",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.43",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.44",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.24",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.27",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.30",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.31",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.36",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EA1.45",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EK1.13",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.14",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AA1.01a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.02a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.03a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.04a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.04b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.04c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.05a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.05b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.05c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.06a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.06b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.06c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.07a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.07b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.07c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.08a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.08b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.08c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.09a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.09b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.09c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.10a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.10b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.10c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.11a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.11b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.11c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.12a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.12b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.12c",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.13a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.13b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.14a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.14b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.15a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.15b",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.16a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.17a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.18a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.19a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.20a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.21a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.22a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.23a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.24a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.25a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA2.01a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.01b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.02a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.02b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.03a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.03b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.03c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.04a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.04b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.04c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.05a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.05b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.05c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.06a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.06b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.06c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.07a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.07b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.07c",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.08a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.08b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.09a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.09b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.10a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.10b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.11a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.11b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.12a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.12b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.13a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.13b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.14a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.14b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.15a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.15b",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.16a",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AK1.01a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.02a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.03a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.04a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.04b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.04c",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.05a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.05b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.05c",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.06a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.06b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.06c",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.07a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.07b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.08",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.08a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.08b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.09",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.09a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.09b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.10",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.10a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.10b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.11",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.11a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.11b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.12",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.12a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.12b",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.13",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.13a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.14",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK2.03a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.03b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.03c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.04a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.04b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.04c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.05a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.05b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.05c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.06a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.06b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.06c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.07a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.07b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.07c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.08a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.08b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.08c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.09a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.09b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.09c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.10a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.10b",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.10c",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.11a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.12a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.13a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.14a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.15a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.16a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.17a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.18a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.19a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.20a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.21a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK3.01a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.02a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.03a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.04a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.05a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.05b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.05c",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.06a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.06b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.06c",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.07a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.07b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.07c",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.08a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.08b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.08c",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.09a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.09b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.09c",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.10a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.10b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.11a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.11b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.12",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.12a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.12b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.13",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.13a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.13b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.14",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.14a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.14b",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.15",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.15a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.16a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.17",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.17a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.18",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.18a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.19",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.20",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.21",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.22",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.23",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.24",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK2.01a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.02a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AA2.34",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.37",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.38",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.39",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.40",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.41",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.42",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.43",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.45",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.46",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.47",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.48",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.50",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.51",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.52",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.55",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.56",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.57",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.69",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.70",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.72",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.73",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.76",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.77",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.78",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.80",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.82",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.83",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.84",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.85",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.87",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA1.32",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.33",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.34",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.35",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.36",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.37",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA1.38",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "AA2.33",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.35",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.36",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.44",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.49",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.53",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.54",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.58",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.59",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.60",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.61",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.62",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.63",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.64",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.65",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.66",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.67",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.68",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.71",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.74",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.75",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.79",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.81",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.86",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.88",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AA2.89",
+    "stem_id": "E/AA2"
+  },
+  {
+    "ka_number": "AK2.25",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK2.26",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.21",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.22",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.23",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.24",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.25",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK1.15",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.16",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.17",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.18",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.20",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.21",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.22",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.23",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.19",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.24",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.25",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK1.26",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "AK3.16",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.19a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.20a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.21a",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EA1.01a",
+    "stem_id": "E/AA1"
+  },
+  {
+    "ka_number": "EK1.03a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.15",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK2.01a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.02a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "EK2.17a",
+    "stem_id": "E/AK2"
+  },
+  {
+    "ka_number": "AK3.25",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.26",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.27",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.28",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.29",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.30",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.31",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.32",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.33",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.35",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "AK3.36",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK1.12a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.13a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.14a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.15a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.16",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK1.16a",
+    "stem_id": "E/AK1"
+  },
+  {
+    "ka_number": "EK3.29",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.30",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.31",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.32",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.33",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.34",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.35",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.36",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.37",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.38",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.39",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.40",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.41",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.42",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "EK3.43",
+    "stem_id": "E/AK3"
+  },
+  {
+    "ka_number": "A1.01",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.02",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.03",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.04",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.05",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.06",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.07",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.08",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.09",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.10",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.11",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.12",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.13",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.14",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A2.01",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.02",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.03",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.04",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.05",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.06",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A3.01",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.02",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.03",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.04",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.05",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.06",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A4.01",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.02",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.03",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.04",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.05",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.06",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.07",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.08",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.09",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.13",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.14",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K2.01",
+    "stem_id": "K2"
+  },
+  {
+    "ka_number": "K2.02",
+    "stem_id": "K2"
+  },
+  {
+    "ka_number": "K2.03",
+    "stem_id": "K2"
+  },
+  {
+    "ka_number": "K2.04",
+    "stem_id": "K2"
+  },
+  {
+    "ka_number": "K2.05",
+    "stem_id": "K2"
+  },
+  {
+    "ka_number": "K3.01",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.02",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.03",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.04",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.05",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.06",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K4.01",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.02",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.03",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.04",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.05",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.06",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.07",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.08",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.09",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.10",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.11",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.12",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K5.01",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.02",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.03",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.04",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.05",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.06",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.07",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.08",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.09",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.10",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K6.01",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.02",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.03",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.04",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.05",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.06",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.07",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.08",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.09",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.10",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.11",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.12",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.13",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.14",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.15",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.16",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "A2.07",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.08",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.09",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.10",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.11",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.12",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.13",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.14",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.15",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.16",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.17",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.18",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.19",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.20",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.21",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.22",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.23",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.24",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.25",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.26",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.27",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.28",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.29",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.30",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.31",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.32",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.33",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.34",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.35",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A2.36",
+    "stem_id": "A2"
+  },
+  {
+    "ka_number": "A3.07",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.08",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.09",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.10",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.11",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.12",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.13",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.14",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.15",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.16",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.17",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A3.18",
+    "stem_id": "A3"
+  },
+  {
+    "ka_number": "A4.10",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.11",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.12",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.13",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.14",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.15",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.16",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.17",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.18",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.19",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.20",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.21",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.22",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.23",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "K1.15",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.16",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.17",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.18",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.19",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.20",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.21",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.22",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.23",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.24",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.25",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.26",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.27",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.28",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.29",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.30",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.31",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.32",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.33",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.34",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.35",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.36",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K1.37",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "K2.06",
+    "stem_id": "K2"
+  },
+  {
+    "ka_number": "K2.07",
+    "stem_id": "K2"
+  },
+  {
+    "ka_number": "K3.07",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.08",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.09",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.10",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.11",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.12",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.13",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K4.13",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.14",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.15",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.16",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.17",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.18",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.19",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.20",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.21",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.22",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K5.11",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.12",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.13",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.14",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.15",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.16",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.17",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.18",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.19",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.20",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.21",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.22",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.23",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.24",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.25",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.26",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.27",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.28",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.29",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.30",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.31",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.32",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.33",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.34",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.35",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.36",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.37",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.38",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.39",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.40",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.41",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.42",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.43",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.44",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.45",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.46",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.47",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.48",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.49",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.50",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.51",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.52",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.53",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.54",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.55",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.56",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.57",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.58",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.59",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.60",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.61",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K6.17",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.18",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.19",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.20",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.21",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.22",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.23",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.24",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.25",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.26",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.27",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.28",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.29",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.30",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.31",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.32",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.33",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.34",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.35",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.36",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.37",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.38",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.39",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.40",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.41",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.42",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.43",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.44",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.45",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.46",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.47",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.48",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.49",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.50",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.51",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.52",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.53",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "K6.54",
+    "stem_id": "K6"
+  },
+  {
+    "ka_number": "A1.15",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.16",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.17",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.18",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.19",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "K4.23",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.24",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.25",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.26",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.27",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.28",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.29",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.30",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K3.14",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.15",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.16",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.17",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.18",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.19",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.20",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K2.08",
+    "stem_id": "K2"
+  },
+  {
+    "ka_number": "K2.09",
+    "stem_id": "K2"
+  },
+  {
+    "ka_number": "K3.21",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.22",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "K3.23",
+    "stem_id": "K3"
+  },
+  {
+    "ka_number": "A1.20",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.21",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "A1.22",
+    "stem_id": "A1"
+  },
+  {
+    "ka_number": "K5.100",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.101",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.102",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.103",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.104",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.105",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.106",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.107",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.108",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.109",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.110",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.62",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.63",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.64",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.65",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.66",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.67",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.68",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.69",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.70",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.71",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.72",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.73",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.74",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.75",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.76",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.77",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.78",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.79",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.80",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.81",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.82",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.83",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.84",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.85",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.86",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.87",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.88",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.89",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.90",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.91",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.92",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.93",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.94",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.95",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.96",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.97",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.98",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K5.99",
+    "stem_id": "K5"
+  },
+  {
+    "ka_number": "K4.31",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.32",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.33",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.34",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.35",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.36",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.37",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.38",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.39",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.40",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.41",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.42",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.43",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.44",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.45",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.46",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.47",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.48",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.49",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.50",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.51",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.52",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.53",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "K4.54",
+    "stem_id": "K4"
+  },
+  {
+    "ka_number": "A4.24",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.25",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.26",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.27",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.28",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.29",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "A4.30",
+    "stem_id": "A4"
+  },
+  {
+    "ka_number": "G2.1.1",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.10",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.11",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.12",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.13",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.14",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.15",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.16",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.17",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.18",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.19",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.2",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.20",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.21",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.22",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.23",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.24",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.25",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.26",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.27",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.28",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.29",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.3",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.30",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.31",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.32",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.33",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.34",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.35",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.36",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.37",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.38",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.39",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.4",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.40",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.41",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.42",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.43",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.44",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.45",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.46",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.47",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.5",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.6",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.7",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.8",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.1.9",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.1",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.10",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.11",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.12",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.13",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.14",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.15",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.16",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.17",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.18",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.19",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.2",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.20",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.21",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.22",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.23",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.24",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.25",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.26",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.27",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.28",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.29",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.3",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.30",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.31",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.32",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.33",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.34",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.35",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.36",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.37",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.38",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.39",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.4",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.40",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.41",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.42",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.43",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.44",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.45",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.5",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.6",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.7",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.8",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.2.9",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.1",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.10",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.11",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.12",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.13",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.14",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.15",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.2",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.3",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.4",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.5",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.6",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.7",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.8",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.3.9",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.1",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.10",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.11",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.12",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.13",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.14",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.15",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.16",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.17",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.18",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.19",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.2",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.20",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.21",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.22",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.23",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.24",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.25",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.26",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.27",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.28",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.29",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.3",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.30",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.31",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.32",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.33",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.34",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.35",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.36",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.37",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.38",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.39",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.4",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.40",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.41",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.42",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.43",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.44",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.45",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.46",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.47",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.48",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.49",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.5",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.50",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.51",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.52",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.6",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.7",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.8",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "G2.4.9",
+    "stem_id": "G"
+  },
+  {
+    "ka_number": "CVS.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CVS.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CVS.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CVS.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CVS.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CVS.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CVS.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CVS.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CVS.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CVS.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CVS.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.13",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.14",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.15",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.16",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.17",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.18",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.19",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.20",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.21",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.22",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.23",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.24",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CSD.K1.25",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CCP.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CCP.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CCP.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CCP.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CCP.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CCP.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CCP.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CCP.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CCP.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CCP.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CCP.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.13",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.14",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.15",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.16",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.17",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.18",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.19",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.20",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.21",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.22",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.23",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.24",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.25",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.26",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.27",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.28",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.29",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CPS.K1.30",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CMG.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CMG.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CMG.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CMG.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CMG.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CMG.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CMG.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CMG.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CMG.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CMG.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CMG.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CHX.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CHX.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CHX.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CHX.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CHX.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CHX.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CHX.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CHX.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CHX.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CHX.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CHX.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CHX.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CHX.K1.13",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CHX.K1.14",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.13",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.14",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CDX.K1.15",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CBD.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CBD.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CBD.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CBD.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CBD.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CBD.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CBD.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CBD.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CBD.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CBD.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CBD.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "CBD.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RXN.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RXN.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RXN.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RXN.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RXN.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RXN.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RXN.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RXN.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RXN.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RLC.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RLC.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RLC.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RLC.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RLC.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RLC.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RLC.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RLC.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RLC.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RLC.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RLC.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RLC.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RLC.K1.13",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RLC.K1.14",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRK.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRK.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRK.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRK.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRK.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRK.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRK.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRK.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRK.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRK.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRK.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRK.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.13",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.14",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.15",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.16",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.17",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RRC.K1.18",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.13",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.14",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.15",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.16",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.17",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RCR.K1.18",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.13",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.14",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.15",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.16",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.17",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.18",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.19",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.20",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.21",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFP.K1.22",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFD.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFD.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFD.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFD.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "RFD.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.13",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.14",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.15",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.16",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.17",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.18",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.19",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.20",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.21",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.22",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.23",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.24",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.25",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.26",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "ROP.K1.27",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TUP.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TUP.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TUP.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TUP.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TUP.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBE.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBE.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBE.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBE.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBE.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBE.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBE.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBE.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.13",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.14",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.15",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.16",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.17",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.18",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.19",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.20",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.21",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.22",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.23",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.24",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.25",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTS.K1.26",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.13",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.14",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.15",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTP.K1.16",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTC.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTC.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTC.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTC.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTC.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.13",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.14",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.15",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TFS.K1.16",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "THT.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "THT.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "THT.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "THT.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "THT.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "THT.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "THT.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "THT.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.11",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.12",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.13",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.14",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.15",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.16",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.17",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.18",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.19",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.20",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.21",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.22",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.23",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.24",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.25",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.26",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.27",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.28",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.29",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTH.K1.30",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTL.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTL.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTL.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTL.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTL.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTL.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTL.K1.07",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTL.K1.08",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTL.K1.09",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TTL.K1.10",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBF.K1.01",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBF.K1.02",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBF.K1.03",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBF.K1.04",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBF.K1.05",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBF.K1.06",
+    "stem_id": "K1"
+  },
+  {
+    "ka_number": "TBF.K1.07",
+    "stem_id": "K1"
+  }
+]
