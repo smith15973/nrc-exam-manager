@@ -5,12 +5,15 @@ const sqlite3v = sqlite3.verbose();
 const db = new sqlite3v.Database('/Users/noah/Desktop/Projects/Davis_Besse_2025/nrc-exam-manager/src/data/nrc_exam_questions_database.db');
 
 // Your array of stems
-const stems: { stem_id: string; stem_statement: string }[] = JSON.parse(
+const stems: Stem[] = JSON.parse(
   fs.readFileSync('scripts/data/stems.json', 'utf-8')
 );
 
-const kas: { ka_number: string; stem_id: string }[] = JSON.parse(
+const kas: Ka[] = JSON.parse(
   fs.readFileSync('scripts/data/kas.json', 'utf-8')
+);
+const systems: System[] = JSON.parse(
+  fs.readFileSync('scripts/data/systems.json', 'utf-8')
 );
 
 interface ValidationError {
@@ -114,6 +117,27 @@ export function insertKas(): Promise<void> {
     });
   });
 }
+export function insertSystems(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      const stmt = db.prepare("INSERT OR IGNORE INTO systems (system_number, system_name) VALUES (?, ?)");
+      
+      systems.forEach(({ system_number, system_name }) => {
+        stmt.run(system_number, system_name);
+      });
+      
+      stmt.finalize((err) => {
+        if (err) {
+          console.error('Error inserting Systems:', err);
+          reject(err);
+        } else {
+          console.log("✅ System insert complete.");
+          resolve();
+        }
+      });
+    });
+  });
+}
 
 export async function insertDataWithValidation(): Promise<void> {
   try {
@@ -131,6 +155,7 @@ export async function insertDataWithValidation(): Promise<void> {
     // If validation passes, proceed with inserts
     await insertStems();
     await insertKas();
+    await insertSystems();
     
     console.log('\n🎉 All data inserted successfully!');
     
