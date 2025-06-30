@@ -127,7 +127,7 @@ export class QuestionRepository {
                                 // Insert all relations - same logic as single add
                                 const insertOperations = [
                                     question.exams?.length ? QuestionRepository.prototype.insertExamRelations.call({ db: self.db }, questionId, question.exams) : Promise.resolve(),
-                                    question.system_kas?.length ? QuestionRepository.prototype.insertSystemRelations.call({ db: self.db }, questionId, question.system_kas) : Promise.resolve()
+                                    question.system_kas?.length ? QuestionRepository.prototype.insertSystemKaRelations.call({ db: self.db }, questionId, question.system_kas) : Promise.resolve()
                                 ].filter(p => p !== Promise.resolve());
 
                                 Promise.all(insertOperations)
@@ -295,11 +295,11 @@ export class QuestionRepository {
 
     insertSystemKaRelations(questionId: number, system_kas: SystemKa[]): Promise<void> {
         return new Promise((resolve, reject) => {
-            const placeholders = system_kas.map(() => '(?, ?)').join(', ');
-            const values = system_kas.flatMap(system_ka => [questionId, system_ka.ka_number]);
+            const placeholders = system_kas.map(() => '(?, ?, ?)').join(', ');
+            const values = system_kas.flatMap(system_ka => [questionId, system_ka.system_number, system_ka.ka_number]);
 
             this.db.run(
-                `INSERT INTO question_kas (question_id, ka_number) VALUES ${placeholders}`,
+                `INSERT INTO question_system_kas (question_id, system_number, ka_number) VALUES ${placeholders}`,
                 values,
                 (err) => err ? reject(err) : resolve()
             );
