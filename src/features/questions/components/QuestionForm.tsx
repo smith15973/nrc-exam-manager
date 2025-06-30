@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { defaultQuestion, questionSchema } from '../../../data/db/schema';
+import { defaultQuestion } from '../../../data/db/schema';
 import { Box, Button, TextField, SxProps, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import AnswerForm from './AnswerForm';
 import { FormDialog } from '../../../common/components/FormDialog';
 import CheckExams from '../../exams/components/CheckExams';
-import CheckSystems from '../../systems/components/CheckSystems';
-import CheckKas from '../../kas/components/CheckKas';
+import SystemKaSelect from '../../../features/system_kas/components/SystemKaSelect';
 
 interface QuestionFormProps {
     question?: Question;
@@ -21,7 +20,7 @@ export default function QuestionForm(props: QuestionFormProps) {
     const [selectedExams, setSelectedExams] = useState<number[]>([])
     const [selectedSystemKas, setSelectedSystemKas] = useState<string[]>([])
     const [open, setOpen] = useState(false);
-    const { exams, systems, kas } = useDatabase();
+    const { exams, system_kas } = useDatabase();
 
     const answers: [Answer, Answer, Answer, Answer] = [
         {
@@ -80,6 +79,7 @@ export default function QuestionForm(props: QuestionFormProps) {
 
 
     const handleChange = (key: string, value: unknown) => {
+        console.log(key, value)
         setQuestionForm((prev) => ({ ...prev, [key]: value }));
     };
 
@@ -114,6 +114,7 @@ export default function QuestionForm(props: QuestionFormProps) {
         };
     };
     const handleExamCheckChange = createSimpleCheckHandler(exams, 'exam_id', 'exams');
+    const handleSystemKaCheckChange = createSimpleCheckHandler(system_kas, 'system_ka_number', 'system_kas');
 
     const handleSubmit = () => {
         onSubmit(questionForm)
@@ -259,6 +260,13 @@ export default function QuestionForm(props: QuestionFormProps) {
                                 examOptions={exams}
                                 handleChange={handleExamCheckChange}
                                 selectedIdList={selectedExams}
+                            />
+                        </Box>
+                        <Box sx={{ pb: 2 }} >
+                            <SystemKaSelect
+                                system_kas={system_kas}
+                                handleChange={handleChange}
+                                selectedIdList={selectedSystemKas}
                             />
                         </Box>
                     </Box>
