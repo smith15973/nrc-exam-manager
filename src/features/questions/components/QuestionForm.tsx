@@ -6,6 +6,7 @@ import AnswerForm from './AnswerForm';
 import { FormDialog } from '../../../common/components/FormDialog';
 import CheckExams from '../../exams/components/CheckExams';
 import SystemKaSelect from '../../../features/system_kas/components/SystemKaSelect';
+import ExamSelect from '../../exams/components/ExamSelect';
 
 interface QuestionFormProps {
     question?: Question;
@@ -114,7 +115,6 @@ export default function QuestionForm(props: QuestionFormProps) {
         };
     };
     const handleExamCheckChange = createSimpleCheckHandler(exams, 'exam_id', 'exams');
-    const handleSystemKaCheckChange = createSimpleCheckHandler(system_kas, 'system_ka_number', 'system_kas');
 
     const handleSubmit = () => {
         onSubmit(questionForm)
@@ -256,19 +256,21 @@ export default function QuestionForm(props: QuestionFormProps) {
                         </Box>
 
                         <Box sx={{ pb: 2 }} >
-                            <CheckExams
-                                examOptions={exams}
-                                handleChange={handleExamCheckChange}
-                                selectedIdList={selectedExams}
-                            />
-                        </Box>
-                        <Box sx={{ pb: 2 }} >
                             <SystemKaSelect
                                 system_kas={system_kas}
                                 handleChange={handleChange}
                                 selectedIdList={selectedSystemKas}
                             />
                         </Box>
+
+                        <Box sx={{ pb: 2 }} >
+                            <ExamSelect
+                                exams={exams}
+                                handleChange={handleChange}
+                                selectedIdList={selectedExams}
+                            />
+                        </Box>
+                        
                     </Box>
 
                     {/* Answers Section */}
