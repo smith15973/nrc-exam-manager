@@ -232,20 +232,20 @@ export class QuestionRepository {
                             return;
                         }
                         const questionId = this.lastID;
-                        const examQuestions: ExamQuestion[] = question.exams?.map(exam => ({
+                        const examQuestions: ExamQuestion[] = question.question_exams?.map(qe => ({
                             question_id: questionId,
-                            exam_id: exam.exam_id,
-                            question_number: 0,
-                            main_system_ka_ka: null,
-                            main_system_ka_system: null,
-                            ka_match_justification: null,
-                            sro_match_justification: null,
-                            answers_order: null
+                            exam_id: qe.exam_id,
+                            question_number: qe.question_number,
+                            main_system_ka_ka: qe.main_system_ka_ka,
+                            main_system_ka_system: qe.main_system_ka_system,
+                            ka_match_justification: qe.ka_match_justification,
+                            sro_match_justification:qe.sro_match_justification,
+                            answers_order: qe.answers_order
                         })) ?? [];
 
                         // Use Promise.all with proper error handling
                         const insertOperations = [
-                            question.exams?.length ? QuestionRepository.prototype.insertExamRelations.call({ db }, examQuestions) : Promise.resolve(),
+                            question.question_exams?.length ? QuestionRepository.prototype.insertExamRelations.call({ db }, examQuestions) : Promise.resolve(),
                             question.system_kas?.length ? QuestionRepository.prototype.insertSystemKaRelations.call({ db }, questionId, question.system_kas) : Promise.resolve(),
                         ].filter(p => p !== Promise.resolve()); // Remove empty promises
 

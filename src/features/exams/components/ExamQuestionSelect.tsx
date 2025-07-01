@@ -15,8 +15,8 @@ import { VariableSizeList, ListChildComponentProps } from 'react-window';
 
 interface ExamSelectProps {
     exams: Exam[];
-    handleChange: (key: string, value: Exam[]) => void; // Changed from string[] to Exam[]
-    selectedIdList: number[];
+    handleChange: (key: string, value: unknown, idx?: number) => void; // Fixed to match parent handler
+    selectedList: ExamQuestion[];
 }
 
 const LISTBOX_PADDING = 8; // px
@@ -147,23 +147,57 @@ const StyledPopper = styled(Popper)({
     },
 });
 
-export default function ExamSelect(props: ExamSelectProps) {
-    const { selectedIdList, exams, handleChange } = props;
+export default function ExamQuestionSelect(props: ExamSelectProps) {
+    const { selectedList, exams, handleChange } = props;
 
-    // Convert selectedIdList to the format expected by Autocomplete
-    const selectedOptions = React.useMemo(() => {
-        return exams.filter(exam =>
-            selectedIdList.includes(exam.exam_id)
-        );
-    }, [exams, selectedIdList]);
+    // Extract exam IDs from the selected ExamQuestion list
+    const selectedExamIds = selectedList.map(eq => eq.exam_id);
+
+    // Convert to Exam objects for the Autocomplete
+    const selectedExams = React.useMemo(() => {
+        return exams.filter(exam => selectedExamIds.includes(exam.exam_id));
+    }, [exams, selectedExamIds]);
 
     const handleAutocompleteChange = (
         event: React.SyntheticEvent,
-        newValue: Exam[]
+        newSelectedExams: Exam[]
     ) => {
-        // Pass the full Exam objects, not just IDs
-        console.log('New selected Exams:', newValue);
-        handleChange("exams", newValue);
+        // Get the current selected exam IDs
+        const currentExamIds = selectedList.map(eq => eq.exam_id);
+        const newExamIds = newSelectedExams.map(exam => exam.exam_id);
+
+        // Find newly added exams
+        const addedExamIds = newExamIds.filter(id => !currentExamIds.includes(id));
+
+        // Find removed exam IDs
+        const removedExamIds = currentExamIds.filter(id => !newExamIds.includes(id));
+
+        // Start with current selectedList
+        let updatedList = [...selectedList];
+
+        // Remove ExamQuestions for removed exams
+        updatedList = updatedList.filter(eq => !removedExamIds.includes(eq.exam_id));
+
+        // Add new ExamQuestions for added exams
+        addedExamIds.forEach(examId => {
+            const exam = exams.find(e => e.exam_id === examId);
+            if (exam) {
+                updatedList.push({
+                    exam_id: examId,
+                    question_id: 0,
+                    exam: exam,
+                    question_number: 0,
+                    main_system_ka_system: null,
+                    main_system_ka_ka: null,
+                    ka_match_justification: '',
+                    sro_match_justification: '',
+                    answers_order: '',
+                });
+            }
+        });
+
+        // Call the parent handler with the updated ExamQuestion list
+        handleChange("question_exams", updatedList);
     };
 
     return (
@@ -172,12 +206,11 @@ export default function ExamSelect(props: ExamSelectProps) {
                 multiple
                 id="virtualized-exam-select"
                 options={exams}
-                value={selectedOptions}
+                value={selectedExams}
                 onChange={handleAutocompleteChange}
                 disableCloseOnSelect
                 disableListWrap
                 getOptionLabel={(option) => option.name}
-                // Fix: Ensure isOptionEqualToValue works correctly
                 isOptionEqualToValue={(option, value) =>
                     option.exam_id === value.exam_id
                 }

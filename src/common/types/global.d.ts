@@ -34,9 +34,30 @@ interface Question {
   references_provided: string | null;
   objective: string | null;
   last_used: string | null;
+  question_exams?: ExamQuestion[];
   exams?: Exam[];
   system_kas?: SystemKa[];
 }
+
+// interface QuestionForm extends Question {
+//   questionExams?: {
+//     exam: Exam;
+//     main_system_ka_system: string | null;
+//     main_system_ka_ka: string | null;
+//     ka_match_justification: string | null;
+//     sro_match_justification: string | null;
+//     answers_order: string | null;
+
+//   }[]
+// }
+
+// interface ExamQuestionDetails {
+//   main_system_ka_system: string | null;
+//   main_system_ka_ka: string | null;
+//   ka_match_justification: string | null;
+//   sro_match_justification: string | null;
+//   answers_order: string | null;
+// }
 
 interface Answer {
   answer_text: string;

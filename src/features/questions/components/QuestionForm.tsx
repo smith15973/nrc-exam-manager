@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { defaultQuestion } from '../../../data/db/schema';
-import { Box, Button, TextField, SxProps, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import { Box, Button, TextField, SxProps, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Typography, Autocomplete } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import AnswerForm from './AnswerForm';
 import { FormDialog } from '../../../common/components/FormDialog';
-import CheckExams from '../../exams/components/CheckExams';
 import SystemKaSelect from '../../../features/system_kas/components/SystemKaSelect';
-import ExamSelect from '../../exams/components/ExamSelect';
+import ExamQuestionSelect from '../../exams/components/ExamQuestionSelect';
 
 interface QuestionFormProps {
     question?: Question;
@@ -18,7 +17,6 @@ interface QuestionFormProps {
 export default function QuestionForm(props: QuestionFormProps) {
     const { question, onSubmit, exam, examId } = props;
     const [questionForm, setQuestionForm] = useState<Question>(question || defaultQuestion);
-    const [selectedExams, setSelectedExams] = useState<number[]>([])
     const [selectedSystemKas, setSelectedSystemKas] = useState<string[]>([])
     const [open, setOpen] = useState(false);
     const { exams, system_kas } = useDatabase();
@@ -53,7 +51,7 @@ export default function QuestionForm(props: QuestionFormProps) {
     }, [question, exam]);
 
     useEffect(() => {
-        const examIds = questionForm.exams?.map(exam => exam.exam_id).filter((id): id is number => id !== undefined) || [];
+        const examIds = questionForm.question_exams?.map(question_exam => question_exam.exam_id).filter((id): id is number => id !== undefined) || [];
 
         // If examId prop is provided and not already in the form
         if (examId && !examIds.includes(examId)) {
@@ -63,58 +61,83 @@ export default function QuestionForm(props: QuestionFormProps) {
                 // Add the exam to the form
                 setQuestionForm(prev => ({
                     ...prev,
-                    exams: [...(prev.exams || []), examToAdd]
+                    question_exams: [
+                        ...(prev.question_exams || []),
+                        {
+                            exam: examToAdd,
+                            question_id: 0,
+                            exam_id: examToAdd.exam_id,
+                            question_number: 0,
+                            main_system_ka_system: null,
+                            main_system_ka_ka: null,
+                            ka_match_justification: '',
+                            sro_match_justification: '',
+                            answers_order: '',
+                        }
+                    ]
                 }));
-                examIds.push(examId);
             }
         }
 
-        setSelectedExams(examIds);
-    }, [questionForm.exams, examId, exams]);
+    }, [questionForm.question_exams, examId, exams]);
 
     useEffect(() => {
         const systemKaNums = questionForm.system_kas?.map(system_ka => system_ka.system_ka_number).filter((num): num is string => num !== undefined) || [];
         setSelectedSystemKas(systemKaNums);
     }, [questionForm.system_kas]);
 
+    // useEffect(() => {
+    //     if (questionForm.exams && questionForm.exams.length > 0) {
+    //         setQuestionForm(prev => ({
+    //             ...prev,
+    //             questionExams: (questionForm.exams || []).map((exam, idx) => {
+    //                 // Try to preserve existing questionExam data for this exam if present
+    //                 const existing = prev.questionExams?.find(qe => qe.exam.exam_id === exam.exam_id);
+    //                 return existing
+    //                     ? existing
+    //                     : {
+    //                         exam,
+    //                         main_system_ka_system: null,
+    //                         main_system_ka_ka: null,
+    //                         ka_match_justification: '',
+    //                         sro_match_justification: '',
+    //                         answers_order: '',
+    //                     };
+    //             })
+    //         }));
+    //     } else {
+    //         setQuestionForm(prev => ({
+    //             ...prev,
+    //             questionExams: [],
+    //         }));
+    //     }
+    // }, [questionForm.exams]);
+
 
 
     const handleChange = (key: string, value: unknown) => {
         console.log(key, value)
         setQuestionForm((prev) => ({ ...prev, [key]: value }));
+        console.log(questionForm)
     };
 
-    const createSimpleCheckHandler = function <T>(
-        collection: T[],
-        keyField: keyof T,
-        formField: keyof Question
-    ) {
-        return (event: React.ChangeEvent<HTMLInputElement>) => {
-            const itemKey = event.currentTarget.name;
-            const isChecked = event.currentTarget.checked;
-
-            setQuestionForm(prev => {
-                const currentItems = (prev[formField] as unknown as T[]) || [];
-                let updatedItems;
-
-                if (isChecked) {
-                    const itemToAdd = collection.find(item => String((item as T)[keyField]) === itemKey);
-                    if (itemToAdd && !currentItems.find(item => String(item[keyField]) === itemKey)) {
-                        updatedItems = [...currentItems, itemToAdd];
-                    } else {
-                        updatedItems = currentItems;
-                    }
-                } else {
-                    updatedItems = currentItems.filter(item => String(item[keyField]) !== itemKey);
-                }
-                return {
-                    ...prev,
-                    [formField]: updatedItems
-                };
-            });
-        };
+    const handleQuestionExamChange = (key: string, value: unknown, idx?: number) => {
+        if (key === "question_exams" && Array.isArray(value)) {
+            // Handle the full ExamQuestion list update from ExamQuestionSelect
+            setQuestionForm(prev => ({
+                ...prev,
+                question_exams: value as ExamQuestion[]
+            }));
+        } else if (typeof idx === 'number') {
+            // Handle updates to specific fields within an ExamQuestion
+            setQuestionForm(prev => ({
+                ...prev,
+                question_exams: prev.question_exams?.map((qe, i) =>
+                    i === idx ? { ...qe, [key]: value } : qe
+                ) || []
+            }));
+        }
     };
-    const handleExamCheckChange = createSimpleCheckHandler(exams, 'exam_id', 'exams');
 
     const handleSubmit = () => {
         onSubmit(questionForm)
@@ -232,7 +255,7 @@ export default function QuestionForm(props: QuestionFormProps) {
                                         aria-labelledby="exam-level-radio-group"
                                         name="controlled-exam-level-radio-group"
                                         value={questionForm.exam_level || 0}
-                                        onChange={(e) => handleChange('exam_level', e.target.value)}
+                                        onChange={(e) => handleChange('exam_level', parseInt(e.target.value))}
                                     >
                                         <FormControlLabel value={0} control={<Radio />} label="RO" />
                                         <FormControlLabel value={1} control={<Radio />} label="SRO" />
@@ -264,13 +287,78 @@ export default function QuestionForm(props: QuestionFormProps) {
                         </Box>
 
                         <Box sx={{ pb: 2 }} >
-                            <ExamSelect
+                            <ExamQuestionSelect
                                 exams={exams}
-                                handleChange={handleChange}
-                                selectedIdList={selectedExams}
+                                handleChange={handleQuestionExamChange}
+                                selectedList={questionForm.question_exams || []}
                             />
+                            {questionForm.question_exams && questionForm.question_exams.length > 0
+                                ? questionForm.question_exams.map((qe, idx) => (
+                                    <Box key={idx} sx={{ mb: 2, p: 2, border: '1px solid #eee', borderRadius: 2 }}>
+                                        <Typography variant='h6'>{qe.exam?.name}</Typography>
+                                        <Autocomplete
+                                            sx={{ width: '100%', mb: 2 }}
+                                            value={
+                                                qe.main_system_ka_system && qe.main_system_ka_ka
+                                                    ? `${qe.main_system_ka_system}_${qe.main_system_ka_ka}`
+                                                    : ''
+                                            }
+                                            options={
+                                                (questionForm.system_kas?.map(sk => sk.system_ka_number) || [])
+                                            }
+                                            onChange={(_, newValue) => {
+                                                // Split the selected value into system and ka
+                                                const [system, ka] = (newValue || '').split('_');
+                                                handleQuestionExamChange('main_system_ka_system', system, idx);
+                                                handleQuestionExamChange('main_system_ka_ka', ka, idx);
+                                            }}
+                                            renderInput={(params) => <TextField {...params} label="Primary System KA" />}
+                                            getOptionLabel={(option) => option || ''}
+                                            isOptionEqualToValue={(option, value) => option === value}
+                                        />
+                                        <TextField
+                                            fullWidth
+                                            type={'text'}
+                                            value={qe.ka_match_justification || ''}
+                                            onChange={(e) => handleQuestionExamChange('ka_match_justification', e.target.value, idx)}
+                                            label={"KA Match Justification"}
+                                            required={true}
+                                            rows={2}
+                                            multiline={true}
+                                            sx={{ mb: 2 }}
+                                        />
+                                        {questionForm.exam_level === 1 && (
+                                            <TextField
+                                                fullWidth
+                                                type={'text'}
+                                                value={qe.sro_match_justification || ''}
+                                                onChange={(e) => handleQuestionExamChange('sro_match_justification', e.target.value, idx)}
+                                                label={"SRO Match Justification"}
+                                                required
+                                                rows={2}
+                                                multiline={true}
+                                                sx={{ mb: 2 }}
+                                            />
+                                        )}
+                                        <Autocomplete
+                                            sx={{ width: '100%' }}
+                                            value={qe.answers_order || ''}
+                                            options={[
+                                                "ABCD", "ABDC", "ACBD", "ACDB", "ADBC", "ADCB",
+                                                "BACD", "BADC", "BCAD", "BCDA", "BDAC", "BDCA",
+                                                "CABD", "CADB", "CBAD", "CBDA", "CDAB", "CDBA",
+                                                "DABC", "DACB", "DBAC", "DBCA", "DCAB", "DCBA"
+                                            ]}
+                                            onChange={(_, newValue) => handleQuestionExamChange('answers_order', newValue, idx)}
+                                            renderInput={(params) => <TextField {...params} label="Answer Order" />}
+                                            getOptionLabel={(option) => option || ''}
+                                            isOptionEqualToValue={(option, value) => option === value}
+                                        />
+                                    </Box>
+                                ))
+                                : 'No Exams'}
                         </Box>
-                        
+
                     </Box>
 
                     {/* Answers Section */}

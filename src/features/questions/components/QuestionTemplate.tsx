@@ -1,7 +1,7 @@
 import { Box, Divider, Typography } from "@mui/material";
 
 type QuestionTemplateProps = {
-    question: Question;
+    question: ExamQuestion;
     print?: true | boolean;
     student?: true | boolean;
     questionNumber?: number;
@@ -9,6 +9,8 @@ type QuestionTemplateProps = {
 };
 
 export default function QuestionTemplate({ question, print = false, student = false, questionNumber, examName }: QuestionTemplateProps) {
+
+    const main_system_ka = question.system_kas?.find(system_ka => system_ka.ka_number === question.main_system_ka_ka && system_ka.system_number === question.main_system_ka_system);
 
     const answers = [
         {
@@ -235,6 +237,43 @@ export default function QuestionTemplate({ question, print = false, student = fa
                     <SectionHeader>Question Details</SectionHeader>
 
                     {/* First Row - Systems, Category, KA Statement */}
+
+                    {main_system_ka ?
+                        <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
+                            <Box sx={{ flex: 1, minWidth: '200px', ...printStyles }}>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, ...printStyles }}>
+                                    System
+                                </Typography>
+                                <Box sx={{ bgcolor: 'grey.50', borderRadius: 1, p: 1.5, ...printStyles }}>
+                                   
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                ...printStyles,
+                                                borderColor: 'grey.300',
+                                                py: 0.5,
+                                            }}
+                                        >
+                                            <Typography variant="body2" sx={{ fontWeight: 'bold', ...printStyles }}>
+                                                {main_system_ka.system_ka_number}
+                                            </Typography>
+                                            <Typography variant="body2">{main_system_ka.system_ka_number}</Typography>
+                                        </Box>
+                                
+                                </Box>
+                            </Box>
+
+                            <Box sx={{ flex: 1, minWidth: '200px', ...printStyles }}>
+                                <InfoRow label="Category" value={question.category} />
+                                <InfoRow
+                                    label="KA Statement"
+                                    value="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                                />
+                            </Box>
+                        </Box>
+                        : <Box>BYE</Box>}
+
                     <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
                         <Box sx={{ flex: 1, minWidth: '200px', ...printStyles }}>
                             <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, ...printStyles }}>
@@ -263,7 +302,7 @@ export default function QuestionTemplate({ question, print = false, student = fa
                         </Box>
 
                         <Box sx={{ flex: 1, minWidth: '200px', ...printStyles }}>
-                            {/* <InfoRow label="Category" value={question.category} /> */}
+                            <InfoRow label="Category" value={question.category} />
                             <InfoRow
                                 label="KA Statement"
                                 value="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
