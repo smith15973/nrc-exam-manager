@@ -239,7 +239,7 @@ export class QuestionRepository {
                             main_system_ka_ka: qe.main_system_ka_ka,
                             main_system_ka_system: qe.main_system_ka_system,
                             ka_match_justification: qe.ka_match_justification,
-                            sro_match_justification:qe.sro_match_justification,
+                            sro_match_justification: qe.sro_match_justification,
                             answers_order: qe.answers_order
                         })) ?? [];
 
@@ -904,6 +904,94 @@ export class QuestionRepository {
                     }
                 }
             );
+        });
+    }
+
+
+    async getExamQuestions(questionId: number): Promise<ExamQuestion[]> {
+        return new Promise((resolve, reject) => {
+            if (this.isClosing()) {
+                reject(new Error('Database is closing'));
+                return;
+            }
+
+            const query = `
+      SELECT 
+        eq.exam_id,
+        eq.question_id,
+        eq.question_number,
+        eq.main_system_ka_system,
+        eq.main_system_ka_ka,
+        eq.ka_match_justification,
+        eq.sro_match_justification,
+        eq.answers_order,
+        q.question_text,
+        q.img_url,
+        q.answer_a,
+        q.answer_a_justification,
+        q.answer_b,
+        q.answer_b_justification,
+        q.answer_c,
+        q.answer_c_justification,
+        q.answer_d,
+        q.answer_d_justification,
+        q.correct_answer,
+        q.exam_level,
+        q.cognitive_level,
+        q.technical_references,
+        q.references_provided,
+        q.objective,
+        q.last_used,
+        e.name as exam_name,
+        e.plant_id
+      FROM exam_questions eq
+      INNER JOIN questions q ON eq.question_id = q.question_id
+      INNER JOIN exams e ON eq.exam_id = e.exam_id
+      WHERE eq.question_id = ?
+    `;
+
+            this.db.all(query, [questionId], (err, rows: any[]) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const examQuestions: ExamQuestion[] = rows.map(row => ({
+                        exam_id: row.exam_id,
+                        question_id: row.question_id,
+                        question_number: row.question_number,
+                        main_system_ka_system: row.main_system_ka_system,
+                        main_system_ka_ka: row.main_system_ka_ka,
+                        ka_match_justification: row.ka_match_justification,
+                        sro_match_justification: row.sro_match_justification,
+                        answers_order: row.answers_order,
+                        exam: {
+                            exam_id: row.exam_id,
+                            name: row.exam_name,
+                            plant_id: row.plant_id
+                        },
+                        question: {
+                            question_id: row.question_id,
+                            question_text: row.question_text,
+                            img_url: row.img_url,
+                            answer_a: row.answer_a,
+                            answer_a_justification: row.answer_a_justification,
+                            answer_b: row.answer_b,
+                            answer_b_justification: row.answer_b_justification,
+                            answer_c: row.answer_c,
+                            answer_c_justification: row.answer_c_justification,
+                            answer_d: row.answer_d,
+                            answer_d_justification: row.answer_d_justification,
+                            correct_answer: row.correct_answer,
+                            exam_level: row.exam_level,
+                            cognitive_level: row.cognitive_level,
+                            technical_references: row.technical_references,
+                            references_provided: row.references_provided,
+                            objective: row.objective,
+                            last_used: row.last_used
+                        }
+                    }));
+                    resolve(examQuestions);
+                }
+            });
         });
     }
 

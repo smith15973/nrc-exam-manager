@@ -1,7 +1,7 @@
 import { Box, Divider, Typography } from "@mui/material";
 
 type QuestionTemplateProps = {
-    question: ExamQuestion;
+    question: Question;
     print?: true | boolean;
     student?: true | boolean;
     questionNumber?: number;
@@ -10,7 +10,7 @@ type QuestionTemplateProps = {
 
 export default function QuestionTemplate({ question, print = false, student = false, questionNumber, examName }: QuestionTemplateProps) {
 
-    const main_system_ka = question.system_kas?.find(system_ka => system_ka.ka_number === question.main_system_ka_ka && system_ka.system_number === question.main_system_ka_system);
+    // const main_system_ka = question.system_kas?.find(system_ka => system_ka.ka_number === question.main_system_ka_ka && system_ka.system_number === question.main_system_ka_system);
 
     const answers = [
         {
@@ -236,85 +236,11 @@ export default function QuestionTemplate({ question, print = false, student = fa
                 <Box sx={{ mb: 4 }}>
                     <SectionHeader>Question Details</SectionHeader>
 
-                    {/* First Row - Systems, Category, KA Statement */}
-
-                    {main_system_ka ?
-                        <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
-                            <Box sx={{ flex: 1, minWidth: '200px', ...printStyles }}>
-                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, ...printStyles }}>
-                                    System
-                                </Typography>
-                                <Box sx={{ bgcolor: 'grey.50', borderRadius: 1, p: 1.5, ...printStyles }}>
-                                   
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                ...printStyles,
-                                                borderColor: 'grey.300',
-                                                py: 0.5,
-                                            }}
-                                        >
-                                            <Typography variant="body2" sx={{ fontWeight: 'bold', ...printStyles }}>
-                                                {main_system_ka.system_ka_number}
-                                            </Typography>
-                                            <Typography variant="body2">{main_system_ka.system_ka_number}</Typography>
-                                        </Box>
-                                
-                                </Box>
-                            </Box>
-
-                            <Box sx={{ flex: 1, minWidth: '200px', ...printStyles }}>
-                                <InfoRow label="Category" value={question.category} />
-                                <InfoRow
-                                    label="KA Statement"
-                                    value="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                                />
-                            </Box>
-                        </Box>
-                        : <Box>BYE</Box>}
-
-                    <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
-                        <Box sx={{ flex: 1, minWidth: '200px', ...printStyles }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, ...printStyles }}>
-                                Systems
-                            </Typography>
-                            <Box sx={{ bgcolor: 'grey.50', borderRadius: 1, p: 1.5, ...printStyles }}>
-                                {question.system_kas?.map((system_ka, index) => (
-                                    <Box
-                                        key={system_ka.system_ka_number}
-                                        sx={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            ...printStyles,
-                                            borderBottom: question.system_kas && index < question.system_kas.length - 1 ? '1px solid' : 'none',
-                                            borderColor: 'grey.300',
-                                            py: 0.5,
-                                        }}
-                                    >
-                                        <Typography variant="body2" sx={{ fontWeight: 'bold', ...printStyles }}>
-                                            {system_ka.system_ka_number}
-                                        </Typography>
-                                        <Typography variant="body2">{system_ka.system_ka_number}</Typography>
-                                    </Box>
-                                ))}
-                            </Box>
-                        </Box>
-
-                        <Box sx={{ flex: 1, minWidth: '200px', ...printStyles }}>
-                            <InfoRow label="Category" value={question.category} />
-                            <InfoRow
-                                label="KA Statement"
-                                value="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                            />
-                        </Box>
-                    </Box>
-
                     {/* Second Row - KA Numbers, KA Importance, Exam Level */}
                     <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
                         <Box sx={{ flex: 1 }}>
                             <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, ...printStyles }}>
-                                K/A Numbers
+                                Related System KA Numbers
                             </Typography>
                             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', ...printStyles }}>
                                 {question.system_kas?.map((system_ka) => (
@@ -337,8 +263,7 @@ export default function QuestionTemplate({ question, print = false, student = fa
                                 ))}
                             </Box>
                         </Box>
-                        <InfoRow label="K/A Importance" value="3.8" />
-                        <InfoRow label="Exam Level" value={question.exam_level} />
+                        <InfoRow label="Exam Level" value={question.exam_level ? 'SRO' : 'RO'} />
                     </Box>
 
                     {/* Third Row - References */}
@@ -347,21 +272,56 @@ export default function QuestionTemplate({ question, print = false, student = fa
                         <InfoRow label="Technical References" value={question.technical_references} />
                     </Box>
 
-                    {/* Fourth Row - Source, Difficulty */}
+                    {/* Fifth Row - Cognitive Level, Objective */}
                     <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
-                        <InfoRow label="Question Source" value="Bank DB 2015 NRC Exam Q2" />
-                    </Box>
-
-                    {/* Fifth Row - Cognitive Level, CFR Content */}
-                    <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
-                        <InfoRow label="Cognitive Level" value={question.cognitive_level} />
-                        <InfoRow label="10 CFR Part 55 Content" value="41.8 / 41.10 / 45.3" />
-                    </Box>
-
-                    {/* Sixth Row - Objective */}
-                    <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
+                        <InfoRow label="Cognitive Level" value={question.cognitive_level ? 'HIGH' : 'LOW'} />
                         <InfoRow label="Objective" value={question.objective} />
                     </Box>
+
+                    {/* <InfoRow label="10 CFR Part 55 Content" value="41.8 / 41.10 / 45.3" /> */}
+
+                    <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
+                        <Box sx={{ flex: 1, minWidth: '200px', ...printStyles }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, ...printStyles }}>
+                                Exams
+                            </Typography>
+                            <Box sx={{ bgcolor: 'grey.50', borderRadius: 1, p: 1.5, ...printStyles }}>
+                                {question.question_exams && question.question_exams.length > 0 ? question.question_exams.map((qe, index) => (
+                                    <Box
+                                        key={qe.exam_id}
+                                        sx={{
+                                            display: 'flex',
+                                            // justifyContent: 'space-between',
+                                            ...printStyles,
+                                            borderBottom: question.question_exams && index < question.question_exams.length - 1 ? '1px solid' : 'none',
+                                            borderColor: 'grey.300',
+                                            py: 0.5,
+                                        }}
+                                    >
+                                        <Typography variant="body2" sx={{ fontWeight: 'bold', ...printStyles }}>
+                                            Question #{qe.question_number}: 
+                                        </Typography>
+                                        <Typography variant="body2">{qe.exam?.name}</Typography>
+                                    </Box>
+                                )) 
+                                : <Box
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            ...printStyles,
+                                            borderBottom: 'none',
+                                            borderColor: 'grey.300',
+                                            py: 0.5,
+                                        }}
+                                    >
+                                        <Typography variant="body2" sx={{ fontWeight: 'bold', ...printStyles }}>
+                                            No Exam Relations
+                                        </Typography>
+                                    </Box>}
+                            </Box>
+                        </Box>
+                    </Box>
+
                 </Box>
             </> : ''}
         </Box>

@@ -134,8 +134,8 @@ export default function QuestionsTable(props: QuestionTableProps) {
         <TableCell align="right">
           {row.exams && row.exams.length > 0 && (
             <>
-              {row.exams.slice(0, 3).map((exam, index) => (
-                <div key={index}>{exam.exam?.name}</div>
+              {row.exams?.slice(0, 3).map((exam, index) => (
+                <div key={index}>{exam.name}</div>
               ))}
               {row.exams.length > 3 && ` +${row.exams.length - 3} more`}
             </>

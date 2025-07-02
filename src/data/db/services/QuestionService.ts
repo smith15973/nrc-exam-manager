@@ -16,10 +16,11 @@ export class QuestionService {
 
     async getCompleteQuestion(questionId: number): Promise<Question> {
         // Get all data in parallel for better performance
-        const [questionRow, exams, system_kas] = await Promise.all([
+        const [questionRow, exams, system_kas, examQuestions] = await Promise.all([
             this.questionRepo.getById(questionId),
             this.examRepo.getByQuestionId(questionId),
             this.systemKaRepo.getByQuestionId(questionId),
+            this.questionRepo.getExamQuestions(questionId)
         ]);
 
         const question: Question = {
@@ -43,6 +44,7 @@ export class QuestionService {
             last_used: questionRow.last_used,
             system_kas: system_kas,
             exams: exams,
+            question_exams: examQuestions
         };
 
         return question;

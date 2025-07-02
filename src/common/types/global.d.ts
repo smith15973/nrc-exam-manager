@@ -240,6 +240,16 @@ interface Window {
       update: (system_ka: SystemKa) => Promise<SystemKaResponse>;
       delete: (system_ka_number: string) => Promise<SystemKaResponse>;
     },
+    exam_questions: {
+      add: (exam_question: ExamQuestion) => Promise<ExamQuestionResponse>;
+      get: (params?: DBSearchParams) => Promise<ExamQuestionResponse>;
+      getMany: (params?: DBSearchParams) => Promise<ExamQuestionResponse>;
+      getWithDetails: (params?: DBSearchParams) => Promise<ExamQuestionResponse>;
+      getByExamId: (examId?: number) => Promise<ExamQuestionResponse>;
+      getByQuestionId: (questionId?: number) => Promise<ExamQuestionResponse>;
+      update: (exam_question: ExamQuestion) => Promise<ExamQuestionResponse>;
+      delete: (examId: number, questionId: number) => Promise<ExamQuestionResponse>;
+    },
     stems: {
       add: (stem: Stem) => Promise<StemResponse>;
       get: (params?: DBSearchParams) => Promise<StemResponse>;

@@ -597,10 +597,6 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         await db.exams.removeQuestion(data.examId, data.questionId)
         return { success: true };
       }
-      case 'add-exam-question': {
-        const examQuestionId = await db.exams.addQuestionToExam(data.examId, data.questionId)
-        return { success: true, examQuestionId };
-      }
 
       // Question operations
       case 'add-question': {
@@ -652,6 +648,7 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         return { success: true };
       }
 
+      // System operations
       case 'add-system': {
         await db.systems.add(data);
         return { success: true }
@@ -663,7 +660,6 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
       case 'get-systems': {
         const systems = await db.systems.getMany(data);
         return { success: true, systems }
-
       }
       case 'update-system': {
         await db.systems.update(data);
@@ -673,6 +669,8 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         await db.systems.delete(data);
         return { success: true }
       }
+
+      // System KA operations
       case 'add-system-ka': {
         await db.system_kas.add(data);
         return { success: true }
@@ -684,7 +682,6 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
       case 'get-system-kas': {
         const system_kas = await db.system_kas.getMany(data);
         return { success: true, system_kas }
-
       }
       case 'update-system-ka': {
         await db.system_kas.update(data);
@@ -695,6 +692,41 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         return { success: true }
       }
 
+      // Exam Question operations
+      case 'add-exam-question': {
+        await db.exam_questions.add(data);
+        return { success: true }
+      }
+      case 'get-exam-question': {
+        const exam_question = await db.exam_questions.get(data);
+        return { success: true, exam_question }
+      }
+      case 'get-exam-questions': {
+        const exam_questions = await db.exam_questions.getMany(data);
+        return { success: true, exam_questions }
+      }
+      case 'get-exam-question-with-details': {
+        const exam_question = await db.exam_questions.getWithDetails(data);
+        return { success: true, exam_question }
+      }
+      case 'get-exam-question-by-exam-id': {
+        const exam_question = await db.exam_questions.getByExamId(data);
+        return { success: true, exam_question }
+      }
+      case 'get-exam-question-by-question-id': {
+        const exam_question = await db.exam_questions.getByQuestionId(data);
+        return { success: true, exam_question }
+      }
+      case 'update-exam-question': {
+        await db.exam_questions.update(data);
+        return { success: true }
+      }
+      case 'delete-exam-question': {
+        await db.exam_questions.delete(data.examId, data.questionId);
+        return { success: true }
+      }
+
+      // Stem operations
       case 'add-stem': {
         await db.stems.add(data);
         return { success: true }
@@ -706,7 +738,6 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
       case 'get-stems': {
         const stems = await db.stems.getMany(data);
         return { success: true, stems }
-
       }
       case 'update-stem': {
         await db.stems.update(data);
@@ -717,6 +748,7 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         return { success: true }
       }
 
+      // KA operations
       case 'add-ka': {
         await db.kas.add(data);
         return { success: true }
@@ -742,7 +774,7 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         return { success: false, error: `Unknown operation: ${operation}` };
       }
     }
-  } catch (err: unknown) {
+  } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : String(err) };
   }
 });

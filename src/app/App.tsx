@@ -20,6 +20,8 @@ import StemPage from '../features/stems/pages/StemPage';
 import StemsPage from '../features/stems/pages/StemsPage';
 import SystemKasPage from '../features/system_kas/pages/SystemKasPage';
 import SystemKaPage from '../features/system_kas/pages/SystemKaPage';
+import ExamQuestionPage from '../features/examsQuestions/pages/ExamQuestionPage';
+import ExamQuestionsPage from '../features/examsQuestions/pages/ExamQuestionsPage';
 
 
 
@@ -35,6 +37,8 @@ const App = () => {
                         <Route path='/plants/:plantId' element={<PlantPage />} />
                         <Route path='/exams/' element={<ExamsPage />} />
                         <Route path='/exams/:examId' element={<ExamPage />} />
+                        <Route path='/exams/:examId/questions' element={<ExamQuestionsPage />} />
+                        <Route path='/exams/:examId/questions/questionId' element={<ExamQuestionPage />} />
                         <Route path='/questions' element={<QuestionsPage />} />
                         <Route path='/questions/:questionId' element={<QuestionPage />} />
                         <Route path='/systems' element={<SystemsPage />} />
