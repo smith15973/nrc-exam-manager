@@ -1,9 +1,10 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import CheckSystems from "../../../features/systems/components/CheckSystems";
 import { useDatabase } from "../../../common/hooks/useDatabase";
 import CheckKas from "../../kas/components/CheckKas";
 import CheckExams from "../../../features/exams/components/CheckExams";
+import SystemKaSelect from "../../../features/system_kas/components/SystemKaSelect";
 
 interface FilterQuestionsProps {
     open: boolean;
@@ -13,29 +14,16 @@ interface FilterQuestionsProps {
     onResetFilters: () => void;
 
 }
-/*
-question_id?: number;
-  query?: string;
-  examIds?: number[];
-  kaNums?: number[];
-  systemNums?: number[];
-  lastUsedStart?: string;
-  lastUsedEnd?: string;
-  examLevelStart?: string;
-  examLevelEnd?: string;
-  diffLevelStart?: string;
-  diffLevelEnd?: string;
-  cogLevelStart?: string;
-  cogLevelEnd?: string;
-  objective?: string;
-  category?: string;
-  technical_references?: string;
-  */
 
 export default function FilterQuestions(props: FilterQuestionsProps) {
     const { open, onClose, onFilterChange, filters, onResetFilters } = props;
 
-    const { kas, systems, exams } = useDatabase();
+    const { kas, systems, exams, system_kas } = useDatabase();
+
+    const handleSystemKaChange = (key: string, value: SystemKa[]) => {
+        const idList = value.map(sk => sk.system_ka_number)
+        onFilterChange('system_kaNums', idList)
+    }
 
     return (
         <>
@@ -71,18 +59,7 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                             label="Question"
                         />
                     </Box>
-                    {/* Category */}
-                    <Box
-                        sx={{ pt: 2 }}
-                    >
-                        <TextField
-                            fullWidth
-                            type="text"
-                            value={filters.category || ""}
-                            onChange={(e) => onFilterChange("category", e.target.value)}
-                            label="Category"
-                        />
-                    </Box>
+
                     {/* Objective */}
                     <Box
                         sx={{ pt: 2 }}
@@ -108,120 +85,37 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                         />
                     </Box>
 
-
-                    {/* Last Used */}
-                    <Box
-                        sx={{ pt: 2 }}
-                    >
-                        <TextField
-                            type="date"
-                            value={filters.lastUsedStart || ""}
-                            onChange={(e) => onFilterChange("lastUsedStart", e.target.value)}
-                            label="Last Used Start"
-                            InputLabelProps={{ shrink: true }}
-                            error={!!(filters.lastUsedStart && filters.lastUsedEnd && new Date(filters.lastUsedStart) > new Date(filters.lastUsedEnd))}
-                            helperText={
-                                filters.lastUsedStart &&
-                                    filters.lastUsedEnd &&
-                                    new Date(filters.lastUsedStart) > new Date(filters.lastUsedEnd)
-                                    ? "Start date should be before end date"
-                                    : ""
-                            }
-                            sx={{ pr: 2 }}
-                        />
-                        <TextField
-                            type="date"
-                            value={filters.lastUsedEnd || ""}
-                            onChange={(e) => onFilterChange("lastUsedEnd", e.target.value)}
-                            label="Last Used End"
-                            InputLabelProps={{ shrink: true }}
-                        />
+                    <Box sx={{ pb: 2, display: 'flex' }}>
+                        <Box sx={{ flex: 1 }}>
+                            <FormControl>
+                                <FormLabel id="exam-level-radio-group">Exam Level</FormLabel>
+                                <RadioGroup
+                                    aria-labelledby="exam-level-radio-group"
+                                    name="controlled-exam-level-radio-group"
+                                    value={filters.exam_level || 0}
+                                    onChange={(e) => onFilterChange('exam_level', parseInt(e.target.value))}
+                                >
+                                    <FormControlLabel value={0} control={<Radio />} label="RO" />
+                                    <FormControlLabel value={1} control={<Radio />} label="SRO" />
+                                </RadioGroup>
+                            </FormControl>
+                        </Box>
+                        <Box sx={{ flex: 1 }}>
+                            <FormControl>
+                                <FormLabel id="cognitive-level-radio-group">Cognitive Level</FormLabel>
+                                <RadioGroup
+                                    aria-labelledby="cognitive-level-radio-group"
+                                    name="controlled-cognitive-level-radio-group"
+                                    value={filters.cognitive_level || 0}
+                                    onChange={(e) => onFilterChange('cognitive_level', parseInt(e.target.value))}
+                                >
+                                    <FormControlLabel value={0} control={<Radio />} label="LOW" />
+                                    <FormControlLabel value={1} control={<Radio />} label="HIGH" />
+                                </RadioGroup>
+                            </FormControl>
+                        </Box>
                     </Box>
 
-
-
-                    {/* Exam Level */}
-                    <Box
-                        sx={{ pt: 2 }}
-                    >
-                        <TextField
-                            type="text"
-                            value={filters.examLevelStart || ""}
-                            onChange={(e) => onFilterChange("examLevelStart", e.target.value)}
-                            label="Minimum Exam Level"
-                            error={!!(filters.examLevelStart && filters.examLevelEnd && filters.examLevelStart > filters.examLevelEnd)}
-                            helperText={
-                                filters.examLevelStart &&
-                                    filters.examLevelEnd &&
-                                    filters.examLevelStart > filters.examLevelEnd
-                                    ? "Minimum exam level should be less than or equal to max exam level"
-                                    : ""
-                            }
-                            sx={{ pr: 2 }}
-                        />
-                        <TextField
-                            type="text"
-                            value={filters.examLevelEnd || ""}
-                            onChange={(e) => onFilterChange("examLevelEnd", e.target.value)}
-                            label="Max Exam Level"
-                        />
-                    </Box>
-
-
-                    {/* Difficuilty Level */}
-                    <Box
-                        sx={{ pt: 2 }}
-                    >
-                        <TextField
-                            type="text"
-                            value={filters.diffLevelStart || ""}
-                            onChange={(e) => onFilterChange("diffLevelStart", e.target.value)}
-                            label="Minimum Difficulty Level "
-                            error={!!(filters.diffLevelStart && filters.diffLevelEnd && filters.diffLevelStart > filters.diffLevelEnd)}
-                            helperText={
-                                filters.diffLevelStart &&
-                                    filters.diffLevelEnd &&
-                                    filters.diffLevelStart > filters.diffLevelEnd
-                                    ? "Minimum difficulty level should be less than or equal to max difficulty level"
-                                    : ""
-                            }
-                            sx={{ pr: 2 }}
-                        />
-                        <TextField
-                            type="text"
-                            value={filters.diffLevelEnd || ""}
-                            onChange={(e) => onFilterChange("diffLevelEnd", e.target.value)}
-                            label="Max Difficulty Level"
-                        />
-                    </Box>
-
-
-                    {/* Cognitive Level */}
-                    <Box
-                        sx={{ pt: 2 }}
-                    >
-                        <TextField
-                            type="text"
-                            value={filters.cogLevelStart || ""}
-                            onChange={(e) => onFilterChange("cogLevelStart", e.target.value)}
-                            label="Minimum Cognitive Level"
-                            error={!!(filters.cogLevelStart && filters.cogLevelEnd && filters.cogLevelStart > filters.cogLevelEnd)}
-                            helperText={
-                                filters.cogLevelStart &&
-                                    filters.cogLevelEnd &&
-                                    filters.cogLevelStart > filters.cogLevelEnd
-                                    ? "Minimum cognitive level should be less than or equal to max cognitive level"
-                                    : ""
-                            }
-                            sx={{ pr: 2 }}
-                        />
-                        <TextField
-                            type="text"
-                            value={filters.cogLevelEnd || ""}
-                            onChange={(e) => onFilterChange("cogLevelEnd", e.target.value)}
-                            label="Max Cognitive Level"
-                        />
-                    </Box>
 
 
                     {/* KAS */}
@@ -270,6 +164,15 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
 
                                 onFilterChange("systemNums", newList);
                             }}
+                        />
+                    </Box>
+
+                    {/* System_KAs */}
+                    <Box sx={{ pb: 2 }} >
+                        <SystemKaSelect
+                            system_kas={system_kas}
+                            handleChange={handleSystemKaChange}
+                            selectedIdList={filters.system_kaNums || []}
                         />
                     </Box>
 

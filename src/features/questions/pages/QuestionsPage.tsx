@@ -23,6 +23,7 @@ export default function QuestionsPage() {
 
     useEffect(() => {
         loadQuestions();
+        console.log("FILTERS", filters)
     }, [filters]);
 
     const loadQuestions = async () => {
@@ -61,7 +62,6 @@ export default function QuestionsPage() {
     const handleFilterChange = (key: string, value: unknown) => {
         console.log(value)
         setFilters((prev) => ({ ...prev, [key]: value }))
-        // loadQuestions();
     }
 
 

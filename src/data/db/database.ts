@@ -39,11 +39,100 @@ export class Database {
                 });
             }
         },
+        2: {
+            description: 'Add Global Search View',
+            up: (db: sqlite3.Database) => {
+                const globalSearchViewSetupSQL = `
+                -- Create a comprehensive view for global question search
+                CREATE VIEW IF NOT EXISTS question_search_view AS
+                SELECT 
+                    q.question_id,
+                    q.question_text,
+                    q.answer_a,
+                    q.answer_b,
+                    q.answer_c,
+                    q.answer_d,
+                    q.answer_a_justification,
+                    q.answer_b_justification,
+                    q.answer_c_justification,
+                    q.answer_d_justification,
+                    q.correct_answer,
+                    q.exam_level,
+                    q.cognitive_level,
+                    q.technical_references,
+                    q.references_provided,
+                    q.objective,
+                    q.last_used,
+                    q.img_url,
+                    
+                    -- Exam information
+                    GROUP_CONCAT(DISTINCT e.name) AS exam_names,
+                    GROUP_CONCAT(DISTINCT p.name) AS plant_names,
+                    GROUP_CONCAT(DISTINCT eq.question_number) AS question_numbers,
+                    
+                    -- System KA information
+                    GROUP_CONCAT(DISTINCT sk.system_ka_number) AS system_ka_numbers,
+                    GROUP_CONCAT(DISTINCT sk.ka_statement) AS ka_statements,
+                    GROUP_CONCAT(DISTINCT sk.category) AS categories,
+                    GROUP_CONCAT(DISTINCT sk.cfr_content) AS cfr_contents,
+                    GROUP_CONCAT(DISTINCT s.system_name) AS system_names,
+                    
+                    -- Stem information
+                    GROUP_CONCAT(DISTINCT st.stem_statement) AS stem_statements,
+                    
+                    -- KA match justifications
+                    GROUP_CONCAT(DISTINCT eq.ka_match_justification) AS ka_match_justifications,
+                    GROUP_CONCAT(DISTINCT eq.sro_match_justification) AS sro_match_justifications,
+                    
+                    -- Create a comprehensive searchable text field
+                    q.question_text || ' ' ||
+                    q.answer_a || ' ' ||
+                    q.answer_b || ' ' ||
+                    q.answer_c || ' ' ||
+                    q.answer_d || ' ' ||
+                    COALESCE(q.answer_a_justification, '') || ' ' ||
+                    COALESCE(q.answer_b_justification, '') || ' ' ||
+                    COALESCE(q.answer_c_justification, '') || ' ' ||
+                    COALESCE(q.answer_d_justification, '') || ' ' ||
+                    COALESCE(q.technical_references, '') || ' ' ||
+                    COALESCE(q.references_provided, '') || ' ' ||
+                    COALESCE(q.objective, '') || ' ' ||
+                    COALESCE(GROUP_CONCAT(DISTINCT e.name), '') || ' ' ||
+                    COALESCE(GROUP_CONCAT(DISTINCT p.name), '') || ' ' ||
+                    COALESCE(GROUP_CONCAT(DISTINCT sk.system_ka_number), '') || ' ' ||
+                    COALESCE(GROUP_CONCAT(DISTINCT sk.system_number), '') || ' ' ||
+                    COALESCE(GROUP_CONCAT(DISTINCT sk.ka_number), '') || ' ' ||
+                    COALESCE(GROUP_CONCAT(DISTINCT sk.ka_statement), '') || ' ' ||
+                    COALESCE(GROUP_CONCAT(DISTINCT sk.cfr_content), '') || ' ' ||
+                    COALESCE(GROUP_CONCAT(DISTINCT s.system_name), '') || ' ' ||
+                    COALESCE(GROUP_CONCAT(DISTINCT st.stem_statement), '') || ' ' ||
+                    COALESCE(GROUP_CONCAT(DISTINCT eq.ka_match_justification), '') || ' ' ||
+                    COALESCE(GROUP_CONCAT(DISTINCT eq.sro_match_justification), '') AS searchable_text
+
+                FROM questions q
+                LEFT JOIN exam_questions eq ON q.question_id = eq.question_id
+                LEFT JOIN exams e ON eq.exam_id = e.exam_id
+                LEFT JOIN plants p ON e.plant_id = p.plant_id
+                LEFT JOIN question_system_kas qsk ON q.question_id = qsk.question_id
+                LEFT JOIN system_kas sk ON qsk.system_number = sk.system_number AND qsk.ka_number = sk.ka_number
+                LEFT JOIN systems s ON sk.system_number = s.system_number
+                LEFT JOIN kas k ON sk.ka_number = k.ka_number
+                LEFT JOIN stems st ON k.stem_id = st.stem_id
+
+                GROUP BY q.question_id;
+                `
+                db.exec(globalSearchViewSetupSQL, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            }
+        }
         // 2: {
         //     description: 'Add Full-Text Search (FTS) tables, view, and triggers',
         //     up: (db: sqlite3.Database) => {
         //         const ftsSetupSql = `
-        //             -- 2. Create the search view
+        // -- 2. Create the search view
         //             CREATE VIEW IF NOT EXISTS questions_search_view AS
         //             SELECT 
         //                 q.question_id AS rowid,

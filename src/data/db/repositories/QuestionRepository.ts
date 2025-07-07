@@ -327,107 +327,113 @@ export class QuestionRepository {
                 return;
             }
 
-            // Build the base query
-            let query = 'SELECT * FROM questions';
+            let query: string;
+            const params = [];
             const conditions: string[] = [];
-            const params: unknown[] = [];
 
-            // Apply filters if provided
+            if (filters?.query?.trim()) {
+                // Use LIKE for global search across all text columns in question_search_view
+                const searchTerm = `%${filters.query.trim().replace(/"/g, '""')}%`;
+                query = `
+                SELECT q.*
+                FROM questions q
+                WHERE q.question_id IN (
+                    SELECT question_id
+                    FROM question_search_view
+                    WHERE searchable_text LIKE ?
+                )
+            `;
+                params.push(searchTerm);
+            } else {
+                // No global search - use regular query
+                query = 'SELECT * FROM questions q';
+            }
+
             if (filters) {
-                filters.query = filters.query?.trim() || '';
 
-                // Text search in question_text
-                if (filters.query) {
-                    conditions.push('question_text LIKE ?');
-                    params.push(`%${filters.query}%`);
+                if (filters.question_text?.trim()) {
+                    conditions.push('q.question_text LIKE ?');
+                    params.push(`%${filters.question_text.trim()}%`);
                 }
 
-                // Date range filters
-                if (filters.lastUsedStart) {
-                    conditions.push('last_used >= ?');
-                    params.push(filters.lastUsedStart);
-                }
-                if (filters.lastUsedEnd) {
-                    conditions.push('last_used <= ?');
-                    params.push(filters.lastUsedEnd);
+                if (filters.exam_level !== undefined) {
+                    conditions.push('q.exam_level = ?');
+                    params.push(filters.exam_level);
                 }
 
-                // Exam level filters
-                if (filters.examLevelStart) {
-                    conditions.push('exam_level >= ?');
-                    params.push(filters.examLevelStart);
-                }
-                if (filters.examLevelEnd) {
-                    conditions.push('exam_level <= ?');
-                    params.push(filters.examLevelEnd);
+                if (filters.cognitive_level !== undefined) {
+                    conditions.push('q.cognitive_level = ?');
+                    params.push(filters.cognitive_level);
                 }
 
-                // Difficulty level filters
-                if (filters.diffLevelStart) {
-                    conditions.push('difficulty_level >= ?');
-                    params.push(parseInt(filters.diffLevelStart));
-                }
-                if (filters.diffLevelEnd) {
-                    conditions.push('difficulty_level <= ?');
-                    params.push(parseInt(filters.diffLevelEnd));
+                if (filters.objective?.trim()) {
+                    conditions.push('q.objective LIKE ?');
+                    params.push(`%${filters.objective.trim()}%`);
                 }
 
-                // Cognitive level filters
-                if (filters.cogLevelStart) {
-                    conditions.push('cognitive_level >= ?');
-                    params.push(filters.cogLevelStart);
-                }
-                if (filters.cogLevelEnd) {
-                    conditions.push('cognitive_level <= ?');
-                    params.push(filters.cogLevelEnd);
+                if (filters.technical_references?.trim()) {
+                    conditions.push('q.technical_references LIKE ?');
+                    params.push(`%${filters.technical_references.trim()}%`);
                 }
 
-                // Objective filter
-                if (filters.objective) {
-                    conditions.push('objective LIKE ?');
-                    params.push(`%${filters.objective}%`);
-                }
-
-                // Handle relationship-based filters (requires JOINs)
-                if (filters.examIds && filters.examIds.length > 0) {
+                // Filter by exam IDs
+                if (filters.examIds?.length) {
                     const placeholders = filters.examIds.map(() => '?').join(',');
-                    conditions.push(`question_id IN (
+                    conditions.push(`q.question_id IN (
                     SELECT question_id FROM exam_questions
                     WHERE exam_id IN (${placeholders})
                 )`);
                     params.push(...filters.examIds);
                 }
 
-                if (filters.kaNums && filters.kaNums.length > 0) {
+                // Filter by KA numbers - updated to use current schema
+                if (filters.kaNums?.length) {
                     const placeholders = filters.kaNums.map(() => '?').join(',');
-                    conditions.push(`question_id IN (
-                    SELECT question_id FROM question_kas 
-                    WHERE ka_number IN (${placeholders})
+                    conditions.push(`q.question_id IN (
+                    SELECT question_id FROM question_system_kas qsk
+                    WHERE qsk.ka_number IN (${placeholders})
                 )`);
                     params.push(...filters.kaNums);
                 }
 
-                if (filters.systemNums && filters.systemNums.length > 0) {
+                // Filter by system numbers - updated to use current schema
+                if (filters.systemNums?.length) {
                     const placeholders = filters.systemNums.map(() => '?').join(',');
-                    conditions.push(`question_id IN (
-                    SELECT question_id FROM question_systems 
-                    WHERE system_number IN (${placeholders})
+                    conditions.push(`q.question_id IN (
+                    SELECT question_id FROM question_system_kas qsk
+                    WHERE qsk.system_number IN (${placeholders})
                 )`);
                     params.push(...filters.systemNums);
                 }
+
+                // Filter by system_ka combinations
+                if (filters.system_kaNums && filters.system_kaNums.length > 0) {
+                    const placeholders = filters.system_kaNums.map(() => '?').join(',');
+                    conditions.push(`q.question_id IN (
+                    SELECT DISTINCT qsk.question_id 
+                    FROM question_system_kas qsk
+                    JOIN system_kas sk ON qsk.system_number = sk.system_number 
+                        AND qsk.ka_number = sk.ka_number
+                    WHERE sk.system_ka_number IN (${placeholders})
+                )`);
+                    params.push(...filters.system_kaNums);
+                }
             }
 
-            // Add WHERE clause if there are conditions
             if (conditions.length > 0) {
-                query += ' WHERE ' + conditions.join(' AND ');
+                query += (filters?.query?.trim() ? ' AND ' : ' WHERE ') + conditions.join(' AND ');
             }
 
-            // Add LIMIT 1 for single record retrieval
-            query += ' LIMIT 1';
+            // Add ORDER BY and LIMIT 1 for single record retrieval
+            query += ' ORDER BY q.question_id LIMIT 1';
+
+            // console.log("Final Query:", query);
+            // console.log("Params:", params);
 
             // Execute the query using db.get() instead of db.all()
             this.db.get(query, params, (err, row: Question | undefined) => {
                 if (err) {
+                    console.error("Query Error:", err);
                     reject(err);
                 } else {
                     // Return null if no record found, otherwise return the question
@@ -449,42 +455,38 @@ export class QuestionRepository {
             const conditions: string[] = [];
 
             if (filters?.query?.trim()) {
-                // Use LIKE for global search across all text columns in questions_search_view
+                // Use LIKE for global search across all text columns in question_search_view
                 const searchTerm = `%${filters.query.trim().replace(/"/g, '""')}%`;
                 query = `
                 SELECT q.*
                 FROM questions q
                 WHERE q.question_id IN (
-                    SELECT rowid
-                    FROM questions_search_view
-                    WHERE question_text LIKE ?
-                       OR objective LIKE ?
-                       OR last_used LIKE ?
-                       OR exam_level LIKE ?
-                       OR difficulty_level LIKE ?
-                       OR cognitive_level LIKE ?
-                       OR exam_names LIKE ?
-                       OR ka_descriptions LIKE ?
-                       OR ka_numbers LIKE ?
-                       OR system_names LIKE ?
-                       OR system_numbers LIKE ?
+                    SELECT question_id
+                    FROM question_search_view
+                    WHERE searchable_text LIKE ?
                 )
             `;
-                params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
+                params.push(searchTerm);
             } else {
                 // No global search - use regular query
                 query = 'SELECT * FROM questions q';
             }
 
             if (filters) {
+
                 if (filters.question_text?.trim()) {
                     conditions.push('q.question_text LIKE ?');
                     params.push(`%${filters.question_text.trim()}%`);
                 }
 
-                if (filters.category?.trim()) {
-                    conditions.push('q.category LIKE ?');
-                    params.push(`%${filters.category.trim()}%`);
+                if (filters.exam_level !== undefined) {
+                    conditions.push('q.exam_level = ?');
+                    params.push(filters.exam_level);
+                }
+
+                if (filters.cognitive_level !== undefined) {
+                    conditions.push('q.cognitive_level = ?');
+                    params.push(filters.cognitive_level);
                 }
 
                 if (filters.objective?.trim()) {
@@ -497,24 +499,7 @@ export class QuestionRepository {
                     params.push(`%${filters.technical_references.trim()}%`);
                 }
 
-                if (filters.lastUsedStart?.trim()) {
-                    conditions.push('q.last_used >= ?');
-                    params.push(filters.lastUsedStart.trim());
-                }
-                if (filters.lastUsedEnd?.trim()) {
-                    conditions.push('q.last_used <= ?');
-                    params.push(filters.lastUsedEnd.trim());
-                }
-
-                if (filters.diffLevelStart?.trim()) {
-                    conditions.push('q.difficulty_level >= ?');
-                    params.push(parseInt(filters.diffLevelStart));
-                }
-                if (filters.diffLevelEnd?.trim()) {
-                    conditions.push('q.difficulty_level <= ?');
-                    params.push(parseInt(filters.diffLevelEnd));
-                }
-
+                // Filter by exam IDs
                 if (filters.examIds?.length) {
                     const placeholders = filters.examIds.map(() => '?').join(',');
                     conditions.push(`q.question_id IN (
@@ -524,22 +509,37 @@ export class QuestionRepository {
                     params.push(...filters.examIds);
                 }
 
+                // Filter by KA numbers - updated to use current schema
                 if (filters.kaNums?.length) {
                     const placeholders = filters.kaNums.map(() => '?').join(',');
                     conditions.push(`q.question_id IN (
-                    SELECT question_id FROM question_kas 
-                    WHERE ka_number IN (${placeholders})
+                    SELECT question_id FROM question_system_kas qsk
+                    WHERE qsk.ka_number IN (${placeholders})
                 )`);
                     params.push(...filters.kaNums);
                 }
 
+                // Filter by system numbers - updated to use current schema
                 if (filters.systemNums?.length) {
                     const placeholders = filters.systemNums.map(() => '?').join(',');
                     conditions.push(`q.question_id IN (
-                    SELECT question_id FROM question_systems 
-                    WHERE system_number IN (${placeholders})
+                    SELECT question_id FROM question_system_kas qsk
+                    WHERE qsk.system_number IN (${placeholders})
                 )`);
                     params.push(...filters.systemNums);
+                }
+
+                // Filter by system_ka combinations
+                if (filters.system_kaNums && filters.system_kaNums.length > 0) {
+                    const placeholders = filters.system_kaNums.map(() => '?').join(',');
+                    conditions.push(`q.question_id IN (
+                    SELECT DISTINCT qsk.question_id 
+                    FROM question_system_kas qsk
+                    JOIN system_kas sk ON qsk.system_number = sk.system_number 
+                        AND qsk.ka_number = sk.ka_number
+                    WHERE sk.system_ka_number IN (${placeholders})
+                )`);
+                    params.push(...filters.system_kaNums);
                 }
             }
 
@@ -600,51 +600,36 @@ export class QuestionRepository {
                     params.push(...filters.systemNums);
                 }
 
-                // Direct column filters
-                if (filters.query) {
+                if (filters.system_kaNums && filters.system_kaNums.length > 0) {
+                    joins.push('JOIN question_system_kas qsk ON q.question_id = qsk.question_id');
+                    joins.push('JOIN system_kas sk ON qsk.system_number = sk.system_number AND qsk.ka_number = sk.ka_number');
+                    const placeholders = filters.system_kaNums.map(() => '?').join(',');
+                    conditions.push(`sk.system_ka_number IN (${placeholders})`);
+                    params.push(...filters.system_kaNums);
+                }
+
+                if (filters.question_text?.trim()) {
                     conditions.push('q.question_text LIKE ?');
-                    params.push(`%${filters.query}%`);
+                    params.push(`%${filters.question_text.trim()}%`);
                 }
 
-                if (filters.lastUsedStart) {
-                    conditions.push('q.last_used >= ?');
-                    params.push(filters.lastUsedStart);
+                if (filters.exam_level !== undefined) {
+                    conditions.push('exam_level = ?');
+                    params.push(filters.exam_level);
                 }
-                if (filters.lastUsedEnd) {
-                    conditions.push('q.last_used <= ?');
-                    params.push(filters.lastUsedEnd);
-                }
-
-                if (filters.examLevelStart) {
-                    conditions.push('q.exam_level >= ?');
-                    params.push(filters.examLevelStart);
-                }
-                if (filters.examLevelEnd) {
-                    conditions.push('q.exam_level <= ?');
-                    params.push(filters.examLevelEnd);
+                if (filters.cognitive_level !== undefined) {
+                    conditions.push('cognitive_level = ?');
+                    params.push(filters.cognitive_level);
                 }
 
-                if (filters.diffLevelStart) {
-                    conditions.push('q.difficulty_level >= ?');
-                    params.push(parseInt(filters.diffLevelStart));
-                }
-                if (filters.diffLevelEnd) {
-                    conditions.push('q.difficulty_level <= ?');
-                    params.push(parseInt(filters.diffLevelEnd));
-                }
-
-                if (filters.cogLevelStart) {
-                    conditions.push('q.cognitive_level >= ?');
-                    params.push(filters.cogLevelStart);
-                }
-                if (filters.cogLevelEnd) {
-                    conditions.push('q.cognitive_level <= ?');
-                    params.push(filters.cogLevelEnd);
-                }
-
-                if (filters.objective) {
+                if (filters.objective?.trim()) {
                     conditions.push('q.objective LIKE ?');
-                    params.push(`%${filters.objective}%`);
+                    params.push(`%${filters.objective.trim()}%`);
+                }
+
+                if (filters.technical_references?.trim()) {
+                    conditions.push('q.technical_references LIKE ?');
+                    params.push(`%${filters.technical_references.trim()}%`);
                 }
             }
 

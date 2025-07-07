@@ -290,16 +290,10 @@ interface QuestionFilters {
   examIds?: number[];
   kaNums?: string[];
   systemNums?: string[];
-  lastUsedStart?: string;
-  lastUsedEnd?: string;
-  examLevelStart?: string;
-  examLevelEnd?: string;
-  diffLevelStart?: string;
-  diffLevelEnd?: string;
-  cogLevelStart?: string;
-  cogLevelEnd?: string;
+  system_kaNums?: string[];
+  exam_level?: 0 | 1 | '';
+  cognitive_level?: 0 | 1 | '';
   objective?: string;
-  category?: string;
   technical_references?: string;
 
 }
