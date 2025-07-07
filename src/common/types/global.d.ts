@@ -39,25 +39,34 @@ interface Question {
   system_kas?: SystemKa[];
 }
 
-// interface QuestionForm extends Question {
-//   questionExams?: {
-//     exam: Exam;
-//     main_system_ka_system: string | null;
-//     main_system_ka_ka: string | null;
-//     ka_match_justification: string | null;
-//     sro_match_justification: string | null;
-//     answers_order: string | null;
-
-//   }[]
-// }
-
-// interface ExamQuestionDetails {
-//   main_system_ka_system: string | null;
-//   main_system_ka_ka: string | null;
-//   ka_match_justification: string | null;
-//   sro_match_justification: string | null;
-//   answers_order: string | null;
-// }
+interface QuestionForDataTransfer {
+  question_text: string;
+  img_url: string | null;
+  answer_a: string;
+  answer_a_justification: string;
+  answer_b: string;
+  answer_b_justification: string;
+  answer_c: string;
+  answer_c_justification: string;
+  answer_d: string;
+  answer_d_justification: string;
+  correct_answer: "A" | "B" | "C" | "D";
+  exam_level: 0 | 1;
+  cognitive_level: 0 | 1;
+  technical_references: string | null;
+  references_provided: string | null;
+  objective: string | null;
+  question_exams?:
+  {
+    exam_name: string;
+    main_system: string;
+    main_ka: string;
+    ka_match_justification: string;
+    sro_match_justification: string;
+    answers_order: string;
+  }[];
+  system_ka_numbers?: string[];
+}
 
 interface Answer {
   answer_text: string;

@@ -37,7 +37,7 @@ export class ExportRepository {
     try {
       // Get question data
       const questions = await Promise.all(
-        questionIds.map(id => this.db.questionService.getCompleteQuestion(id))
+        questionIds.map(id => this.db.questionService.getQuestionForExport(id))
       );
 
       // Show save dialog
