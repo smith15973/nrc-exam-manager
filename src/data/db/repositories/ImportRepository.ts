@@ -37,7 +37,7 @@ export class ImportRepository {
   }
 
   // Unified import function that handles JSON, CSV, and XLSX files
-  async importFiles(allowMultiple = true): Promise<any[] | { success: boolean; error: string }> {
+  async importFiles(allowMultiple = true): Promise<unknown[] | { success: boolean; error: string }> {
     const filePaths = await this.openFileDialog([
       { name: 'All Supported Files', extensions: ['json', 'csv', 'xlsx'] },
       { name: 'JSON Files', extensions: ['json'] },
@@ -50,7 +50,7 @@ export class ImportRepository {
     }
 
     try {
-      const results: any[] = [];
+      const results: unknown[] = [];
 
       for (const filePath of filePaths) {
         // Verify file exists and is readable
@@ -66,7 +66,7 @@ export class ImportRepository {
 
         // Determine file type by extension
         const extension = path.extname(filePath).toLowerCase();
-        let fileData: any;
+        let fileData: unknown;
 
         switch (extension) {
           case '.json':
@@ -98,7 +98,7 @@ export class ImportRepository {
   }
 
   // Helper method to process JSON files
-  private async processJsonFile(filePath: string): Promise<any> {
+  private async processJsonFile(filePath: string): Promise<unknown> {
     try {
       const content = fs.readFileSync(filePath, 'utf-8');
       return JSON.parse(content);
@@ -108,7 +108,7 @@ export class ImportRepository {
   }
 
   // Helper method to process CSV files
-  private async processCsvFile(filePath: string): Promise<any[]> {
+  private async processCsvFile(filePath: string): Promise<unknown[]> {
     try {
       const content = fs.readFileSync(filePath, 'utf-8');
 
@@ -132,7 +132,7 @@ export class ImportRepository {
   }
 
   // Helper method to process XLSX files
-  private async processXlsxFile(filePath: string): Promise<any[]> {
+  private async processXlsxFile(filePath: string): Promise<unknown[]> {
     try {
       const workbook = XLSX.read(fs.readFileSync(filePath), { type: 'buffer' });
 
@@ -154,19 +154,22 @@ export class ImportRepository {
     }
   }
 
-  // Alternative version that returns just the data without metadata
-  async importFilesSimple(allowMultiple = true): Promise<any[] | { success: boolean; error: string }> {
+  async importFilesSimple(allowMultiple = true): Promise<unknown[] | { success: boolean; error: string }> {
     const result = await this.importFiles(allowMultiple);
 
     if ('success' in result && !result.success) {
       return result; // Return error as-is
     }
 
-    // Extract just the data from each file
-    const files = result as any[];
-    const allData: any[] = [];
+    const files = result as unknown[];
+    const allData: unknown[] = [];
 
     for (const file of files) {
+      if (!(typeof file === 'object' && file !== null && 'data' in file)) {
+        console.warn('File object missing data property:', file);
+        continue;
+      }
+
       if (Array.isArray(file.data)) {
         allData.push(...file.data); // Spread arrays
       } else {
@@ -177,8 +180,8 @@ export class ImportRepository {
     return allData;
   }
 
-  // Updated importQuestionsSimple method with proper Question[] formatting
-  async importQuestionsSimple(): Promise<Question[] | { success: boolean; error: string }> {
+  // Updated importQuestionsSimple method with proper QuestionForDataTransfer formatting
+  async importQuestionsSimple(): Promise<QuestionForDataTransfer[] | { success: boolean; error: string }> {
     try {
       const result = await this.importFilesSimple(true);
 
@@ -186,12 +189,12 @@ export class ImportRepository {
         return result; // Return error as-is
       }
 
-      const rawData = result as any[];
-      const questions: Question[] = [];
+      const rawData = result as unknown[];
+      const questions: QuestionForDataTransfer[] = [];
 
       for (const item of rawData) {
         try {
-          const question = this.transformToQuestion(item);
+          const question = this.transformToQuestionForDataTransfer(item);
           if (question) {
             questions.push(question);
           }
@@ -211,93 +214,96 @@ export class ImportRepository {
     }
   }
 
-  // Helper method to transform raw data into Question format
-  private transformToQuestion(rawData: any): Question | null {
+  // Updated helper method to transform raw data into QuestionForDataTransfer format
+  private transformToQuestionForDataTransfer(rawData: unknown): QuestionForDataTransfer | null {
     if (!rawData || typeof rawData !== 'object') {
       throw new Error('Invalid data type - expected object');
     }
 
+    const data = rawData as Record<string, any>;
+
     // Validate required fields
-    if (!rawData.question_text && !rawData.questionText && !rawData.text) {
+    if (!data.question_text && !data.questionText && !data.text) {
       throw new Error('Missing required field: question_text');
     }
 
-    // Transform the data to match Question interface
-    const question: Question = {
-      question_id: this.extractNumber(rawData.question_id || rawData.questionId || rawData.id) || 0,
-      question_text: this.extractString(rawData.question_text || rawData.questionText || rawData.text) || '',
-      img_url: this.extractString(rawData.img_url || rawData.image || rawData.imgUrl) || null,
-      answer_a: this.extractString(rawData.answer_a || rawData.a || rawData.option_a) || '',
-      answer_a_justification: this.extractString(rawData.answer_a_justification || rawData.a_justification || rawData.justification_a) || '',
-      answer_b: this.extractString(rawData.answer_b || rawData.b || rawData.option_b) || '',
-      answer_b_justification: this.extractString(rawData.answer_b_justification || rawData.b_justification || rawData.justification_b) || '',
-      answer_c: this.extractString(rawData.answer_c || rawData.c || rawData.option_c) || '',
-      answer_c_justification: this.extractString(rawData.answer_c_justification || rawData.c_justification || rawData.justification_c) || '',
-      answer_d: this.extractString(rawData.answer_d || rawData.d || rawData.option_d) || '',
-      answer_d_justification: this.extractString(rawData.answer_d_justification || rawData.d_justification || rawData.justification_d) || '',
-      correct_answer: (this.extractString(rawData.correct_answer || rawData.correct || rawData.answer) || 'A').toUpperCase() as "A" | "B" | "C" | "D",
-      exam_level: (this.extractNumber(rawData.exam_level || rawData.examLevel || rawData.level) === 1 ? 1 : 0),
-      cognitive_level: (this.extractNumber(rawData.cognitive_level || rawData.cognitiveLevel) === 1 ? 1 : 0),
-      technical_references: this.extractString(rawData.technical_references || rawData.technicalReferences || rawData.references) || null,
-      references_provided: this.extractString(rawData.references_provided || rawData.referencesProvided) || null,
-      objective: this.extractString(rawData.objective) || null,
-      last_used: this.extractString(rawData.last_used || rawData.lastUsed) || null
+    // Transform the data to match QuestionForDataTransfer interface
+    const question: QuestionForDataTransfer = {
+      question_text: this.extractString(data.question_text || data.questionText || data.text) || '',
+      img_url: this.extractString(data.img_url || data.image || data.imgUrl) || null,
+      answer_a: this.extractString(data.answer_a || data.a || data.option_a) || '',
+      answer_a_justification: this.extractString(data.answer_a_justification || data.a_justification || data.justification_a) || '',
+      answer_b: this.extractString(data.answer_b || data.b || data.option_b) || '',
+      answer_b_justification: this.extractString(data.answer_b_justification || data.b_justification || data.justification_b) || '',
+      answer_c: this.extractString(data.answer_c || data.c || data.option_c) || '',
+      answer_c_justification: this.extractString(data.answer_c_justification || data.c_justification || data.justification_c) || '',
+      answer_d: this.extractString(data.answer_d || data.d || data.option_d) || '',
+      answer_d_justification: this.extractString(data.answer_d_justification || data.d_justification || data.justification_d) || '',
+      correct_answer: (this.extractString(data.correct_answer || data.correct || data.answer) || 'A').toUpperCase() as "A" | "B" | "C" | "D",
+      exam_level: (this.extractNumber(data.exam_level || data.examLevel || data.level) === 1 ? 1 : 0) as 0 | 1,
+      cognitive_level: (this.extractNumber(data.cognitive_level || data.cognitiveLevel) === 1 ? 1 : 0) as 0 | 1,
+      technical_references: this.extractString(data.technical_references || data.technicalReferences || data.references) || null,
+      references_provided: this.extractString(data.references_provided || data.referencesProvided) || null,
+      objective: this.extractString(data.objective) || null
     };
 
-
-    // Handle relationships if they exist
-    if (rawData.exams) {
-      question.exams = Array.isArray(rawData.exams) ? rawData.exams : [rawData.exams];
+    // Handle question_exams if they exist
+    if (data.question_exams || data.exams) {
+      const examData = data.question_exams || data.exams;
+      if (Array.isArray(examData)) {
+        question.question_exams = examData.map(exam => ({
+          exam_name: this.extractString(exam.exam_name || exam.name) || '',
+          main_system: this.extractString(exam.main_system || exam.system) || '',
+          main_ka: this.extractString(exam.main_ka || exam.ka) || '',
+          ka_match_justification: this.extractString(exam.ka_match_justification || exam.ka_justification) || '',
+          sro_match_justification: this.extractString(exam.sro_match_justification || exam.sro_justification) || '',
+          answers_order: this.extractString(exam.answers_order || exam.order) || ''
+        }));
+      } else if (typeof examData === 'object') {
+        question.question_exams = [{
+          exam_name: this.extractString(examData.exam_name || examData.name) || '',
+          main_system: this.extractString(examData.main_system || examData.system) || '',
+          main_ka: this.extractString(examData.main_ka || examData.ka) || '',
+          ka_match_justification: this.extractString(examData.ka_match_justification || examData.ka_justification) || '',
+          sro_match_justification: this.extractString(examData.sro_match_justification || examData.sro_justification) || '',
+          answers_order: this.extractString(examData.answers_order || examData.order) || 'ABCD'
+        }];
+      }
     }
 
-    if (rawData.systems) {
-      question.system_kas = Array.isArray(rawData.system_kas) ? rawData.system_kas : [rawData.system_kas];
+    // Handle system_ka_numbers if they exist
+    if (data.system_ka_numbers || data.systems || data.kas) {
+      const systemKaData = data.system_ka_numbers || data.systems || data.kas;
+      if (Array.isArray(systemKaData)) {
+        question.system_ka_numbers = systemKaData.map(item => {
+          if (typeof item === 'string') {
+            return item;
+          } else if (typeof item === 'object' && item !== null) {
+            return this.extractString(item.number || item.ka_number || item.system_number) || '';
+          }
+          return String(item);
+        }).filter(item => item !== '');
+      } else if (typeof systemKaData === 'string') {
+        question.system_ka_numbers = [systemKaData];
+      } else if (typeof systemKaData === 'object' && systemKaData !== null) {
+        const extracted = this.extractString(systemKaData.number || systemKaData.ka_number || systemKaData.system_number);
+        if (extracted) {
+          question.system_ka_numbers = [extracted];
+        }
+      }
     }
 
     return question;
   }
 
-  // Helper method to transform answers data
-  private transformAnswers(answersData: any, questionId: number): [Answer, Answer, Answer, Answer] | undefined {
-    if (!answersData) return undefined;
-
-    let answers: any[] = [];
-
-    if (Array.isArray(answersData)) {
-      answers = answersData;
-    } else if (typeof answersData === 'object') {
-      // Handle object format like { a: "text", b: "text", c: "text", d: "text" }
-      answers = Object.entries(answersData).map(([key, value]) => ({
-        option: key.toUpperCase(),
-        answer_text: value,
-        is_correct: 0 // Default to incorrect, will be set based on correct_answer field
-      }));
-    }
-
-    // Ensure we have exactly 4 answers
-    while (answers.length < 4) {
-      answers.push({
-        answer_text: '',
-        is_correct: 0,
-        option: String.fromCharCode(65 + answers.length) // A, B, C, D
-      });
-    }
-
-    // Transform to Answer format
-    const transformedAnswers: Answer[] = answers.slice(0, 4).map((answer, index) => ({
-      answer_id: 0, // Will be set by database
-      question_id: questionId,
-      answer_text: this.extractString(answer.answer_text || answer.text || answer.content) || '',
-      is_correct: this.extractNumber(answer.is_correct || answer.correct) || 0,
-      option: this.extractString(answer.option) || String.fromCharCode(65 + index), // A, B, C, D
-      justification: this.extractString(answer.justification || answer.explanation) || null
-    }));
-
-    return transformedAnswers as [Answer, Answer, Answer, Answer];
+  // Keep the old transformToQuestion method for backward compatibility
+  private transformToQuestion(rawData: unknown): QuestionForDataTransfer | null {
+    // For backward compatibility, delegate to the new method
+    return this.transformToQuestionForDataTransfer(rawData);
   }
 
   // Helper method to safely extract string values
-  private extractString(value: any): string | null {
+  private extractString(value: unknown): string | null {
     if (value === null || value === undefined) return null;
     if (typeof value === 'string') return value.trim();
     if (typeof value === 'number') return value.toString();
@@ -306,7 +312,7 @@ export class ImportRepository {
   }
 
   // Helper method to safely extract number values
-  private extractNumber(value: any): number | null {
+  private extractNumber(value: unknown): number | null {
     if (value === null || value === undefined) return null;
     if (typeof value === 'number') return value;
     if (typeof value === 'string') {
@@ -316,15 +322,14 @@ export class ImportRepository {
     return null;
   }
 
-  // Updated validation method that cleans data instead of rejecting it
-  private async cleanAndValidateQuestion(question: Question): Promise<{ question: Question; warnings: string[] }> {
+  // Updated validation method for QuestionForDataTransfer
+  private async cleanAndValidateQuestionForDataTransfer(question: QuestionForDataTransfer): Promise<{ question: QuestionForDataTransfer; warnings: string[] }> {
     const warnings: string[] = [];
     const cleanedQuestion = { ...question };
 
-    // Get all valid reference data
-    const exams = await this.db.exams.getAll();
-    const kas = await this.db.kas.getMany();
-    const systems = await this.db.systems.getMany();
+    // Define allowed field names for type safety
+    type AnswerField = 'answer_a' | 'answer_b' | 'answer_c' | 'answer_d';
+    type JustificationField = 'answer_a_justification' | 'answer_b_justification' | 'answer_c_justification' | 'answer_d_justification';
 
     // Clean required fields
     if (!cleanedQuestion.question_text || cleanedQuestion.question_text.trim() === '') {
@@ -332,180 +337,68 @@ export class ImportRepository {
       warnings.push('Question text was missing - set to empty string');
     }
 
-    if (cleanedQuestion.question_text && cleanedQuestion.question_text.trim() !== '') {
-      const existingQuestions = await this.db.questions.getMany({ query: cleanedQuestion.question_text.trim() });
-      const existingQuestion = existingQuestions[0];
-      if (existingQuestion) {
-        warnings.push(`Duplicate question detected - matches existing question ID ${existingQuestion.question_id}`);
-      }
+    // Validate correct_answer
+    if (!['A', 'B', 'C', 'D'].includes(cleanedQuestion.correct_answer)) {
+      cleanedQuestion.correct_answer = 'A';
+      warnings.push('Invalid correct_answer - set to A');
     }
 
-    // Clean and validate answers
-    if (!cleanedQuestion.answers) {
-      // Create 4 empty answers if none exist
-      cleanedQuestion.answers = [
-        { answer_id: 0, question_id: cleanedQuestion.question_id, answer_text: '', is_correct: 0, option: 'A', justification: null },
-        { answer_id: 0, question_id: cleanedQuestion.question_id, answer_text: '', is_correct: 0, option: 'B', justification: null },
-        { answer_id: 0, question_id: cleanedQuestion.question_id, answer_text: '', is_correct: 0, option: 'C', justification: null },
-        { answer_id: 0, question_id: cleanedQuestion.question_id, answer_text: '', is_correct: 0, option: 'D', justification: null }
-      ] as [Answer, Answer, Answer, Answer];
-      warnings.push('Question had no answers - created 4 empty answers');
-    } else {
-      // Ensure exactly 4 answers
-      if (cleanedQuestion.answers.length !== 4) {
-        const currentAnswers = [...cleanedQuestion.answers];
-
-        // Pad with empty answers if less than 4
-        while (currentAnswers.length < 4) {
-          currentAnswers.push({
-            answer_id: 0,
-            question_id: cleanedQuestion.question_id,
-            answer_text: '',
-            is_correct: 0,
-            option: String.fromCharCode(65 + currentAnswers.length),
-            justification: null
-          });
-        }
-
-        // Trim to 4 if more than 4
-        if (currentAnswers.length > 4) {
-          warnings.push(`Question had ${cleanedQuestion.answers.length} answers - trimmed to 4`);
-        } else {
-          warnings.push(`Question had ${cleanedQuestion.answers.length} answers - padded to 4`);
-        }
-
-        cleanedQuestion.answers = currentAnswers.slice(0, 4) as [Answer, Answer, Answer, Answer];
-      }
-
-      // Check for correct answers and fix if needed
-      const correctAnswers = cleanedQuestion.answers.filter(a => a.is_correct === 1);
-      if (correctAnswers.length === 0) {
-        // Set first answer as correct if none are marked
-        cleanedQuestion.answers[0].is_correct = 1;
-        warnings.push('No correct answer found - set answer A as correct');
-      } else if (correctAnswers.length > 1) {
-        // Keep only the first correct answer
-        let foundCorrect = false;
-        cleanedQuestion.answers.forEach(answer => {
-          if (answer.is_correct === 1) {
-            if (foundCorrect) {
-              answer.is_correct = 0;
-            } else {
-              foundCorrect = true;
-            }
-          }
-        });
-        warnings.push(`Multiple correct answers found - kept only the first one`);
-      }
-
-      // Clean answer texts
-      cleanedQuestion.answers.forEach((answer, index) => {
-        if (!answer.answer_text || answer.answer_text.trim() === '') {
-          answer.answer_text = '';
-          warnings.push(`Answer ${String.fromCharCode(65 + index)} text was missing - set to empty string`);
-        }
-
-        // Truncate long answer text
-        if (answer.answer_text && answer.answer_text.length > 500) {
-          answer.answer_text = answer.answer_text.substring(0, 500);
-          warnings.push(`Answer ${String.fromCharCode(65 + index)} text was too long - truncated to 500 characters`);
-        }
-      });
+    // Validate exam_level and cognitive_level
+    if (cleanedQuestion.exam_level !== 0 && cleanedQuestion.exam_level !== 1) {
+      cleanedQuestion.exam_level = 0;
+      warnings.push('Invalid exam_level - set to 0');
     }
 
-    // Clean difficulty level
-    if (cleanedQuestion.difficulty_level !== null && cleanedQuestion.difficulty_level !== undefined) {
-      if (cleanedQuestion.difficulty_level < 1) {
-        cleanedQuestion.difficulty_level = 1;
-        warnings.push('Difficulty level was below 1 - set to 1');
-      } else if (cleanedQuestion.difficulty_level > 5) {
-        cleanedQuestion.difficulty_level = 5;
-        warnings.push('Difficulty level was above 5 - set to 5');
-      }
+    if (cleanedQuestion.cognitive_level !== 0 && cleanedQuestion.cognitive_level !== 1) {
+      cleanedQuestion.cognitive_level = 0;
+      warnings.push('Invalid cognitive_level - set to 0');
     }
 
-    // Clean exam references
-    if (cleanedQuestion.exams && cleanedQuestion.exams.length > 0) {
-      const validExamIds = exams.map(exam => exam.exam_id);
-      const rejectedExams: string[] = [];
+    // Clean answer fields
+    const answerFields: AnswerField[] = ['answer_a', 'answer_b', 'answer_c', 'answer_d'];
+    const justificationFields: JustificationField[] = ['answer_a_justification', 'answer_b_justification', 'answer_c_justification', 'answer_d_justification'];
 
-      cleanedQuestion.exams = cleanedQuestion.exams.filter(examRef => {
-        if (!examRef.exam_id || validExamIds.includes(examRef.exam_id)) {
-          return true;
-        } else {
-          // Find the exam name for the rejected reference
-          const examName = examRef.name || `ID ${examRef.exam_id}`;
-          rejectedExams.push(examName);
-          return false;
-        }
-      });
-
-      if (rejectedExams.length > 0) {
-        warnings.push(`Removed invalid exam references: ${rejectedExams.join(', ')}`);
+    answerFields.forEach(field => {
+      if (!cleanedQuestion[field] || cleanedQuestion[field].trim() === '') {
+        cleanedQuestion[field] = '';
+        warnings.push(`${field} was missing - set to empty string`);
       }
-    }
 
-    // Clean exam references
-    if (cleanedQuestion.kas && cleanedQuestion.kas.length > 0) {
-      const validKaNums = kas.map(ka => ka.ka_number);
-      const rejectedKas: string[] = [];
-
-      cleanedQuestion.kas = cleanedQuestion.kas.filter(kaRef => {
-        if (!kaRef.ka_number || validKaNums.includes(kaRef.ka_number)) {
-          return true;
-        } else {
-          // Find the exam name for the rejected reference
-          const kaNumber = kaRef.ka_number;
-          rejectedKas.push(kaNumber);
-          return false;
-        }
-      });
-
-      if (rejectedKas.length > 0) {
-        warnings.push(`Removed invalid KA references: ${rejectedKas.join(', ')}`);
+      // Truncate long answer text
+      if (cleanedQuestion[field] && cleanedQuestion[field].length > 500) {
+        cleanedQuestion[field] = cleanedQuestion[field].substring(0, 500);
+        warnings.push(`${field} was too long - truncated to 500 characters`);
       }
-    }
+    });
 
-    // Clean system references
-    if (cleanedQuestion.systems && cleanedQuestion.systems.length > 0) {
-      const validSystemNumbers = systems.map(system => system.system_number);
-      const rejectedSystems: string[] = [];
-
-      cleanedQuestion.systems = cleanedQuestion.systems.filter(systemRef => {
-        if (!systemRef.number || validSystemNumbers.includes(systemRef.number)) {
-          return true;
-        } else {
-          const systemNumber = systemRef.number;
-          rejectedSystems.push(systemNumber);
-          return false;
-        }
-      });
-
-      if (rejectedSystems.length > 0) {
-        warnings.push(`Removed invalid system references: ${rejectedSystems.join(', ')}`);
+    justificationFields.forEach(field => {
+      if (!cleanedQuestion[field] || cleanedQuestion[field].trim() === '') {
+        cleanedQuestion[field] = '';
+        warnings.push(`${field} was missing - set to empty string`);
       }
-    }
-
-    // Clean date format
-    if (cleanedQuestion.last_used) {
-      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-      if (!dateRegex.test(cleanedQuestion.last_used)) {
-        // Try to parse and reformat the date
-        const date = new Date(cleanedQuestion.last_used);
-        if (!isNaN(date.getTime())) {
-          cleanedQuestion.last_used = date.toISOString().split('T')[0];
-          warnings.push('Last used date was reformatted to YYYY-MM-DD');
-        } else {
-          cleanedQuestion.last_used = null;
-          warnings.push('Last used date was invalid - set to null');
-        }
-      }
-    }
+    });
 
     // Truncate long question text
     if (cleanedQuestion.question_text && cleanedQuestion.question_text.length > 1000) {
       cleanedQuestion.question_text = cleanedQuestion.question_text.substring(0, 1000);
       warnings.push('Question text was too long - truncated to 1000 characters');
+    }
+
+    // Clean question_exams if present
+    if (cleanedQuestion.question_exams) {
+      cleanedQuestion.question_exams = cleanedQuestion.question_exams.map(exam => ({
+        exam_name: exam.exam_name || '',
+        main_system: exam.main_system || '',
+        main_ka: exam.main_ka || '',
+        ka_match_justification: exam.ka_match_justification || '',
+        sro_match_justification: exam.sro_match_justification || '',
+        answers_order: exam.answers_order || ''
+      }));
+    }
+
+    // Clean system_ka_numbers if present
+    if (cleanedQuestion.system_ka_numbers) {
+      cleanedQuestion.system_ka_numbers = cleanedQuestion.system_ka_numbers.filter(num => num && num.trim() !== '');
     }
 
     return {
@@ -514,10 +407,9 @@ export class ImportRepository {
     };
   }
 
-  // Method to get import statistics with cleaned data
-  // Method to get import statistics with cleaned data
-  async importQuestions(): Promise<{
-    questions: Question[];
+  // Updated method to get import statistics with cleaned data for QuestionForDataTransfer
+  async importQuestionsForDataTransfer(): Promise<{
+    questions: QuestionForDataTransfer[];
     stats: { total: number; processed: number; warnings: { questionNumber: number, msgs: string[] }[] }
   } | { success: boolean; error: string }> {
     try {
@@ -527,8 +419,8 @@ export class ImportRepository {
         return result;
       }
 
-      const rawData = result as any[];
-      const questions: Question[] = [];
+      const rawData = result as unknown[];
+      const questions: QuestionForDataTransfer[] = [];
       const allWarnings: { questionNumber: number, msgs: string[] }[] = [];
       let totalProcessed = 0;
       let successfullyProcessed = 0;
@@ -536,9 +428,9 @@ export class ImportRepository {
       for (const item of rawData) {
         totalProcessed++;
         try {
-          const question = this.transformToQuestion(item);
+          const question = this.transformToQuestionForDataTransfer(item);
           if (question) {
-            const { question: cleanedQuestion, warnings } = await this.cleanAndValidateQuestion(question);
+            const { question: cleanedQuestion, warnings } = await this.cleanAndValidateQuestionForDataTransfer(question);
             questions.push(cleanedQuestion);
             successfullyProcessed++;
 
@@ -553,10 +445,12 @@ export class ImportRepository {
         } catch (transformError) {
           allWarnings.push({
             questionNumber: totalProcessed,
-            msgs: [`Failed to transformToQuestion - ${(transformError as Error).message}`]
+            msgs: [`Failed to transform question - ${(transformError as Error).message}`]
           });
         }
       }
+
+      console.log("RESULTS", questions)
 
       return {
         questions,
@@ -569,5 +463,14 @@ export class ImportRepository {
     } catch (error) {
       return { success: false, error: `Failed to import questions: ${(error as Error).message}` };
     }
+  }
+
+  // Keep the old importQuestions method for backward compatibility
+  async importQuestions(): Promise<{
+    questions: QuestionForDataTransfer[];
+    stats: { total: number; processed: number; warnings: { questionNumber: number, msgs: string[] }[] }
+  } | { success: boolean; error: string }> {
+    // For backward compatibility, delegate to the new method
+    return this.importQuestionsForDataTransfer();
   }
 }
