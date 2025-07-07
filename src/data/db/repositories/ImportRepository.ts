@@ -4,9 +4,11 @@ import * as fs from 'fs';
 import * as Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import { Database } from '../database';
+import { ExamRepository } from './ExamRepository';
 
 export class ImportRepository {
   private db: Database;
+  private examRepo: ExamRepository;
 
   constructor(db: Database) {
     this.db = db;
@@ -181,7 +183,7 @@ export class ImportRepository {
   }
 
   // Updated importQuestionsSimple method with proper QuestionForDataTransfer formatting
-  async importQuestionsSimple(): Promise<QuestionForDataTransfer[] | { success: boolean; error: string }> {
+  async importQuestionsSimple(): Promise<Question[] | { success: boolean; error: string }> {
     try {
       const result = await this.importFilesSimple(true);
 
@@ -190,11 +192,11 @@ export class ImportRepository {
       }
 
       const rawData = result as unknown[];
-      const questions: QuestionForDataTransfer[] = [];
+      const questions: Question[] = [];
 
       for (const item of rawData) {
         try {
-          const question = this.transformToQuestionForDataTransfer(item);
+          const question = this.transformToQuestion(item);
           if (question) {
             questions.push(question);
           }
@@ -215,7 +217,7 @@ export class ImportRepository {
   }
 
   // Updated helper method to transform raw data into QuestionForDataTransfer format
-  private transformToQuestionForDataTransfer(rawData: unknown): QuestionForDataTransfer | null {
+  private transformToQuestion(rawData: unknown): Question | null {
     if (!rawData || typeof rawData !== 'object') {
       throw new Error('Invalid data type - expected object');
     }
@@ -227,31 +229,13 @@ export class ImportRepository {
       throw new Error('Missing required field: question_text');
     }
 
-    // Transform the data to match QuestionForDataTransfer interface
-    const question: QuestionForDataTransfer = {
-      question_text: this.extractString(data.question_text || data.questionText || data.text) || '',
-      img_url: this.extractString(data.img_url || data.image || data.imgUrl) || null,
-      answer_a: this.extractString(data.answer_a || data.a || data.option_a) || '',
-      answer_a_justification: this.extractString(data.answer_a_justification || data.a_justification || data.justification_a) || '',
-      answer_b: this.extractString(data.answer_b || data.b || data.option_b) || '',
-      answer_b_justification: this.extractString(data.answer_b_justification || data.b_justification || data.justification_b) || '',
-      answer_c: this.extractString(data.answer_c || data.c || data.option_c) || '',
-      answer_c_justification: this.extractString(data.answer_c_justification || data.c_justification || data.justification_c) || '',
-      answer_d: this.extractString(data.answer_d || data.d || data.option_d) || '',
-      answer_d_justification: this.extractString(data.answer_d_justification || data.d_justification || data.justification_d) || '',
-      correct_answer: (this.extractString(data.correct_answer || data.correct || data.answer) || 'A').toUpperCase() as "A" | "B" | "C" | "D",
-      exam_level: (this.extractNumber(data.exam_level || data.examLevel || data.level) === 1 ? 1 : 0) as 0 | 1,
-      cognitive_level: (this.extractNumber(data.cognitive_level || data.cognitiveLevel) === 1 ? 1 : 0) as 0 | 1,
-      technical_references: this.extractString(data.technical_references || data.technicalReferences || data.references) || null,
-      references_provided: this.extractString(data.references_provided || data.referencesProvided) || null,
-      objective: this.extractString(data.objective) || null
-    };
+    let question_exams;
 
     // Handle question_exams if they exist
     if (data.question_exams || data.exams) {
       const examData = data.question_exams || data.exams;
       if (Array.isArray(examData)) {
-        question.question_exams = examData.map(exam => ({
+        question_exams = examData.map(exam => ({
           exam_name: this.extractString(exam.exam_name || exam.name) || '',
           main_system: this.extractString(exam.main_system || exam.system) || '',
           main_ka: this.extractString(exam.main_ka || exam.ka) || '',
@@ -260,7 +244,7 @@ export class ImportRepository {
           answers_order: this.extractString(exam.answers_order || exam.order) || ''
         }));
       } else if (typeof examData === 'object') {
-        question.question_exams = [{
+        question_exams = [{
           exam_name: this.extractString(examData.exam_name || examData.name) || '',
           main_system: this.extractString(examData.main_system || examData.system) || '',
           main_ka: this.extractString(examData.main_ka || examData.ka) || '',
@@ -270,6 +254,11 @@ export class ImportRepository {
         }];
       }
     }
+
+    question_exams?.forEach(async (qe) => {
+      const exam = await this.examRepo.get({ 'name': qe.exam_name })
+      qe.exam_id = exam.exam_id;
+    })
 
     // Handle system_ka_numbers if they exist
     if (data.system_ka_numbers || data.systems || data.kas) {
@@ -293,13 +282,29 @@ export class ImportRepository {
       }
     }
 
-    return question;
-  }
+    // Transform the data to match QuestionForDataTransfer interface
+    const question: Question = {
+      question_text: this.extractString(data.question_text || data.questionText || data.text) || '',
+      img_url: this.extractString(data.img_url || data.image || data.imgUrl) || null,
+      answer_a: this.extractString(data.answer_a || data.a || data.option_a) || '',
+      answer_a_justification: this.extractString(data.answer_a_justification || data.a_justification || data.justification_a) || '',
+      answer_b: this.extractString(data.answer_b || data.b || data.option_b) || '',
+      answer_b_justification: this.extractString(data.answer_b_justification || data.b_justification || data.justification_b) || '',
+      answer_c: this.extractString(data.answer_c || data.c || data.option_c) || '',
+      answer_c_justification: this.extractString(data.answer_c_justification || data.c_justification || data.justification_c) || '',
+      answer_d: this.extractString(data.answer_d || data.d || data.option_d) || '',
+      answer_d_justification: this.extractString(data.answer_d_justification || data.d_justification || data.justification_d) || '',
+      correct_answer: (this.extractString(data.correct_answer || data.correct || data.answer) || 'A').toUpperCase() as "A" | "B" | "C" | "D",
+      exam_level: (this.extractNumber(data.exam_level || data.examLevel || data.level) === 1 ? 1 : 0) as 0 | 1,
+      cognitive_level: (this.extractNumber(data.cognitive_level || data.cognitiveLevel) === 1 ? 1 : 0) as 0 | 1,
+      technical_references: this.extractString(data.technical_references || data.technicalReferences || data.references) || null,
+      references_provided: this.extractString(data.references_provided || data.referencesProvided) || null,
+      objective: this.extractString(data.objective) || null
+    };
 
-  // Keep the old transformToQuestion method for backward compatibility
-  private transformToQuestion(rawData: unknown): QuestionForDataTransfer | null {
-    // For backward compatibility, delegate to the new method
-    return this.transformToQuestionForDataTransfer(rawData);
+
+
+    return question;
   }
 
   // Helper method to safely extract string values
@@ -420,7 +425,7 @@ export class ImportRepository {
       }
 
       const rawData = result as unknown[];
-      const questions: QuestionForDataTransfer[] = [];
+      const questions: Question[] = [];
       const allWarnings: { questionNumber: number, msgs: string[] }[] = [];
       let totalProcessed = 0;
       let successfullyProcessed = 0;
@@ -428,7 +433,7 @@ export class ImportRepository {
       for (const item of rawData) {
         totalProcessed++;
         try {
-          const question = this.transformToQuestionForDataTransfer(item);
+          const question = this.transformToQuestion(item);
           if (question) {
             const { question: cleanedQuestion, warnings } = await this.cleanAndValidateQuestionForDataTransfer(question);
             questions.push(cleanedQuestion);

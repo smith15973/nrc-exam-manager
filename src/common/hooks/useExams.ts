@@ -1,7 +1,6 @@
 // useDatabase.ts 
 import { useState, useEffect } from "react";
 
-
 export const useExams = () => {
     const [exams, setExams] = useState<Exam[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -29,10 +28,42 @@ export const useExams = () => {
         }
     };
 
+    // New flexible methods
+    const getExamsByParams = async (params?: DBSearchParams): Promise<Exam[]> => {
+        try {
+            const result = await window.db.exams.getMany(params);
+            if (result.success) {
+                setExams(result.exams || []);
+                return result.exams || [];
+            } else {
+                setError(result.error || 'Failed to fetch exams');
+                return [];
+            }
+        } catch (err) {
+            setError("Failed to fetch exams");
+            return [];
+        }
+    };
 
+    const getExamByParams = async (params: DBSearchParams): Promise<Exam | null> => {
+        try {
+            const result = await window.db.exams.get(params);
+            if (result.success) {
+                return result.exam || null;
+            } else {
+                setError(result.error || 'Failed to fetch exam');
+                return null;
+            }
+        } catch (err) {
+            setError("Failed to fetch exam");
+            return null;
+        }
+    };
+
+    // Backward compatibility methods
     const getExams = async (): Promise<Exam[]> => {
         try {
-            const result = await window.db.exams.get();
+            const result = await window.db.exams.getAll();
             if (result.success) {
                 setExams(result.exams || []);
                 return result.exams || [];
@@ -59,6 +90,19 @@ export const useExams = () => {
             setError("Failed to fetch exam");
             return null;
         }
+    };
+
+    // Convenience methods using the new flexible system
+    const getExamsByName = async (name: string): Promise<Exam[]> => {
+        return getExamsByParams({ name });
+    };
+
+    const getExamsByPlantId = async (plantId: number): Promise<Exam[]> => {
+        return getExamsByParams({ plant_id: plantId });
+    };
+
+    const getExamByName = async (name: string): Promise<Exam | null> => {
+        return getExamByParams({ name });
     };
 
     const getExamsByQuestionId = async (questionId: number): Promise<Exam[]> => {
@@ -107,8 +151,7 @@ export const useExams = () => {
         } catch (err) {
             setError("Failed to delete exam")
         }
-    }
-
+    };
 
     const removeQuestionFromExam = async (examId: number, questionId: number): Promise<void> => {
         try {
@@ -121,7 +164,7 @@ export const useExams = () => {
         } catch (err) {
             setError('Failed to remove questions')
         }
-    }
+    };
 
     const addExamQuestion = async (examId: number, questionId: number): Promise<void> => {
         try {
@@ -134,14 +177,31 @@ export const useExams = () => {
         } catch (err) {
             setError('Failed to add exam question')
         }
-    }
-
+    };
 
     useEffect(() => {
         getExams();
     }, []);
 
     return {
-        exams, getExams, addExam, updateExam, deleteExam, getExamsByQuestionId, getExamById, error, removeQuestionFromExam, addExamQuestion
-    }
-}
+        exams,
+        error,
+        // New flexible methods
+        getExamsByParams,
+        getExamByParams,
+        // Convenience methods
+        getExamsByName,
+        getExamsByPlantId,
+        getExamByName,
+        // Backward compatibility methods
+        getExams,
+        getExamById,
+        getExamsByQuestionId,
+        // CRUD operations
+        addExam,
+        updateExam,
+        deleteExam,
+        removeQuestionFromExam,
+        addExamQuestion,
+    };
+};

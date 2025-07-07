@@ -564,39 +564,45 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         if (!data.plant_id) {
           return { success: false, error: "Plant ID is required" };
         }
-
         const examId = await db.exams.add(data)
         return { success: true, examId };
       }
-
       case 'get-exams': {
         const exams = await db.exams.getAll();
         return { success: true, exams };
       }
-
+      case 'get-exams-by-params': {
+        const exams = await db.exams.getMany(data);
+        return { success: true, exams };
+      }
       case 'get-exam': {
         const exam = await db.exams.getById(data);
+        return { success: true, exam };
+      }
+      case 'get-exam-by-params': {
+        const exam = await db.exams.get(data);
         return { success: true, exam };
       }
       case 'get-exams-by-question-id': {
         const examsByQuestion = await db.exams.getByQuestionId(data)
         return { success: true, exams: examsByQuestion };
       }
-
       case 'update-exam': {
         await db.exams.update(data);
         return { success: true };
       }
-
       case 'delete-exam': {
         await db.exams.delete(data);
         return { success: true };
       }
-
       case 'remove-exam-question': {
         await db.exams.removeQuestion(data.examId, data.questionId)
         return { success: true };
       }
+      // case 'add-exam-question': {
+      //   const examQuestionId = await db.exams.addQuestionToExam(data.examId, data.questionId)
+      //   return { success: true, examQuestionId };
+      // }
 
       // Question operations
       case 'add-question': {

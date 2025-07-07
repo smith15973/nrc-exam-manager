@@ -3,8 +3,8 @@ import ConfirmDelete from "../../../common/components/ConfirmDelete";
 import { useDatabase } from "../../../common/hooks/useDatabase";
 import ExportQuestionsButton from "../components/ExportQuestionsButton";
 import ImportViewer from "../components/ImportViewer";
-import QuestionForm from "../components/QuestionForm";
 import QuestionsTable from "../components/QuestionsTable";
+import QuestionFormModal from "../components/QuestionForm";
 
 
 
@@ -71,7 +71,7 @@ export default function QuestionsPage() {
 
     return (
         <>
-            <QuestionForm onSubmit={handleSubmit} />
+            <QuestionFormModal onSubmit={handleSubmit} />
             <ImportViewer onSubmit={handleImport} />
             <ExportQuestionsButton questionIds={selectedIds} onExport={() => { setSelectedIds([]) }} />
             <ConfirmDelete

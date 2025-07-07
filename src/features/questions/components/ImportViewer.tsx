@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
-import { defaultQuestion, questionSchema, defaultAnswer } from '../../../data/db/schema';
-import { Box, TextField, SxProps, Button, Typography, Alert, Dialog, DialogContent, DialogActions, DialogTitle } from '@mui/material';
+import { defaultQuestion } from '../../../data/db/schema';
+import { Box, Button, Typography, Alert, Dialog, DialogContent, DialogActions, DialogTitle } from '@mui/material';
+import { QuestionFormContent } from './QuestionForm';
 import { useDatabase } from '../../../common/hooks/useDatabase';
-import AnswerForm from './AnswerForm';
-import CheckExams from '../../exams/components/CheckExams';
-import CheckSystems from '../../systems/components/CheckSystems';
-import CheckKas from '../../kas/components/CheckKas';
 
 interface ImportViewerProps {
   onSubmit: (questions: Question[]) => void;
@@ -20,16 +17,46 @@ export default function ImportViewer({ onSubmit }: ImportViewerProps) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [reviewedQuestions, setReviewedQuestions] = useState<ExtendedQuestion[]>([]);
   const [currentQuestionNumber, setCurrentQuestionNumber] = useState<number | null>(null);
-  const { exams, systems, kas } = useDatabase();
   const [importErrors, setImportErrors] = useState<{ questionNumber: number; msgs: string[] }[]>([]);
 
   const currentQuestion = reviewedQuestions.find((q) => q.questionNumber === currentQuestionNumber) || defaultQuestion;
+  const [selectedSystemKas, setSelectedSystemKas] = useState<string[]>([]);
+  const { getExamByName } = useDatabase();
 
-  const selectedExams = currentQuestion.exams?.map((exam) => exam.exam_id).filter((id): id is number => id !== undefined) || [];
-  const selectedSystems = currentQuestion.systems?.map((system) => system.system_number).filter((num): num is string => num !== undefined) || [];
-  const selectedKas = currentQuestion.kas?.map((ka) => ka.ka_number).filter((num): num is string => num !== undefined) || [];
 
-  const handleChange = (key: string, value: any) => {
+  const [answers, setAnswers] = useState<[Answer, Answer, Answer, Answer]>([
+    { answer_text: '', justification: '', isCorrect: 0 },
+    { answer_text: '', justification: '', isCorrect: 0 },
+    { answer_text: '', justification: '', isCorrect: 0 },
+    { answer_text: '', justification: '', isCorrect: 0 },
+  ]);
+
+  useEffect(() => {
+    setAnswers([
+      {
+        answer_text: currentQuestion?.answer_a,
+        justification: currentQuestion.answer_a_justification,
+        isCorrect: currentQuestion.correct_answer === "A" ? 1 : 0,
+      },
+      {
+        answer_text: currentQuestion?.answer_b,
+        justification: currentQuestion.answer_b_justification,
+        isCorrect: currentQuestion.correct_answer === "B" ? 1 : 0,
+      },
+      {
+        answer_text: currentQuestion?.answer_c,
+        justification: currentQuestion.answer_c_justification,
+        isCorrect: currentQuestion.correct_answer === "C" ? 1 : 0,
+      },
+      {
+        answer_text: currentQuestion?.answer_d,
+        justification: currentQuestion.answer_d_justification,
+        isCorrect: currentQuestion.correct_answer === "D" ? 1 : 0,
+      },
+    ]);
+  }, [currentQuestion]);
+
+  const handleChange = (key: string, value: unknown) => {
     setReviewedQuestions((prev) => {
       const updated = [...prev];
       const index = updated.findIndex((q) => q.questionNumber === currentQuestionNumber);
@@ -40,70 +67,28 @@ export default function ImportViewer({ onSubmit }: ImportViewerProps) {
     });
   };
 
-  const handleAnswerChange = (newAnswer: Answer, index: number) => {
+  const handleQuestionExamChange = (key: string, value: unknown, idx?: number) => {
     setReviewedQuestions((prev) => {
       const updated = [...prev];
-      const qIndex = updated.findIndex((q) => q.questionNumber === currentQuestionNumber);
-      if (qIndex === -1) return prev;
+      const index = updated.findIndex((q) => q.questionNumber === currentQuestionNumber);
+      if (index === -1) return prev;
 
-      const currentQ = updated[qIndex];
-      let answers: [Answer, Answer, Answer, Answer];
-      if (currentQ.answers && currentQ.answers.length === 4) {
-        answers = [...currentQ.answers] as [Answer, Answer, Answer, Answer];
-      } else {
-        answers = [defaultAnswer, defaultAnswer, defaultAnswer, defaultAnswer];
+      if (key === "question_exams" && Array.isArray(value)) {
+        updated[index] = {
+          ...updated[index],
+          question_exams: value as ExamQuestion[]
+        };
+      } else if (typeof idx === 'number') {
+        updated[index] = {
+          ...updated[index],
+          question_exams: updated[index].question_exams?.map((qe, i) =>
+            i === idx ? { ...qe, [key]: value } : qe
+          ) || []
+        };
       }
-
-      if (newAnswer.is_correct) {
-        answers = answers.map((ans, i) =>
-          i === index ? { ...newAnswer } : { ...ans, is_correct: false }
-        ) as [Answer, Answer, Answer, Answer];
-      } else {
-        answers[index] = { ...newAnswer };
-      }
-
-      updated[qIndex] = { ...currentQ, answers };
       return updated;
     });
   };
-
-  const createSimpleCheckHandler = function <T>(collection: T[], keyField: keyof T, formField: keyof Question) {
-    return (event: React.ChangeEvent<HTMLInputElement>) => {
-      const itemKey = event.currentTarget.name;
-      const isChecked = event.currentTarget.checked;
-
-      setReviewedQuestions((prev) => {
-        const updated = [...prev];
-        const index = updated.findIndex((q) => q.questionNumber === currentQuestionNumber);
-        if (index === -1) return prev;
-
-        const currentQ = updated[index];
-        const currentItems = (currentQ[formField] as unknown as T[]) || [];
-        let updatedItems;
-
-        if (isChecked) {
-          const itemToAdd = collection.find((item) => String((item as T)[keyField]) === itemKey);
-          if (itemToAdd && !currentItems.find((item) => String(item[keyField]) === itemKey)) {
-            updatedItems = [...currentItems, itemToAdd];
-          } else {
-            updatedItems = currentItems;
-          }
-        } else {
-          updatedItems = currentItems.filter((item) => String(item[keyField]) !== itemKey);
-        }
-
-        updated[index] = {
-          ...currentQ,
-          [formField]: updatedItems,
-        };
-        return updated;
-      });
-    };
-  };
-
-  const handleExamCheckChange = createSimpleCheckHandler(exams, 'exam_id', 'exams');
-  const handleSystemCheckChange = createSimpleCheckHandler(systems, 'number', 'systems');
-  const handleKaCheckChange = createSimpleCheckHandler(kas, 'ka_number', 'kas');
 
   const goToNext = () => {
     const currentIdx = reviewedQuestions.findIndex((q) => q.questionNumber === currentQuestionNumber);
@@ -136,23 +121,32 @@ export default function ImportViewer({ onSubmit }: ImportViewerProps) {
     });
   };
 
-  const containerSx: SxProps = {
-    pt: 2,
-    display: 'grid',
-    gridTemplateColumns: {
-      xs: '1fr',
-      sm: '1fr',
-      md: '1fr 1fr',
-    },
-    gap: 2,
-    '@media (max-width: 900px)': {
-      gridTemplateColumns: '1fr',
-    },
-  };
-
   const handleImport = async () => {
     try {
       const result = await window.files.import.questions();
+
+      let questions: QuestionForDataTransfer[] = [];
+      if (result.questions) {
+        questions = result.questions;
+      }
+
+
+      questions.forEach(async (question) => {
+        if (Array.isArray(question.question_exams)) {
+          const exams = await Promise.all(
+            question.question_exams.map(qe =>
+              getExamByName(qe.exam_name)
+            )
+          );
+          console.log(exams)
+          question.exam_ids = exams.map(exam => exam?.exam_id).filter((id): id is number => id !== undefined);
+        }
+      });
+
+      
+
+
+
       if (result.questions && result.questions.length > 0) {
         setQuestions(result.questions);
         setOpen(true);
@@ -181,6 +175,11 @@ export default function ImportViewer({ onSubmit }: ImportViewerProps) {
     }
   }, [questions]);
 
+  useEffect(() => {
+    const systemKaNums = currentQuestion.system_kas?.map(system_ka => system_ka.system_ka_number).filter((num): num is string => num !== undefined) || [];
+    setSelectedSystemKas(systemKaNums);
+  }, [currentQuestion.system_kas]);
+
   const handleClose = () => {
     setQuestions([]);
     setReviewedQuestions([]);
@@ -189,7 +188,7 @@ export default function ImportViewer({ onSubmit }: ImportViewerProps) {
     setOpen(false);
   };
 
-  const handleComfirmImports = () => {
+  const handleConfirmImports = () => {
     console.log('Submitting reviewed questions:', reviewedQuestions);
     onSubmit(reviewedQuestions);
     setOpen(false);
@@ -252,8 +251,10 @@ export default function ImportViewer({ onSubmit }: ImportViewerProps) {
               <Button
                 variant="contained"
                 color="error"
-                onClick={() => handleRemoveQuestion(currentQuestionNumber!)}
-                disabled={!currentQuestionNumber}
+                onClick={() => {
+                  if (currentQuestionNumber !== null) handleRemoveQuestion(currentQuestionNumber);
+                }}
+                disabled={currentQuestionNumber === null}
               >
                 Remove Question
               </Button>
@@ -261,78 +262,22 @@ export default function ImportViewer({ onSubmit }: ImportViewerProps) {
           </Box>
           {errorDisplay()}
         </DialogTitle>
-
         <DialogContent>
           {reviewedQuestions.length > 0 ? (
-            <Box sx={containerSx}>
-              <Box>
-                {questionSchema.map((field) => {
-                  if (field.key === 'last_used') return null;
-                  return (
-                    <Box sx={{ pb: 2 }} key={field.key}>
-                      <TextField
-                        fullWidth
-                        type={field.type}
-                        value={(currentQuestion as any)[field.key] || ''}
-                        onChange={(e) => handleChange(field.key, e.target.value)}
-                        label={field.label}
-                        required={field.required}
-                        rows={field.key === 'question_text' ? 5 : undefined}
-                        multiline={field.key === 'question_text'}
-                      />
-                    </Box>
-                  );
-                })}
-                <Box sx={{ pb: 2 }}>
-                  <TextField
-                    fullWidth
-                    type="date"
-                    value={currentQuestion.last_used || ''}
-                    onChange={(e) => handleChange('last_used', e.target.value)}
-                    label="Last Used"
-                    required={false}
-                    InputLabelProps={{ shrink: true }}
-                  />
-                </Box>
-                <Box sx={{ pb: 2 }}>
-                  <CheckExams
-                    examOptions={exams}
-                    handleChange={handleExamCheckChange}
-                    selectedIdList={selectedExams}
-                  />
-                </Box>
-                <Box sx={{ pb: 2 }}>
-                  <CheckSystems
-                    systemOptions={systems}
-                    handleChange={handleSystemCheckChange}
-                    selectedIdList={selectedSystems}
-                  />
-                </Box>
-                <Box sx={{ pb: 2 }}>
-                  <CheckKas
-                    kaOptions={kas}
-                    handleChange={handleKaCheckChange}
-                    selectedIdList={selectedKas}
-                  />
-                </Box>
-              </Box>
-              <Box>
-                {currentQuestion.answers?.map((answer, idx) => (
-                  <AnswerForm
-                    updateQuestionForm={(newAnswer) => handleAnswerChange(newAnswer, idx)}
-                    answer={answer}
-                    key={idx}
-                  />
-                ))}
-              </Box>
-            </Box>
+            <QuestionFormContent
+              questionForm={currentQuestion}
+              selectedSystemKas={selectedSystemKas}
+              handleChange={handleChange}
+              handleQuestionExamChange={handleQuestionExamChange}
+              answers={answers}
+            />
           ) : (
             <Typography>No questions to display. Try importing again.</Typography>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button disabled={reviewedQuestions.length <= 0} onClick={handleComfirmImports}>Import All</Button>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button disabled={reviewedQuestions.length <= 0} onClick={handleConfirmImports}>Import All</Button>
         </DialogActions>
       </Dialog>
       <Button onClick={handleImport}>Import Questions</Button>

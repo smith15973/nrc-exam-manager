@@ -30,15 +30,15 @@ contextBridge.exposeInMainWorld('db', {
     add: (exam: Exam) => dbCall('add-exam', exam),
     // single
     getById: (examId: number) => dbCall('get-exam', examId),
+    get: (params: DBSearchParams) => dbCall('get-exam-by-params', params),
     // many
-    get: () => dbCall('get-exams'),
+    getAll: () => dbCall('get-exams'),
+    getMany: (params?: DBSearchParams) => dbCall('get-exams-by-params', params),
     getByQuestionId: (questionId: number) => dbCall('get-exams-by-question-id', questionId),
-
     update: (exam: Exam) => dbCall('update-exam', exam),
     delete: (examId: number) => dbCall('delete-exam', examId),
     removeQuestion: (examId: number, questionId: number) => dbCall('remove-exam-question', { examId, questionId }),
-    addQuestionToExam: (examId: number, questionId: number) => dbCall('add-exam-question', { examId, questionId }),
-
+    // addQuestionToExam: (examId: number, questionId: number) => dbCall('add-exam-question', { examId, questionId }),
   },
   questions: {
     // Question operations

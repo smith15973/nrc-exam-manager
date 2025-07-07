@@ -65,6 +65,7 @@ interface QuestionForDataTransfer {
     sro_match_justification: string;
     answers_order: string;
   }[];
+  exam_ids?: number[];
   system_ka_numbers?: string[];
 }
 
@@ -183,7 +184,7 @@ interface QuestionSystemKasResponse extends ApiResponse {
 }
 
 interface QuestionsImportResponse extends ApiResponse {
-  questions: Question[];
+  questions: QuestionForDataTransfer[];
   stats: {
     total: number;
     processed: number;
@@ -214,13 +215,15 @@ interface Window {
     exams: {
       // exam operations
       add: (exam: Exam) => Promise<ExamResponse>;
-      get: () => Promise<ExamResponse>;
+      getAll: () => Promise<ExamResponse>;
+      getMany: (params?: DBSearchParams) => Promise<ExamResponse>;
       getById: (examId: number) => Promise<ExamResponse>;
+      get: (params: DBSearchParams) => Promise<ExamResponse>;
       getByQuestionId: (questionId: number) => Promise<ExamResponse>;
       update: (exam: Exam) => Promise<ExamResponse>;
       delete: (examId: number) => Promise<ExamResponse>;
-      removeQuestion: (examId: number, questionId: number) => Promise<ExamResponse>
-      addQuestionToExam: (examId: number, questionId: number) => Promise<ExamResponse>
+      removeQuestion: (examId: number, questionId: number) => Promise<ExamResponse>;
+      addQuestionToExam: (examId: number, questionId: number) => Promise<ExamResponse>;
     },
     questions: {
       add: (question: Question) => Promise<QuestionResponse>;
@@ -277,7 +280,7 @@ interface Window {
 
   files: {
     import: {
-      questions: () => Promise<QuestionsImportResponse>
+      questions: () => Promise<Questions>
     },
     export: {
       questions: (questionIds: number[]) => Promise<QuestionsExportResponse>
