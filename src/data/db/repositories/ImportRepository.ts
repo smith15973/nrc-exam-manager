@@ -4,13 +4,14 @@ import * as fs from 'fs';
 import * as Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import { Database } from '../database';
-import { ExamRepository } from './ExamRepository';
 
 export class ImportRepository {
   private db: Database;
-  private examRepo: ExamRepository;
 
-  constructor(db: Database) {
+
+  constructor(
+    db: Database,
+  ) {
     this.db = db;
   }
 
@@ -182,42 +183,10 @@ export class ImportRepository {
     return allData;
   }
 
-  // Updated importQuestionsSimple method with proper QuestionForDataTransfer formatting
-  async importQuestionsSimple(): Promise<Question[] | { success: boolean; error: string }> {
-    try {
-      const result = await this.importFilesSimple(true);
-
-      if ('success' in result && !result.success) {
-        return result; // Return error as-is
-      }
-
-      const rawData = result as unknown[];
-      const questions: Question[] = [];
-
-      for (const item of rawData) {
-        try {
-          const question = this.transformToQuestion(item);
-          if (question) {
-            questions.push(question);
-          }
-        } catch (transformError) {
-          console.warn(`Skipping invalid question data:`, item, transformError);
-          // Continue processing other questions rather than failing entirely
-        }
-      }
-
-      if (questions.length === 0) {
-        return { success: false, error: 'No valid questions found in the imported data' };
-      }
-
-      return questions;
-    } catch (error) {
-      return { success: false, error: `Failed to import questions: ${(error as Error).message}` };
-    }
-  }
-
   // Updated helper method to transform raw data into QuestionForDataTransfer format
-  private transformToQuestion(rawData: unknown): Question | null {
+  private async transformToQuestion(rawData: unknown): Promise<{ question: QuestionForDataTransfer; warnings: string[] }> {
+    const warnings: string[] = [];
+
     if (!rawData || typeof rawData !== 'object') {
       throw new Error('Invalid data type - expected object');
     }
@@ -229,61 +198,8 @@ export class ImportRepository {
       throw new Error('Missing required field: question_text');
     }
 
-    let question_exams;
-
-    // Handle question_exams if they exist
-    if (data.question_exams || data.exams) {
-      const examData = data.question_exams || data.exams;
-      if (Array.isArray(examData)) {
-        question_exams = examData.map(exam => ({
-          exam_name: this.extractString(exam.exam_name || exam.name) || '',
-          main_system: this.extractString(exam.main_system || exam.system) || '',
-          main_ka: this.extractString(exam.main_ka || exam.ka) || '',
-          ka_match_justification: this.extractString(exam.ka_match_justification || exam.ka_justification) || '',
-          sro_match_justification: this.extractString(exam.sro_match_justification || exam.sro_justification) || '',
-          answers_order: this.extractString(exam.answers_order || exam.order) || ''
-        }));
-      } else if (typeof examData === 'object') {
-        question_exams = [{
-          exam_name: this.extractString(examData.exam_name || examData.name) || '',
-          main_system: this.extractString(examData.main_system || examData.system) || '',
-          main_ka: this.extractString(examData.main_ka || examData.ka) || '',
-          ka_match_justification: this.extractString(examData.ka_match_justification || examData.ka_justification) || '',
-          sro_match_justification: this.extractString(examData.sro_match_justification || examData.sro_justification) || '',
-          answers_order: this.extractString(examData.answers_order || examData.order) || 'ABCD'
-        }];
-      }
-    }
-
-    question_exams?.forEach(async (qe) => {
-      const exam = await this.examRepo.get({ 'name': qe.exam_name })
-      qe.exam_id = exam.exam_id;
-    })
-
-    // Handle system_ka_numbers if they exist
-    if (data.system_ka_numbers || data.systems || data.kas) {
-      const systemKaData = data.system_ka_numbers || data.systems || data.kas;
-      if (Array.isArray(systemKaData)) {
-        question.system_ka_numbers = systemKaData.map(item => {
-          if (typeof item === 'string') {
-            return item;
-          } else if (typeof item === 'object' && item !== null) {
-            return this.extractString(item.number || item.ka_number || item.system_number) || '';
-          }
-          return String(item);
-        }).filter(item => item !== '');
-      } else if (typeof systemKaData === 'string') {
-        question.system_ka_numbers = [systemKaData];
-      } else if (typeof systemKaData === 'object' && systemKaData !== null) {
-        const extracted = this.extractString(systemKaData.number || systemKaData.ka_number || systemKaData.system_number);
-        if (extracted) {
-          question.system_ka_numbers = [extracted];
-        }
-      }
-    }
-
     // Transform the data to match QuestionForDataTransfer interface
-    const question: Question = {
+    const question: QuestionForDataTransfer = {
       question_text: this.extractString(data.question_text || data.questionText || data.text) || '',
       img_url: this.extractString(data.img_url || data.image || data.imgUrl) || null,
       answer_a: this.extractString(data.answer_a || data.a || data.option_a) || '',
@@ -302,9 +218,101 @@ export class ImportRepository {
       objective: this.extractString(data.objective) || null
     };
 
+    // Handle question_exams if they exist
+    if (data.question_exams) {
+      const examData = data.question_exams;
+      if (Array.isArray(examData)) {
+        question.question_exams = examData.map(exam => ({
+          exam_name: this.extractString(exam.exam_name || exam.name) || '',
+          main_system: this.extractString(exam.main_system || exam.system) || '',
+          main_ka: this.extractString(exam.main_ka || exam.ka) || '',
+          ka_match_justification: this.extractString(exam.ka_match_justification || exam.ka_justification) || '',
+          sro_match_justification: this.extractString(exam.sro_match_justification || exam.sro_justification) || '',
+          answers_order: this.extractString(exam.answers_order || exam.order) || 'ABCD',
+        }));
+      } else if (typeof examData === 'object') {
+        question.question_exams = [{
+          exam_name: this.extractString(examData.exam_name || examData.name) || '',
+          main_system: this.extractString(examData.main_system || examData.system) || '',
+          main_ka: this.extractString(examData.main_ka || examData.ka) || '',
+          ka_match_justification: this.extractString(examData.ka_match_justification || examData.ka_justification) || '',
+          sro_match_justification: this.extractString(examData.sro_match_justification || examData.sro_justification) || '',
+          answers_order: this.extractString(examData.answers_order || examData.order) || 'ABCD',
+        }];
+      }
 
+      // Validate exams and get exam_ids
+      if (question.question_exams) {
+        const examIds: number[] = [];
 
-    return question;
+        for (const qe of question.question_exams) {
+          if (qe.exam_name) {
+            try {
+              const exam = await this.db.exams.get({ name: qe.exam_name });
+              if (exam) {
+                examIds.push(exam.exam_id);
+              } else {
+                warnings.push(`Exam '${qe.exam_name}' not found in database`);
+              }
+            } catch (error) {
+              warnings.push(`Error looking up exam '${qe.exam_name}': ${(error as Error).message}`);
+            }
+          }
+        }
+
+        if (examIds.length > 0) {
+          question.exam_ids = examIds;
+        }
+      }
+    }
+
+    // Handle system_ka_numbers if they exist
+    if (data.system_ka_numbers) {
+      const systemKaData = data.system_ka_numbers;
+      let systemKaNumbers: string[] = [];
+
+      if (Array.isArray(systemKaData)) {
+        systemKaNumbers = systemKaData.map(item => {
+          if (typeof item === 'string') {
+            return item;
+          } else if (typeof item === 'object' && item !== null) {
+            return this.extractString(item.number || item.ka_number || item.system_ka_number) || '';
+          }
+          return String(item);
+        }).filter(item => item !== '');
+      } else if (typeof systemKaData === 'string') {
+        systemKaNumbers = [systemKaData];
+      } else if (typeof systemKaData === 'object' && systemKaData !== null) {
+        const extracted = this.extractString(systemKaData.number || systemKaData.ka_number || systemKaData.system_number || systemKaData.system_ka_number);
+        if (extracted) {
+          systemKaNumbers = [extracted];
+        }
+      }
+
+      // Validate system_ka_numbers against database
+      if (systemKaNumbers.length > 0) {
+        const validatedNumbers: string[] = [];
+
+        for (const systemKaNumber of systemKaNumbers) {
+          try {
+            const systemKa = await this.db.system_kas.get({ system_ka_number: systemKaNumber });
+            if (systemKa) {
+              validatedNumbers.push(systemKaNumber);
+            } else {
+              warnings.push(`System KA number '${systemKaNumber}' not found in database`);
+            }
+          } catch (error) {
+            warnings.push(`Error looking up System KA '${systemKaNumber}': ${(error as Error).message}`);
+          }
+        }
+
+        if (validatedNumbers.length > 0) {
+          question.system_ka_numbers = validatedNumbers;
+        }
+      }
+    }
+
+    return { question, warnings };
   }
 
   // Helper method to safely extract string values
@@ -328,7 +336,7 @@ export class ImportRepository {
   }
 
   // Updated validation method for QuestionForDataTransfer
-  private async cleanAndValidateQuestionForDataTransfer(question: QuestionForDataTransfer): Promise<{ question: QuestionForDataTransfer; warnings: string[] }> {
+  private async cleanAndValidateQuestion(question: QuestionForDataTransfer): Promise<{ question: QuestionForDataTransfer; warnings: string[] }> {
     const warnings: string[] = [];
     const cleanedQuestion = { ...question };
 
@@ -340,6 +348,12 @@ export class ImportRepository {
     if (!cleanedQuestion.question_text || cleanedQuestion.question_text.trim() === '') {
       cleanedQuestion.question_text = '';
       warnings.push('Question text was missing - set to empty string');
+    }
+
+    const fetchedQuestion = await this.db.questions.getOne({question_text: cleanedQuestion.question_text});
+    console.log(fetchedQuestion)
+    if (fetchedQuestion) {
+      warnings.push(`Duplicate question found in database with ID: ${fetchedQuestion.question_id}`);
     }
 
     // Validate correct_answer
@@ -397,7 +411,7 @@ export class ImportRepository {
         main_ka: exam.main_ka || '',
         ka_match_justification: exam.ka_match_justification || '',
         sro_match_justification: exam.sro_match_justification || '',
-        answers_order: exam.answers_order || ''
+        answers_order: exam.answers_order || 'ABCD'
       }));
     }
 
@@ -412,9 +426,92 @@ export class ImportRepository {
     };
   }
 
-  // Updated method to get import statistics with cleaned data for QuestionForDataTransfer
-  async importQuestionsForDataTransfer(): Promise<{
-    questions: QuestionForDataTransfer[];
+  // Helper method to convert QuestionForDataTransfer to Question interface
+  private async convertToQuestionInterface(questionData: QuestionForDataTransfer): Promise<Question> {
+    const question: Question = {
+      question_id: 0, // Will be set when saved to database
+      question_text: questionData.question_text,
+      img_url: questionData.img_url,
+      answer_a: questionData.answer_a,
+      answer_a_justification: questionData.answer_a_justification,
+      answer_b: questionData.answer_b,
+      answer_b_justification: questionData.answer_b_justification,
+      answer_c: questionData.answer_c,
+      answer_c_justification: questionData.answer_c_justification,
+      answer_d: questionData.answer_d,
+      answer_d_justification: questionData.answer_d_justification,
+      correct_answer: questionData.correct_answer,
+      exam_level: questionData.exam_level,
+      cognitive_level: questionData.cognitive_level,
+      technical_references: questionData.technical_references,
+      references_provided: questionData.references_provided,
+      objective: questionData.objective,
+      last_used: null, // New questions haven't been used yet
+    };
+
+    // Convert question_exams to ExamQuestion format if they exist
+    if (questionData.question_exams && questionData.exam_ids) {
+      question.question_exams = [];
+
+      for (let i = 0; i < questionData.question_exams.length; i++) {
+        const qe = questionData.question_exams[i];
+        const examId = questionData.exam_ids[i]; // Corresponding exam_id if it exists
+
+        if (examId) {
+          const examQuestion: ExamQuestion = {
+            exam_id: examId,
+            question_id: 0, // Will be set when saved to database
+            question_number: 0, // Will be set when added to exam
+            main_system_ka_system: qe.main_system || null,
+            main_system_ka_ka: qe.main_ka || null,
+            ka_match_justification: qe.ka_match_justification || null,
+            sro_match_justification: qe.sro_match_justification || null,
+            answers_order: qe.answers_order || null,
+          };
+
+          question.question_exams.push(examQuestion);
+        }
+      }
+    }
+
+    // Get full Exam objects if exam_ids exist
+    if (questionData.exam_ids && questionData.exam_ids.length > 0) {
+      question.exams = [];
+
+      for (const examId of questionData.exam_ids) {
+        try {
+          const exam = await this.db.exams.getById(examId);
+          if (exam) {
+            question.exams.push(exam);
+          }
+        } catch (error) {
+          console.warn(`Could not load exam with ID ${examId}:`, error);
+        }
+      }
+    }
+
+    // Get full SystemKa objects if system_ka_numbers exist
+    if (questionData.system_ka_numbers && questionData.system_ka_numbers.length > 0) {
+      question.system_kas = [];
+
+      for (const systemKaNumber of questionData.system_ka_numbers) {
+        try {
+          const systemKa = await this.db.system_kas.get({ system_ka_number: systemKaNumber });
+          if (systemKa) {
+            question.system_kas.push(systemKa);
+          }
+        } catch (error) {
+          console.warn(`Could not load SystemKa with number ${systemKaNumber}:`, error);
+        }
+      }
+    }
+
+    return question;
+  }
+
+  // Updated method to get import statistics with cleaned data and database validation
+  async importQuestions(): Promise<{
+    questions: Question[];
     stats: { total: number; processed: number; warnings: { questionNumber: number, msgs: string[] }[] }
   } | { success: boolean; error: string }> {
     try {
@@ -433,17 +530,21 @@ export class ImportRepository {
       for (const item of rawData) {
         totalProcessed++;
         try {
-          const question = this.transformToQuestion(item);
+          const { question, warnings: transformWarnings } = await this.transformToQuestion(item);
           if (question) {
-            const { question: cleanedQuestion, warnings } = await this.cleanAndValidateQuestionForDataTransfer(question);
-            questions.push(cleanedQuestion);
+            const { question: cleanedQuestion, warnings: cleanWarnings } = await this.cleanAndValidateQuestion(question);
+
+            // Convert to Question interface for frontend
+            const frontendQuestion = await this.convertToQuestionInterface(cleanedQuestion);
+            questions.push(frontendQuestion);
             successfullyProcessed++;
 
-            // Add warnings with question context
-            if (warnings.length > 0) {
+            // Combine warnings from transform and clean operations
+            const allQuestionWarnings = [...transformWarnings, ...cleanWarnings];
+            if (allQuestionWarnings.length > 0) {
               allWarnings.push({
                 questionNumber: totalProcessed,
-                msgs: warnings
+                msgs: allQuestionWarnings
               });
             }
           }
@@ -455,7 +556,7 @@ export class ImportRepository {
         }
       }
 
-      console.log("RESULTS", questions)
+      console.log("RESULTS", questions);
 
       return {
         questions,
@@ -468,14 +569,5 @@ export class ImportRepository {
     } catch (error) {
       return { success: false, error: `Failed to import questions: ${(error as Error).message}` };
     }
-  }
-
-  // Keep the old importQuestions method for backward compatibility
-  async importQuestions(): Promise<{
-    questions: QuestionForDataTransfer[];
-    stats: { total: number; processed: number; warnings: { questionNumber: number, msgs: string[] }[] }
-  } | { success: boolean; error: string }> {
-    // For backward compatibility, delegate to the new method
-    return this.importQuestionsForDataTransfer();
   }
 }

@@ -11,7 +11,7 @@ import QuestionTemplate from '../../../features/questions/components/QuestionTem
 export default function ExamQuestionPage() {
     const [examQuestion, setExamQuestion] = useState(defaultExamQuestion);
     const { questionId, examId } = useParams<{ questionId: string, examId: string }>();
-    const { getExamQuestionsWithDetails } = useDatabase();
+    const { getExamQuestionsWithDetails, deleteExamQuestion } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [student, setStudent] = useState(false);
@@ -58,7 +58,7 @@ export default function ExamQuestionPage() {
                 {/* <QuestionForm question={question} onSubmit={handleSubmit} /> */}
                 <ConfirmDelete
                     message='Are you sure you want to delete this question? This will remove it from all exam associations! This action cannot be undone!'
-                    onConfirmDelete={() => deleteQuestion(question.question_id)}
+                    onConfirmDelete={() => deleteExamQuestion({ examId: examQuestion.exam_id, questionId: examQuestion.question_id })}
                     redirectPath="/questions"
                 />
             </Box>
@@ -71,13 +71,13 @@ export default function ExamQuestionPage() {
 
 
 
-            {loading && question.question_id && (
+            {loading && examQuestion.question_id && (
                 <Alert severity="info" sx={{ mt: 2 }}>
                     Updating question...
                 </Alert>
             )}
 
-            <QuestionTemplate question={question} student={student} />
+            <QuestionTemplate question={examQuestion} student={student} />
         </>
     )
 }
