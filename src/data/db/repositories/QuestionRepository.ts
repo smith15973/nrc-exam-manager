@@ -775,32 +775,10 @@ export class QuestionRepository {
                                     }
                                 );
                             }),
-                            // Delete existing answers
+                            // Delete existing system_ka relationships (correct table name)
                             new Promise<void>((resolveDelete, rejectDelete) => {
                                 self.db.run(
-                                    'DELETE FROM answers WHERE question_id = ?',
-                                    [question.question_id],
-                                    (deleteErr) => {
-                                        if (deleteErr) rejectDelete(deleteErr);
-                                        else resolveDelete();
-                                    }
-                                );
-                            }),
-                            // Delete existing ka relationships
-                            new Promise<void>((resolveDelete, rejectDelete) => {
-                                self.db.run(
-                                    'DELETE FROM question_kas WHERE question_id = ?',
-                                    [question.question_id],
-                                    (deleteErr) => {
-                                        if (deleteErr) rejectDelete(deleteErr);
-                                        else resolveDelete();
-                                    }
-                                );
-                            }),
-                            // Delete existing system relationships
-                            new Promise<void>((resolveDelete, rejectDelete) => {
-                                self.db.run(
-                                    'DELETE FROM question_systems WHERE question_id = ?',
+                                    'DELETE FROM question_system_kas WHERE question_id = ?',
                                     [question.question_id],
                                     (deleteErr) => {
                                         if (deleteErr) rejectDelete(deleteErr);
@@ -811,53 +789,31 @@ export class QuestionRepository {
                         ];
 
                         Promise.all(deleteOperations).then(() => {
-                            // Now insert the new relationships
+                            // Now insert the new relationships using the same methods as add/addBatch
                             const insertOperations: Promise<void>[] = [];
 
-                            // Handle exam relationships
-                            if (question.exams?.length) {
-                                const examPromise = new Promise<void>((resolveExam, rejectExam) => {
-                                    const placeholders = (question.exams ?? []).map(() => '(?, ?)').join(', ');
-                                    const values: unknown[] = [];
+                            // Handle exam relationships - use the same structure as add methods
+                            if (question.question_exams?.length) {
+                                const examQuestions: ExamQuestion[] = question.question_exams.map(qe => ({
+                                    question_id: question.question_id,
+                                    exam_id: qe.exam_id,
+                                    question_number: qe.question_number,
+                                    main_system_ka_ka: qe.main_system_ka_ka,
+                                    main_system_ka_system: qe.main_system_ka_system,
+                                    ka_match_justification: qe.ka_match_justification,
+                                    sro_match_justification: qe.sro_match_justification,
+                                    answers_order: qe.answers_order
+                                }));
 
-                                    (question.exams ?? []).forEach(exam => {
-                                        values.push(exam.exam_id, question.question_id);
-                                    });
-
-                                    self.db.run(
-                                        `INSERT INTO exam_questions (exam_id, question_id) VALUES ${placeholders}`,
-                                        values,
-                                        (examErr) => {
-                                            if (examErr) rejectExam(examErr);
-                                            else resolveExam();
-                                        }
-                                    );
-                                });
+                                const examPromise = QuestionRepository.prototype.insertExamRelations.call({ db: self.db }, examQuestions);
                                 insertOperations.push(examPromise);
                             }
 
-                            // Handle system_ka relationships
+                            // Handle system_ka relationships - use the same structure as add methods
                             if (question.system_kas?.length) {
-                                const systemKaPromise = new Promise<void>((resolveSystemKa, rejectSystemKa) => {
-                                    const placeholders = question.system_kas?.map(() => '(?, ?)').join(', ');
-                                    const values: unknown[] = [];
-
-                                    question.system_kas?.forEach(ka => {
-                                        values.push(question.question_id, ka.ka_number);
-                                    });
-
-                                    self.db.run(
-                                        `INSERT INTO question_kas (question_id, ka_number) VALUES ${placeholders}`,
-                                        values,
-                                        (systemKaErr) => {
-                                            if (systemKaErr) rejectSystemKa(systemKaErr);
-                                            else resolveSystemKa();
-                                        }
-                                    );
-                                });
+                                const systemKaPromise = QuestionRepository.prototype.insertSystemKaRelations.call({ db: self.db }, question.question_id, question.system_kas);
                                 insertOperations.push(systemKaPromise);
                             }
-
 
                             Promise.all(insertOperations).then(() => {
                                 self.db.run('COMMIT', (commitErr) => {

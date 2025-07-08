@@ -1,4 +1,6 @@
 import { Box, Divider, Typography } from "@mui/material";
+import { useEffect } from "react";
+
 
 type QuestionTemplateProps = {
     question: Question;
@@ -6,11 +8,22 @@ type QuestionTemplateProps = {
     student?: true | boolean;
     questionNumber?: number;
     examName?: string;
+    examQuestionData?: ExamQuestion
 };
 
-export default function QuestionTemplate({ question, print = false, student = false, questionNumber, examName }: QuestionTemplateProps) {
+export default function QuestionTemplate({ question, print = false, student = false, questionNumber, examName, examQuestionData }: QuestionTemplateProps) {
 
-    // const main_system_ka = question.system_kas?.find(system_ka => system_ka.ka_number === question.main_system_ka_ka && system_ka.system_number === question.main_system_ka_system);
+    const main_system_ka = examQuestionData ? question.system_kas?.find(system_ka =>
+        system_ka.ka_number === examQuestionData.main_system_ka_ka && system_ka.system_number === examQuestionData.main_system_ka_system)
+        : undefined;
+
+
+    useEffect(() => {
+        console.log("main_system_ka", main_system_ka)
+    }, [main_system_ka])
+    useEffect(() => {
+        console.log("eqData", examQuestionData)
+    }, [examQuestionData])
 
     const answers = [
         {
@@ -175,155 +188,184 @@ export default function QuestionTemplate({ question, print = false, student = fa
 
 
 
-            {!student ? <>
+            {!student ?
+                <>
 
-                <Divider sx={{ my: 3 }} />
+                    <Divider sx={{ my: 3 }} />
 
-                {/* Correct Answer Section */}
-                <Box sx={{ mb: 4 }}>
-                    <SectionHeader>Answer & Justifications</SectionHeader>
-                    <Box
-                        sx={{
-                            p: 2,
-                            bgcolor: 'success.50',
-                            borderRadius: 1,
-                            border: '2px solid',
-                            borderColor: 'success.main',
-                            mb: 3,
-                            ...printStyles
-                        }}
-                    >
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'success.dark', ...printStyles }}>
-                            Correct Answer: {question.correct_answer}
-                        </Typography>
+                    {/* Correct Answer Section */}
+                    <Box sx={{ mb: 4 }}>
+                        <SectionHeader>Answer & Justifications</SectionHeader>
+                        <Box
+                            sx={{
+                                p: 2,
+                                bgcolor: 'success.50',
+                                borderRadius: 1,
+                                border: '2px solid',
+                                borderColor: 'success.main',
+                                mb: 3,
+                                ...printStyles
+                            }}
+                        >
+                            <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'success.dark', ...printStyles }}>
+                                Correct Answer: {question.correct_answer}
+                            </Typography>
+                        </Box>
+
+                        {/* Justifications */}
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, ...printStyles }}>
+                            {answers.map((answer, index) => (
+                                <Box
+                                    key={String.fromCharCode(65 + index)}
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'flex-start',
+                                        p: 1.5,
+                                        borderRadius: 1,
+                                        bgcolor: answer?.isCorrect ? 'success.50' : 'error.50',
+                                        ...printStyles
+                                    }}
+                                >
+                                    <OptionLabel>{String.fromCharCode(65 + index)}.</OptionLabel>
+                                    <Box sx={{ ml: 2, flex: 1 }}>
+                                        <Typography sx={{ fontWeight: 'bold', mb: 0.5, ...printStyles }}>
+                                            {answer?.isCorrect ? "Correct" : "Incorrect"}
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            color="text.secondary"
+                                            sx={{ whiteSpace: 'pre-wrap', ...printStyles }}
+                                        >
+                                            {answer?.justification}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            ))}
+                        </Box>
                     </Box>
 
-                    {/* Justifications */}
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, ...printStyles }}>
-                        {answers.map((answer, index) => (
-                            <Box
-                                key={String.fromCharCode(65 + index)}
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'flex-start',
-                                    p: 1.5,
-                                    borderRadius: 1,
-                                    bgcolor: answer?.isCorrect ? 'success.50' : 'error.50',
-                                    ...printStyles
-                                }}
-                            >
-                                <OptionLabel>{String.fromCharCode(65 + index)}.</OptionLabel>
-                                <Box sx={{ ml: 2, flex: 1 }}>
-                                    <Typography sx={{ fontWeight: 'bold', mb: 0.5, ...printStyles }}>
-                                        {answer?.isCorrect ? "Correct" : "Incorrect"}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        color="text.secondary"
-                                        sx={{ whiteSpace: 'pre-wrap', ...printStyles }}
-                                    >
-                                        {answer?.justification}
-                                    </Typography>
+                    <Divider sx={{ my: 3 }} />
+
+                    <Box sx={{ mb: 4 }}>
+                        <SectionHeader>Question Details</SectionHeader>
+
+                        {/* First Row - KA Numbers, KA Importance, Exam Level */}
+                        <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
+                            <Box sx={{ flex: 1 }}>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, ...printStyles }}>
+                                    Related System KA Numbers
+                                </Typography>
+                                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', ...printStyles }}>
+                                    {question.system_kas?.map((system_ka) => (
+                                        <Box
+                                            key={system_ka.system_ka_number}
+                                            sx={{
+                                                px: 1.5,
+                                                py: 0.5,
+                                                bgcolor: 'primary.100',
+                                                borderRadius: 1,
+                                                border: '1px solid',
+                                                borderColor: 'primary.300',
+                                                color: system_ka.system_ka_number === main_system_ka?.system_ka_number ? 'green' : ''
+                                                // ...printStyles
+                                            }}
+                                        >
+                                            <Typography variant="body2" sx={{ fontWeight: 'bold', ...printStyles }}>
+                                                {system_ka.system_ka_number}
+                                            </Typography>
+                                        </Box>
+                                    ))}
                                 </Box>
                             </Box>
-                        ))}
-                    </Box>
-                </Box>
+                            <InfoRow label="Exam Level" value={question.exam_level ? 'SRO' : 'RO'} />
+                        </Box>
 
-                <Divider sx={{ my: 3 }} />
+                        {/* Second Row - References */}
+                        <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
+                            <InfoRow label="References Provided to Candidate" value="none" />
+                            <InfoRow label="Technical References" value={question.technical_references} />
+                        </Box>
 
-                {/* Question Details Section */}
-                <Box sx={{ mb: 4 }}>
-                    <SectionHeader>Question Details</SectionHeader>
+                        {/* Third Row - Cognitive Level, Objective */}
+                        <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
+                            <InfoRow label="Cognitive Level" value={question.cognitive_level ? 'HIGH' : 'LOW'} />
+                            <InfoRow label="Objective" value={question.objective} />
+                        </Box>
 
-                    {/* Second Row - KA Numbers, KA Importance, Exam Level */}
-                    <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
-                        <Box sx={{ flex: 1 }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, ...printStyles }}>
-                                Related System KA Numbers
-                            </Typography>
-                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', ...printStyles }}>
-                                {question.system_kas?.map((system_ka) => (
-                                    <Box
-                                        key={system_ka.system_ka_number}
-                                        sx={{
-                                            px: 1.5,
-                                            py: 0.5,
-                                            bgcolor: 'primary.100',
-                                            borderRadius: 1,
-                                            border: '1px solid',
-                                            borderColor: 'primary.300',
-                                            // ...printStyles
-                                        }}
-                                    >
-                                        <Typography variant="body2" sx={{ fontWeight: 'bold', ...printStyles }}>
-                                            {system_ka.system_ka_number}
-                                        </Typography>
-                                    </Box>
-                                ))}
+                        {/* Exam Relations */}
+
+                        <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
+                            <Box sx={{ flex: 1, minWidth: '200px', ...printStyles }}>
+                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, ...printStyles }}>
+                                    Exams
+                                </Typography>
+                                <Box sx={{ bgcolor: 'grey.50', borderRadius: 1, p: 1.5, ...printStyles }}>
+                                    {question.question_exams && question.question_exams.length > 0 ? question.question_exams.map((qe, index) => (
+                                        <Box
+                                            key={qe.exam_id}
+                                            sx={{
+                                                display: 'flex',
+                                                // justifyContent: 'space-between',
+                                                ...printStyles,
+                                                borderBottom: question.question_exams && index < question.question_exams.length - 1 ? '1px solid' : 'none',
+                                                borderColor: 'grey.300',
+                                                py: 0.5,
+                                                color: qe.exam_id === examQuestionData?.exam_id ? 'green' : ''
+                                            }}
+                                        >
+                                            <Typography variant="body2" sx={{ fontWeight: 'bold', ...printStyles }}>
+                                                Question #{qe.question_number}:
+                                            </Typography>
+                                            <Typography variant="body2">{qe.exam?.name}</Typography>
+                                        </Box>
+                                    ))
+                                        : <Box
+                                            sx={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                ...printStyles,
+                                                borderBottom: 'none',
+                                                borderColor: 'grey.300',
+                                                py: 0.5,
+                                            }}
+                                        >
+                                            <Typography variant="body2" sx={{ fontWeight: 'bold', ...printStyles }}>
+                                                No Exam Relations
+                                            </Typography>
+                                        </Box>}
+                                </Box>
                             </Box>
                         </Box>
-                        <InfoRow label="Exam Level" value={question.exam_level ? 'SRO' : 'RO'} />
+
                     </Box>
 
-                    {/* Third Row - References */}
-                    <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
-                        <InfoRow label="References Provided to Candidate" value="none" />
-                        <InfoRow label="Technical References" value={question.technical_references} />
-                    </Box>
+                    {main_system_ka ?
 
-                    {/* Fifth Row - Cognitive Level, Objective */}
-                    <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
-                        <InfoRow label="Cognitive Level" value={question.cognitive_level ? 'HIGH' : 'LOW'} />
-                        <InfoRow label="Objective" value={question.objective} />
-                    </Box>
+                        // Question Details Section
+                        <Box sx={{ mb: 4 }}>
+                            <SectionHeader>Exam Question Details</SectionHeader>
 
-                    {/* <InfoRow label="10 CFR Part 55 Content" value="41.8 / 41.10 / 45.3" /> */}
-
-                    <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
-                        <Box sx={{ flex: 1, minWidth: '200px', ...printStyles }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, ...printStyles }}>
-                                Exams
-                            </Typography>
-                            <Box sx={{ bgcolor: 'grey.50', borderRadius: 1, p: 1.5, ...printStyles }}>
-                                {question.question_exams && question.question_exams.length > 0 ? question.question_exams.map((qe, index) => (
-                                    <Box
-                                        key={qe.exam_id}
-                                        sx={{
-                                            display: 'flex',
-                                            // justifyContent: 'space-between',
-                                            ...printStyles,
-                                            borderBottom: question.question_exams && index < question.question_exams.length - 1 ? '1px solid' : 'none',
-                                            borderColor: 'grey.300',
-                                            py: 0.5,
-                                        }}
-                                    >
-                                        <Typography variant="body2" sx={{ fontWeight: 'bold', ...printStyles }}>
-                                            Question #{qe.question_number}: 
-                                        </Typography>
-                                        <Typography variant="body2">{qe.exam?.name}</Typography>
-                                    </Box>
-                                )) 
-                                : <Box
-                                        sx={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            ...printStyles,
-                                            borderBottom: 'none',
-                                            borderColor: 'grey.300',
-                                            py: 0.5,
-                                        }}
-                                    >
-                                        <Typography variant="body2" sx={{ fontWeight: 'bold', ...printStyles }}>
-                                            No Exam Relations
-                                        </Typography>
-                                    </Box>}
+                            {/* Justification */}
+                            <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
+                                <InfoRow label="KA Match Justification" value={examQuestionData?.ka_match_justification} />
+                                {examQuestionData?.sro_match_justification ? <InfoRow label="SRO Match Justification" value={examQuestionData?.sro_match_justification} /> : ''}
                             </Box>
-                        </Box>
-                    </Box>
 
-                </Box>
-            </> : ''}
+                            {/* Third Row - Cognitive Level, Objective */}
+                            <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
+                                <InfoRow label="Category" value={main_system_ka.category} />
+                                <InfoRow label="KA Statement" value={main_system_ka.ka_statement} />
+                            </Box>
+
+                            <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap', ...printStyles }}>
+                                <InfoRow label="Importance Level" value={question.exam_level === 1 ? main_system_ka.sro_importance : main_system_ka.ro_importance} />
+                                <InfoRow label="10 CFR Part 55 Content" value={main_system_ka.cfr_content} />
+                            </Box>
+                        </Box> : ""
+                    }
+
+                </> : ''
+            }
         </Box>
     );
 }

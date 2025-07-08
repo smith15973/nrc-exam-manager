@@ -11,7 +11,7 @@ import QuestionTemplate from '../../../features/questions/components/QuestionTem
 export default function ExamQuestionPage() {
     const [examQuestion, setExamQuestion] = useState(defaultExamQuestion);
     const { questionId, examId } = useParams<{ questionId: string, examId: string }>();
-    const { getExamQuestionsWithDetails, deleteExamQuestion } = useDatabase();
+    const { getExamQuestionWithDetails, deleteExamQuestion } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [student, setStudent] = useState(false);
@@ -22,10 +22,9 @@ export default function ExamQuestionPage() {
         try {
             setLoading(true);
             setError(null);
-            const fetchedExamQuestion = await getExamQuestionsWithDetails({ question_id: questionId, exam_id: examId });
-            console.log('fetched', fetchedExamQuestion)
-            if (fetchedExamQuestion[0]) {
-                setExamQuestion(fetchedExamQuestion[0]);
+            const fetchedExamQuestion = await getExamQuestionWithDetails({ question_id: questionId, exam_id: examId });
+            if (fetchedExamQuestion) {
+                setExamQuestion(fetchedExamQuestion);
             } else {
                 setError('Exam Question not found');
             }
