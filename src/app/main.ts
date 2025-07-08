@@ -2,8 +2,8 @@ import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
 import { Database } from '../data/db/database';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as Papa from 'papaparse';
-import * as XLSX from 'xlsx';
+// import * as Papa from 'papaparse';
+// import * as XLSX from 'xlsx';
 import { ImportRepository } from '../data/db/repositories/ImportRepository';
 import { ExportRepository } from '../data/db/repositories/ExportRepository';
 
@@ -711,9 +711,9 @@ ipcMain.handle('db-operation', async (_event, { operation, data }) => {
         const exam_questions = await db.exam_questions.getMany(data);
         return { success: true, exam_questions }
       }
-      case 'get-exam-question-with-details': {
-        const exam_question = await db.exam_questions.getWithDetails(data);
-        return { success: true, exam_question }
+      case 'get-exam-questions-with-details': {
+        const exam_questions = await db.exam_questions.getWithDetails(data);
+        return { success: true, examQuestions: exam_questions }
       }
       case 'get-exam-question-by-exam-id': {
         const exam_question = await db.exam_questions.getByExamId(data);

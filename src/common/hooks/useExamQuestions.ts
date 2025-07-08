@@ -70,8 +70,7 @@ export const useExamQuestions = () => {
     const getExamQuestionsWithDetails = async (params?: DBSearchParams): Promise<ExamQuestion[]> => {
         try {
             const result = await window.db.exam_questions.getWithDetails(params);
-            console.log(result);
-
+            
             if (result.success) {
                 setExamQuestions(result.examQuestions || []);
                 return result.examQuestions || [];
@@ -82,6 +81,24 @@ export const useExamQuestions = () => {
         } catch (err) {
             setError("Failed to fetch exam questions with details");
             return [];
+        }
+    };
+
+    const getExamQuestionWithDetails = async (params?: DBSearchParams): Promise<ExamQuestion | null> => {
+        try {
+            const result = await window.db.exam_questions.getWithDetails(params);
+
+            if (result.success && result.examQuestions && result.examQuestions.length > 0) {
+                return result.examQuestions[0];
+            } else if (result.success) {
+                return null;
+            } else {
+                setError(result.error || 'Failed to fetch exam question with details');
+                return null;
+            }
+        } catch (err) {
+            setError("Failed to fetch exam question with details");
+            return null;
         }
     };
 
@@ -173,6 +190,7 @@ export const useExamQuestions = () => {
         examQuestions,
         getExamQuestion,
         getExamQuestions,
+        getExamQuestionWithDetails,
         getExamQuestionsWithDetails,
         getExamQuestionsByExamId,
         getExamQuestionsByQuestionId,

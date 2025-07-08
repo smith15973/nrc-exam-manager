@@ -77,7 +77,9 @@ export default function ExamQuestionPage() {
                 </Alert>
             )}
 
-            <QuestionTemplate question={examQuestion} student={student} />
+            {examQuestion.question && (
+                <QuestionTemplate question={examQuestion.question} student={student} examQuestionData={examQuestion} />
+            )}
         </>
     )
 }

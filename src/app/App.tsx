@@ -38,7 +38,7 @@ const App = () => {
                         <Route path='/exams/' element={<ExamsPage />} />
                         <Route path='/exams/:examId' element={<ExamPage />} />
                         <Route path='/exams/:examId/questions' element={<ExamQuestionsPage />} />
-                        <Route path='/exams/:examId/questions/questionId' element={<ExamQuestionPage />} />
+                        <Route path='/exams/:examId/questions/:questionId' element={<ExamQuestionPage />} />
                         <Route path='/questions' element={<QuestionsPage />} />
                         <Route path='/questions/:questionId' element={<QuestionPage />} />
                         <Route path='/systems' element={<SystemsPage />} />

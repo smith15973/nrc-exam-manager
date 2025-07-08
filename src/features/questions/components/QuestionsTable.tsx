@@ -24,6 +24,7 @@ interface QuestionTableProps {
   onFilterChange: (key: string, value: unknown) => void;
   filters?: QuestionFilters;
   onResetFilters: () => void;
+  examId?: number;
 }
 
 const VirtuosoTableComponents: TableComponents<Question> = {
@@ -44,8 +45,16 @@ const VirtuosoTableComponents: TableComponents<Question> = {
 
 export default function QuestionsTable(props: QuestionTableProps) {
   const [openFilters, setOpenFilters] = useState(false);
-  const { questions, checkable = false, selectedIds = [], onSelectionChange, filters, onFilterChange, onResetFilters } = props;
+  const { questions, checkable = false, selectedIds = [], onSelectionChange, filters, onFilterChange, onResetFilters, examId } = props;
   const navigate = useNavigate();
+
+  const handleNavigate = (questionId: number) => {
+    if (examId) {
+      navigate(`/exams/${examId}/questions/${questionId}`)
+    } else {
+      navigate(`/questions/${questionId}`)
+    }
+  }
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -56,7 +65,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
     onSelectionChange?.([]);
   };
 
-  const handleSearchQueryChange = (value: any) => {
+  const handleSearchQueryChange = (value: unknown) => {
     if (onFilterChange) {
       onFilterChange('query', value)
     }
@@ -145,7 +154,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
           {row.exam_level === 1 ? "SRO" : "RO"}
         </TableCell>
         <TableCell align="right">
-          <Button variant='contained' onClick={() => navigate(`/questions/${row.question_id}`)}>View</Button>
+          <Button variant='contained' onClick={() => handleNavigate(row.question_id)}>View</Button>
         </TableCell>
       </React.Fragment>
     );
