@@ -81,7 +81,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
         <TableCell sx={{ width: '40%' }}>Question</TableCell>
         <TableCell align="right" sx={{ width: '15%' }}>System KA #s</TableCell>
         <TableCell align="right" sx={{ width: '15%' }}>Exams</TableCell>
-        <TableCell align="right" sx={{ width: '10%' }}>Last Used</TableCell>
+        <TableCell align="right" sx={{ width: '10%' }}>Exam Level</TableCell>
         <TableCell align="right" sx={{ width: '10%' }}>View</TableCell>
       </TableRow>
     );
@@ -142,7 +142,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
           )}
         </TableCell>
         <TableCell align="right">
-          {row.last_used}
+          {row.exam_level === 1 ? "SRO" : "RO"}
         </TableCell>
         <TableCell align="right">
           <Button variant='contained' onClick={() => navigate(`/questions/${row.question_id}`)}>View</Button>
