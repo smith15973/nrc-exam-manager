@@ -1,6 +1,14 @@
 // db/repositories/ExamRepository.ts
 import sqlite3 from 'sqlite3';
 
+interface ExamDbRow {
+    exam_id: number;
+    name: string;
+    plant_id: number;
+    plant_plant_id?: number;
+    plant_name?: string;
+}
+
 export class ExamRepository {
     constructor(private db: sqlite3.Database, private isClosing: () => boolean) { }
 
@@ -51,20 +59,20 @@ export class ExamRepository {
                 sql += ` WHERE ${conditions}`;
             }
 
-            this.db.all(sql, values, (err, rows) => {
+            this.db.all(sql, values, (err, rows: ExamDbRow[]) => {
                 if (err) {
                     reject(err);
                 } else {
                     // Transform the flat rows into nested objects
-                    const exams = rows.map((row: any) => {
-                        const exam: any = {
+                    const exams = rows.map((row) => {
+                        const exam: Exam = {
                             exam_id: row.exam_id,
                             name: row.name,
                             plant_id: row.plant_id,
                             // Create nested plant object
                             plant: row.plant_plant_id ? {
                                 plant_id: row.plant_plant_id,
-                                name: row.plant_name,
+                                name: row.plant_name ?? "",
                             } : undefined
                         };
                         return exam;
@@ -92,7 +100,7 @@ export class ExamRepository {
             }
 
             const conditions = keys.map(key => `e.${key} = ?`).join(' AND ');
-            
+
             // SQL query to join exams with plants
             const sql = `
                 SELECT 
@@ -104,21 +112,21 @@ export class ExamRepository {
                 WHERE ${conditions}
             `;
 
-            this.db.get(sql, values, (err, row: any) => {
+            this.db.get(sql, values, (err, row: ExamDbRow) => {
                 if (err) {
                     reject(err);
                 } else if (!row) {
                     reject(new Error('Exam not found'));
                 } else {
-                    const exam: any = {
+                    const exam: Exam = {
                         exam_id: row.exam_id,
                         name: row.name,
                         plant_id: row.plant_id,
                         // Create nested plant object
                         plant: row.plant_plant_id ? {
                             plant_id: row.plant_plant_id,
-                            name: row.plant_name,
-                        } : null
+                            name: row.plant_name ?? "",
+                        } : undefined
                     };
                     resolve(exam);
                 }
@@ -151,7 +159,7 @@ export class ExamRepository {
                 ORDER BY e.exam_id
             `;
 
-            this.db.all(query, [questionId], (err, rows: any[]) => {
+            this.db.all(query, [questionId], (err, rows: ExamDbRow[]) => {
                 if (err) {
                     reject(err);
                 } else {
