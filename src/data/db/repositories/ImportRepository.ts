@@ -218,54 +218,6 @@ export class ImportRepository {
       objective: this.extractString(data.objective) || null
     };
 
-    // Handle question_exams if they exist
-    if (data.question_exams) {
-      const examData = data.question_exams;
-      if (Array.isArray(examData)) {
-        question.question_exams = examData.map(exam => ({
-          exam_name: this.extractString(exam.exam_name || exam.name) || '',
-          main_system: this.extractString(exam.main_system || exam.system) || '',
-          main_ka: this.extractString(exam.main_ka || exam.ka) || '',
-          ka_match_justification: this.extractString(exam.ka_match_justification || exam.ka_justification) || '',
-          sro_match_justification: this.extractString(exam.sro_match_justification || exam.sro_justification) || '',
-          answers_order: this.extractString(exam.answers_order || exam.order) || 'ABCD',
-        }));
-      } else if (typeof examData === 'object') {
-        question.question_exams = [{
-          exam_name: this.extractString(examData.exam_name || examData.name) || '',
-          main_system: this.extractString(examData.main_system || examData.system) || '',
-          main_ka: this.extractString(examData.main_ka || examData.ka) || '',
-          ka_match_justification: this.extractString(examData.ka_match_justification || examData.ka_justification) || '',
-          sro_match_justification: this.extractString(examData.sro_match_justification || examData.sro_justification) || '',
-          answers_order: this.extractString(examData.answers_order || examData.order) || 'ABCD',
-        }];
-      }
-
-      // Validate exams and get exam_ids
-      if (question.question_exams) {
-        const examIds: number[] = [];
-
-        for (const qe of question.question_exams) {
-          if (qe.exam_name) {
-            try {
-              const exam = await this.db.exams.get({ name: qe.exam_name });
-              if (exam) {
-                examIds.push(exam.exam_id);
-              } else {
-                warnings.push(`Exam '${qe.exam_name}' not found in database`);
-              }
-            } catch (error) {
-              warnings.push(`Error looking up exam '${qe.exam_name}': ${(error as Error).message}`);
-            }
-          }
-        }
-
-        if (examIds.length > 0) {
-          question.exam_ids = examIds;
-        }
-      }
-    }
-
     // Handle system_ka_numbers if they exist
     if (data.system_ka_numbers) {
       const systemKaData = data.system_ka_numbers;
@@ -312,6 +264,74 @@ export class ImportRepository {
       }
     }
 
+    // Handle question_exams if they exist
+    if (data.question_exams) {
+      const examData = data.question_exams;
+      if (Array.isArray(examData)) {
+        question.question_exams = examData.map(exam => ({
+          exam_name: this.extractString(exam.exam_name || exam.name) || '',
+          main_system: this.extractString(exam.main_system || exam.system) || '',
+          main_ka: this.extractString(exam.main_ka || exam.ka) || '',
+          ka_match_justification: this.extractString(exam.ka_match_justification || exam.ka_justification) || '',
+          sro_match_justification: this.extractString(exam.sro_match_justification || exam.sro_justification) || '',
+          answers_order: this.extractString(exam.answers_order || exam.order) || 'ABCD',
+        }));
+      } else if (typeof examData === 'object') {
+        question.question_exams = [{
+          exam_name: this.extractString(examData.exam_name || examData.name) || '',
+          main_system: this.extractString(examData.main_system || examData.system) || '',
+          main_ka: this.extractString(examData.main_ka || examData.ka) || '',
+          ka_match_justification: this.extractString(examData.ka_match_justification || examData.ka_justification) || '',
+          sro_match_justification: this.extractString(examData.sro_match_justification || examData.sro_justification) || '',
+          answers_order: this.extractString(examData.answers_order || examData.order) || 'ABCD',
+        }];
+      }
+
+      // Validate exams and get exam_ids
+      if (question.question_exams) {
+        const examIds: number[] = [];
+
+        for (const qe of question.question_exams) {
+          if (qe.exam_name) {
+            try {
+              const exam = await this.db.exams.get({ name: qe.exam_name });
+              if (exam) {
+                examIds.push(exam.exam_id);
+                if (qe.main_system && qe.main_ka) {
+                  // Check if the main_system/main_ka combination exists in the question's system_ka_numbers
+                  const mainSystemKaNumber = `${qe.main_system}_${qe.main_ka}`; // Assuming format like "001.001"
+
+                  if (!question.system_ka_numbers?.includes(mainSystemKaNumber)) {
+                    warnings.push(`Main SystemKa '${qe.main_system}_${qe.main_ka}' from exam '${exam.name}' is not in the question's system_ka_numbers. It has been reset.`);
+                    qe.main_ka = '';
+                    qe.main_system = '';
+                  }
+                } else if (qe.main_system && !qe.main_ka) {
+                  warnings.push(`Main system '${qe.main_system}' provided but main_ka is missing from exam '${exam.name}'. It has been reset.`);
+                  qe.main_ka = '';
+                  qe.main_system = '';
+                } else if (!qe.main_system && qe.main_ka) {
+                  warnings.push(`Main KA '${qe.main_ka}' provided but main_system is missing from exam '${exam.name}'. It has been reset.`);
+                  qe.main_ka = '';
+                  qe.main_system = '';
+                }
+              } else {
+                warnings.push(`Exam '${qe.exam_name}' not found in database`);
+              }
+            } catch (error) {
+              warnings.push(`Error looking up exam '${qe.exam_name}': ${(error as Error).message}`);
+            }
+          }
+
+
+        }
+
+        if (examIds.length > 0) {
+          question.exam_ids = examIds;
+        }
+      }
+    }
+
     return { question, warnings };
   }
 
@@ -350,7 +370,7 @@ export class ImportRepository {
       warnings.push('Question text was missing - set to empty string');
     }
 
-    const fetchedQuestion = await this.db.questions.getOne({question_text: cleanedQuestion.question_text});
+    const fetchedQuestion = await this.db.questions.getOne({ question_text: cleanedQuestion.question_text });
     console.log(fetchedQuestion)
     if (fetchedQuestion) {
       warnings.push(`Duplicate question found in database with ID: ${fetchedQuestion.question_id}`);
