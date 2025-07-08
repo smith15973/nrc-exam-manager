@@ -79,24 +79,24 @@ export class QuestionRepository {
                         // Insert the question with all relations - same as single add
                         this.db.run(
                             `INSERT INTO questions 
-                            (question_text, 
-                            img_url, 
-                            answer_a, 
-                            answer_a_justification, 
-                            answer_b, 
-                            answer_b_justification,
-                            answer_c,
-                            answer_c_justification,
-                            answer_d,
-                            answer_d_justification,
-                            correct_answer,
-                            exam_level,
-                            cognitive_level,
-                            technical_references,
-                            references_provided,
-                            objective,
-                            last_used) 
-                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                        (question_text, 
+                        img_url, 
+                        answer_a, 
+                        answer_a_justification, 
+                        answer_b, 
+                        answer_b_justification,
+                        answer_c,
+                        answer_c_justification,
+                        answer_d,
+                        answer_d_justification,
+                        correct_answer,
+                        exam_level,
+                        cognitive_level,
+                        technical_references,
+                        references_provided,
+                        objective,
+                        last_used) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                             [
                                 question.question_text,
                                 question.img_url,
@@ -124,9 +124,21 @@ export class QuestionRepository {
 
                                 const questionId = this.lastID;
 
-                                // Insert all relations - same logic as single add
+                                // Transform question_exams to ExamQuestion[] format like in insertQuestion
+                                const examQuestions: ExamQuestion[] = question.question_exams?.map(qe => ({
+                                    question_id: questionId,
+                                    exam_id: qe.exam_id,
+                                    question_number: qe.question_number,
+                                    main_system_ka_ka: qe.main_system_ka_ka,
+                                    main_system_ka_system: qe.main_system_ka_system,
+                                    ka_match_justification: qe.ka_match_justification,
+                                    sro_match_justification: qe.sro_match_justification,
+                                    answers_order: qe.answers_order
+                                })) ?? [];
+
+                                // Insert all relations - same logic as single add but with proper data types
                                 const insertOperations = [
-                                    question.exams?.length ? QuestionRepository.prototype.insertExamRelations.call({ db: self.db }, questionId, question.exams) : Promise.resolve(),
+                                    examQuestions.length ? QuestionRepository.prototype.insertExamRelations.call({ db: self.db }, examQuestions) : Promise.resolve(),
                                     question.system_kas?.length ? QuestionRepository.prototype.insertSystemKaRelations.call({ db: self.db }, questionId, question.system_kas) : Promise.resolve()
                                 ].filter(p => p !== Promise.resolve());
 
@@ -140,7 +152,7 @@ export class QuestionRepository {
                                         }
                                     })
                                     .catch((insertErr) => {
-                                        console.error(insertErr); // Fixed: was logging 'err' instead of 'insertErr'
+                                        console.error(insertErr);
                                         finishTransaction(false, insertErr);
                                     });
                             }
@@ -269,6 +281,7 @@ export class QuestionRepository {
 
     // Extract repetitive insertion logic into separate methods
     async insertExamRelations(examQuestions: ExamQuestion[]): Promise<void> {
+        console.log("INSERTING EXAM RELATIONS", examQuestions)
         const insertPromises = examQuestions.map(examQ =>
             new Promise<void>((resolve, reject) => {
                 this.db.run(
