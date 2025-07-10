@@ -10,6 +10,8 @@ interface Exam {
   exam_id: number;
   name: string;
   plant_id: number;
+  nrc_url?: string;
+  pdf_url?: string;
   // Optional relationship properties
   plant?: Plant;
   questions?: Question[];
@@ -33,7 +35,6 @@ interface Question {
   technical_references: string | null;
   references_provided: string | null;
   objective: string | null;
-  last_used: string | null;
   question_exams?: ExamQuestion[];
   exams?: Exam[];
   system_kas?: SystemKa[];

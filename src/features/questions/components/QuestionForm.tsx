@@ -97,17 +97,6 @@ export function QuestionFormContent({
                         label={"Objective"}
                     />
                 </Box>
-                <Box sx={{ pb: 2 }} >
-                    <TextField
-                        fullWidth
-                        type={'date'}
-                        value={questionForm.last_used || ''}
-                        onChange={(e) => handleChange('last_used', e.target.value)}
-                        label={'Last Used'}
-                        required={false}
-                        InputLabelProps={{ shrink: true }}
-                    />
-                </Box>
                 <Box sx={{ pb: 2, display: 'flex' }}>
                     <Box sx={{ flex: 1 }}>
                         <FormControl>

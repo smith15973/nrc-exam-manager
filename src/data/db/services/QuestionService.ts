@@ -41,7 +41,6 @@ export class QuestionService {
             technical_references: questionRow.technical_references,
             references_provided: questionRow.references_provided,
             objective: questionRow.objective,
-            last_used: questionRow.last_used,
             system_kas: system_kas,
             exams: exams,
             question_exams: examQuestions

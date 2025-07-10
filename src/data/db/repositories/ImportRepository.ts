@@ -466,7 +466,6 @@ export class ImportRepository {
       technical_references: questionData.technical_references,
       references_provided: questionData.references_provided,
       objective: questionData.objective,
-      last_used: null, // New questions haven't been used yet
     };
 
     // Convert question_exams to ExamQuestion format if they exist

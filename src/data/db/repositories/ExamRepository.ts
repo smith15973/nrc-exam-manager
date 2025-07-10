@@ -5,6 +5,8 @@ interface ExamDbRow {
     exam_id: number;
     name: string;
     plant_id: number;
+    nrc_url?: string;
+    pdf_url?: string;
     plant_plant_id?: number;
     plant_name?: string;
 }
@@ -20,8 +22,8 @@ export class ExamRepository {
             }
 
             this.db.run(
-                'INSERT INTO exams (name, plant_id) VALUES (?, ?)',
-                [exam.name, exam.plant_id],
+                'INSERT INTO exams (name, plant_id, nrc_url, pdf_url) VALUES (?, ?, ?, ?)',
+                [exam.name, exam.plant_id, exam.nrc_url, exam.pdf_url],
                 function (err) {
                     if (err) {
                         reject(err);
@@ -69,6 +71,8 @@ export class ExamRepository {
                             exam_id: row.exam_id,
                             name: row.name,
                             plant_id: row.plant_id,
+                            nrc_url: row.nrc_url,
+                            pdf_url: row.pdf_url,
                             // Create nested plant object
                             plant: row.plant_plant_id ? {
                                 plant_id: row.plant_plant_id,
@@ -122,6 +126,8 @@ export class ExamRepository {
                         exam_id: row.exam_id,
                         name: row.name,
                         plant_id: row.plant_id,
+                        nrc_url: row.nrc_url,
+                        pdf_url: row.pdf_url,
                         // Create nested plant object
                         plant: row.plant_plant_id ? {
                             plant_id: row.plant_plant_id,
@@ -152,7 +158,7 @@ export class ExamRepository {
             }
 
             const query = `
-                SELECT e.exam_id, e.name, e.plant_id 
+                SELECT e.exam_id, e.name, e.plant_id e.nrc_url, e.pdf_url
                 FROM exams e
                 INNER JOIN exam_questions eq ON e.exam_id = eq.exam_id
                 WHERE eq.question_id = ?
@@ -167,6 +173,8 @@ export class ExamRepository {
                         exam_id: row.exam_id,
                         name: row.name,
                         plant_id: row.plant_id,
+                        nrc_url: row.nrc_url,
+                        pdf_url: row.pdf_url,
                     }));
                     resolve(exams);
                 }
@@ -191,8 +199,8 @@ export class ExamRepository {
             }
 
             this.db.run(
-                'UPDATE exams SET name = ?, plant_id = ? WHERE exam_id = ?',
-                [exam.name, exam.plant_id, exam.exam_id],
+                'UPDATE exams SET name = ?, plant_id = ?, nrc_url = ?, pdf_url = ? WHERE exam_id = ?',
+                [exam.name, exam.plant_id, exam.nrc_url, exam.pdf_url, exam.exam_id],
                 function (err) {
                     if (err) {
                         reject(err);

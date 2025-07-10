@@ -95,8 +95,7 @@ export class QuestionRepository {
                         technical_references,
                         references_provided,
                         objective,
-                        last_used) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                             [
                                 question.question_text,
                                 question.img_url,
@@ -114,7 +113,6 @@ export class QuestionRepository {
                                 question.technical_references,
                                 question.references_provided,
                                 question.objective,
-                                question.last_used,
                             ],
                             function (this: sqlite3.RunResult, err: Error | null) {
                                 if (err) {
@@ -215,9 +213,8 @@ export class QuestionRepository {
                     cognitive_level,
                     technical_references,
                     references_provided,
-                    objective,
-                    last_used) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    objective) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                     [
                         question.question_text,
                         question.img_url,
@@ -235,7 +232,6 @@ export class QuestionRepository {
                         question.technical_references,
                         question.references_provided,
                         question.objective,
-                        question.last_used,
                     ],
                     function (err) {
                         if (err) {
@@ -728,7 +724,7 @@ export class QuestionRepository {
 
                 // First, update the main question record
                 self.db.run(
-                    'UPDATE questions SET question_text = ?, img_url = ?, answer_a = ?, answer_a_justification = ?, answer_b = ?, answer_b_justification = ?, answer_c = ?, answer_c_justification = ?, answer_d = ?, answer_d_justification = ?, correct_answer = ?, exam_level = ?, cognitive_level = ?, technical_references = ?, references_provided = ?, objective = ?, last_used = ? WHERE question_id = ?',
+                    'UPDATE questions SET question_text = ?, img_url = ?, answer_a = ?, answer_a_justification = ?, answer_b = ?, answer_b_justification = ?, answer_c = ?, answer_c_justification = ?, answer_d = ?, answer_d_justification = ?, correct_answer = ?, exam_level = ?, cognitive_level = ?, technical_references = ?, references_provided = ?, objective = ?, WHERE question_id = ?',
                     [
                         question.question_text,
                         question.img_url,
@@ -746,7 +742,6 @@ export class QuestionRepository {
                         question.technical_references,
                         question.references_provided,
                         question.objective,
-                        question.last_used,
                         question.question_id
                     ],
                     function (err) {
@@ -895,9 +890,10 @@ export class QuestionRepository {
         q.technical_references,
         q.references_provided,
         q.objective,
-        q.last_used,
         e.name as exam_name,
         e.plant_id
+        e.nrc_url as exam_nrc_url
+        e.pdf_url as exam_pdf_url
       FROM exam_questions eq
       INNER JOIN questions q ON eq.question_id = q.question_id
       INNER JOIN exams e ON eq.exam_id = e.exam_id
@@ -920,7 +916,9 @@ export class QuestionRepository {
                         exam: {
                             exam_id: row.exam_id,
                             name: row.exam_name,
-                            plant_id: row.plant_id
+                            plant_id: row.plant_id,
+                            nrc_url: row.nrc_url,
+                            pdf_url: row.pdf_url
                         },
                         question: {
                             question_id: row.question_id,
@@ -940,7 +938,6 @@ export class QuestionRepository {
                             technical_references: row.technical_references,
                             references_provided: row.references_provided,
                             objective: row.objective,
-                            last_used: row.last_used
                         }
                     }));
                     resolve(examQuestions);

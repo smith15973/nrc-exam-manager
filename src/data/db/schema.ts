@@ -11,6 +11,8 @@ export const schema = {
       'exam_id INTEGER PRIMARY KEY AUTOINCREMENT',
       'name TEXT NOT NULL',
       'plant_id INTEGER NOT NULL',
+      'nrc_url TEXT',
+      'pdf_url TEXT',
       'FOREIGN KEY (plant_id) REFERENCES plants(plant_id) ON DELETE CASCADE',
     ],
   },
@@ -33,7 +35,6 @@ export const schema = {
       'technical_references TEXT',
       'references_provided TEXT',
       'objective TEXT',
-      'last_used TEXT',
     ],
   },
   stems: {
@@ -141,6 +142,8 @@ export const defaultExam: Exam = {
   exam_id: 0,
   name: '',
   plant_id: 0,
+  nrc_url: '',
+  pdf_url: '',
 };
 
 // Default question object
@@ -162,7 +165,6 @@ export const defaultQuestion: Question = {
   technical_references: null,
   references_provided: null,
   objective: null,
-  last_used: null,
   system_kas: [],
   exams: [],
 }

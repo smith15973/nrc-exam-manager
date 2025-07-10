@@ -62,7 +62,6 @@ export class Database {
                     q.technical_references,
                     q.references_provided,
                     q.objective,
-                    q.last_used,
                     q.img_url,
                     
                     -- Exam information

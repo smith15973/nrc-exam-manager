@@ -145,8 +145,9 @@ export class ExamQuestionRepository {
         q.technical_references,
         q.references_provided,
         q.objective,
-        q.last_used,
         e.name as exam_name,
+        e.nrc_url as exam_nrc_url,
+        e.pdf_url as exam_pdf_url,
         e.plant_id
       FROM exam_questions eq
       INNER JOIN questions q ON eq.question_id = q.question_id
@@ -193,6 +194,8 @@ export class ExamQuestionRepository {
               e.exam_id,
               e.name,
               e.plant_id
+              e.nrc_url
+              e.pdf_url
             FROM exam_questions eq2
             INNER JOIN exams e ON eq2.exam_id = e.exam_id
             WHERE eq2.question_id IN (${questionIds.map(() => '?').join(',')})
@@ -210,6 +213,8 @@ export class ExamQuestionRepository {
               eq2.sro_match_justification,
               eq2.answers_order,
               e.name as exam_name,
+              e.nrc_url as exam_nrc_url,
+              e.pdf_url as exam_pdf_url,
               e.plant_id
             FROM exam_questions eq2
             INNER JOIN exams e ON eq2.exam_id = e.exam_id
@@ -275,7 +280,9 @@ export class ExamQuestionRepository {
               acc[row.question_id].push({
                 exam_id: row.exam_id,
                 name: row.name,
-                plant_id: row.plant_id
+                plant_id: row.plant_id,
+                nrc_url: row.nrc_url,
+                pdf_url: row.pdf_url,
               });
               return acc;
             }, {} as Record<number, Exam[]>);
@@ -297,7 +304,9 @@ export class ExamQuestionRepository {
                 exam: {
                   exam_id: row.exam_id,
                   name: row.exam_name,
-                  plant_id: row.plant_id
+                  plant_id: row.plant_id,
+                  nrc_url: row.nrc_url,
+                  pdf_url: row.pdf_url,
                 }
               });
               return acc;
@@ -315,7 +324,9 @@ export class ExamQuestionRepository {
               exam: {
                 exam_id: row.exam_id,
                 name: row.exam_name,
-                plant_id: row.plant_id
+                plant_id: row.plant_id,
+                nrc_url:row.nrc_url,
+                pdf_url:row.pdf_url,
               },
               question: {
                 question_id: row.question_id,
@@ -335,7 +346,6 @@ export class ExamQuestionRepository {
                 technical_references: row.technical_references,
                 references_provided: row.references_provided,
                 objective: row.objective,
-                last_used: row.last_used,
                 system_kas: systemKasByQuestion[row.question_id] || [],
                 exams: examsByQuestion[row.question_id] || [],
                 question_exams: questionExamsByQuestion[row.question_id] || []
