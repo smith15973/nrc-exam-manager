@@ -724,7 +724,7 @@ export class QuestionRepository {
 
                 // First, update the main question record
                 self.db.run(
-                    'UPDATE questions SET question_text = ?, img_url = ?, answer_a = ?, answer_a_justification = ?, answer_b = ?, answer_b_justification = ?, answer_c = ?, answer_c_justification = ?, answer_d = ?, answer_d_justification = ?, correct_answer = ?, exam_level = ?, cognitive_level = ?, technical_references = ?, references_provided = ?, objective = ?, WHERE question_id = ?',
+                    'UPDATE questions SET question_text = ?, img_url = ?, answer_a = ?, answer_a_justification = ?, answer_b = ?, answer_b_justification = ?, answer_c = ?, answer_c_justification = ?, answer_d = ?, answer_d_justification = ?, correct_answer = ?, exam_level = ?, cognitive_level = ?, technical_references = ?, references_provided = ?, objective = ? WHERE question_id = ?',
                     [
                         question.question_text,
                         question.img_url,
