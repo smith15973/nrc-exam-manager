@@ -1,5 +1,10 @@
 import VirtualizedSelect from "../../../common/components/VirtualizedSelect";
 
+interface System {
+  system_number: string;
+  system_name: string;
+}
+
 interface SystemSelectProps {
   systemNumber: string;
   systems: System[];
@@ -8,12 +13,17 @@ interface SystemSelectProps {
 
 export default function SystemSelect(props: SystemSelectProps) {
   const { systemNumber, systems, handleChange } = props;
-  const systemNums = systems.map(system => system.system_number);
   
+  // Create options with label and value
+  const systemOptions = systems.map(system => ({
+    label: `${system.system_number} - ${system.system_name}`,
+    value: system.system_number
+  }));
+
   return (
     <VirtualizedSelect
       value={systemNumber}
-      options={systemNums}
+      options={systemOptions}
       label="System Numbers"
       fieldKey="system_number"
       handleChange={handleChange}

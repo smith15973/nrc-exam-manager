@@ -9,9 +9,14 @@ import Typography from '@mui/material/Typography';
 
 const LISTBOX_PADDING = 8; // px
 
+interface OptionType {
+  label: string;
+  value: string;
+}
+
 interface VirtualizedSelectProps {
   value: string;
-  options: string[];
+  options: string[] | OptionType[];
   label: string;
   fieldKey: string;
   handleChange: (key: string, value: string) => void;
@@ -147,27 +152,68 @@ export default function VirtualizedSelect(props: VirtualizedSelectProps) {
     sx = { pb: 2 }
   } = props;
 
-  return (
-    <FormControl sx={sx} fullWidth={fullWidth} required={required}>
-      <Autocomplete
-        value={value}
-        options={options}
-        disableListWrap
-        onChange={(_, value) => handleChange(fieldKey, value || "")}
-        renderInput={(params) => <TextField {...params} label={label} />}
-        renderOption={(props, option, state) =>
-          [props, option, state.index] as React.ReactNode
-        }
-        renderGroup={(params) => params as any}
-        slots={{
-          popper: StyledPopper,
-        }}
-        slotProps={{
-          listbox: {
-            component: ListboxComponent,
-          },
-        }}
-      />
-    </FormControl>
-  );
+  // Check if options are objects or strings
+  const isObjectOptions = options.length > 0 && typeof options[0] === 'object';
+  
+  if (isObjectOptions) {
+    const objectOptions = options as OptionType[];
+    const selectedOption = objectOptions.find(opt => opt.value === value) || null;
+    
+    return (
+      <FormControl sx={sx} fullWidth={fullWidth} required={required}>
+        <Autocomplete<OptionType>
+          value={selectedOption}
+          options={objectOptions}
+          disableListWrap
+          getOptionLabel={(option) => option.label}
+          isOptionEqualToValue={(option, value) => option.value === value.value}
+          onChange={(_, selectedValue) => {
+            const valueToSet = selectedValue ? selectedValue.value : "";
+            handleChange(fieldKey, valueToSet);
+          }}
+          renderInput={(params) => <TextField {...params} label={label} />}
+          renderOption={(props, option, state) =>
+            [props, option.label, state.index] as React.ReactNode
+          }
+          renderGroup={(params) => params as any}
+          slots={{
+            popper: StyledPopper,
+          }}
+          slotProps={{
+            listbox: {
+              component: ListboxComponent,
+            },
+          }}
+        />
+      </FormControl>
+    );
+  } else {
+    const stringOptions = options as string[];
+    
+    return (
+      <FormControl sx={sx} fullWidth={fullWidth} required={required}>
+        <Autocomplete<string>
+          value={value}
+          options={stringOptions}
+          disableListWrap
+          onChange={(_, selectedValue) => {
+            handleChange(fieldKey, selectedValue || "");
+          }}
+          renderInput={(params) => <TextField {...params} label={label} />}
+          renderOption={(props, option, state) =>
+            [props, option, state.index] as React.ReactNode
+          }
+          renderGroup={(params) => params as any}
+          slots={{
+            popper: StyledPopper,
+          }}
+          slotProps={{
+            listbox: {
+              component: ListboxComponent,
+            },
+          }}
+        />
+      </FormControl>
+    );
+  }
 }
