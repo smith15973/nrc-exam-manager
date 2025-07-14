@@ -891,8 +891,8 @@ export class QuestionRepository {
         q.references_provided,
         q.objective,
         e.name as exam_name,
-        e.plant_id
-        e.nrc_url as exam_nrc_url
+        e.plant_id,
+        e.nrc_url as exam_nrc_url,
         e.pdf_url as exam_pdf_url
       FROM exam_questions eq
       INNER JOIN questions q ON eq.question_id = q.question_id

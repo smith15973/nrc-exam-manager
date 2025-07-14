@@ -158,7 +158,7 @@ export class ExamRepository {
             }
 
             const query = `
-                SELECT e.exam_id, e.name, e.plant_id e.nrc_url, e.pdf_url
+                SELECT e.exam_id, e.name, e.plant_id, e.nrc_url, e.pdf_url
                 FROM exams e
                 INNER JOIN exam_questions eq ON e.exam_id = eq.exam_id
                 WHERE eq.question_id = ?

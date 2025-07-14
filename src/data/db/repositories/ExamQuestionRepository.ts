@@ -193,8 +193,8 @@ export class ExamQuestionRepository {
               eq2.question_id,
               e.exam_id,
               e.name,
-              e.plant_id
-              e.nrc_url
+              e.plant_id,
+              e.nrc_url,
               e.pdf_url
             FROM exam_questions eq2
             INNER JOIN exams e ON eq2.exam_id = e.exam_id
