@@ -6,6 +6,7 @@ import AnswerForm from './AnswerForm';
 import { FormDialog } from '../../../common/components/FormDialog';
 import SystemKaSelect from '../../../features/system_kas/components/SystemKaSelect';
 import ExamQuestionSelect from '../../exams/components/ExamQuestionSelect';
+import SystemKaForm from '../../../features/system_kas/components/SystemKaForm';
 
 interface QuestionFormProps {
     question?: Question;
@@ -33,7 +34,7 @@ export function QuestionFormContent({
     handleQuestionExamChange,
     answers
 }: QuestionFormContentProps) {
-    const { exams, system_kas } = useDatabase();
+    const { exams, system_kas, addSystemKa } = useDatabase();
 
     // Responsive container styles
     const containerSx: SxProps = {
@@ -49,6 +50,11 @@ export function QuestionFormContent({
             gridTemplateColumns: '1fr',
         }
     };
+
+    const handleSystemKaSubmit = async (system_ka: SystemKa) => {
+        await addSystemKa(system_ka);
+    }
+
 
     return (
         <Box sx={containerSx}>
@@ -127,12 +133,17 @@ export function QuestionFormContent({
                         </FormControl>
                     </Box>
                 </Box>
-                <Box sx={{ pb: 2 }} >
-                    <SystemKaSelect
-                        system_kas={system_kas}
-                        handleChange={handleChange}
-                        selectedIdList={selectedSystemKas}
-                    />
+                <Box sx={{ pb: 2, display: 'flex' }} >
+                    <Box sx={{ width: '75%' }}>
+                        <SystemKaSelect
+                            system_kas={system_kas}
+                            handleChange={handleChange}
+                            selectedIdList={selectedSystemKas}
+                        />
+                    </Box>
+                    <Box>
+                        <SystemKaForm handleSubmit={handleSystemKaSubmit} />
+                    </Box>
                 </Box>
                 <Box sx={{ pb: 2 }} >
                     <ExamQuestionSelect
