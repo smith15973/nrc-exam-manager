@@ -6,27 +6,32 @@ import { useParams } from 'react-router-dom';
 // import QuestionForm from '../components/QuestionForm';
 import ConfirmDelete from '../../../common/components/ConfirmDelete';
 import QuestionTemplate from '../../../features/questions/components/QuestionTemplate';
+import QuestionFormModal from '../../../features/questions/components/QuestionForm';
 
 
 export default function ExamQuestionPage() {
     const [examQuestion, setExamQuestion] = useState(defaultExamQuestion);
     const { questionId, examId } = useParams<{ questionId: string, examId: string }>();
-    const { getExamQuestionWithDetails, deleteExamQuestion } = useDatabase();
+    const { getExamQuestionWithDetails, deleteExamQuestion, updateQuestion } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [student, setStudent] = useState(false);
 
 
     // Single source of truth for loading question data
-    const loadExamQuestion = async (questionId: number, examId: number) => {
+    const loadExamQuestion = async () => {
         try {
             setLoading(true);
             setError(null);
-            const fetchedExamQuestion = await getExamQuestionWithDetails({ question_id: questionId, exam_id: examId });
-            if (fetchedExamQuestion) {
-                setExamQuestion(fetchedExamQuestion);
+            if (questionId && examId) {
+                const fetchedExamQuestion = await getExamQuestionWithDetails({ question_id: parseInt(questionId), exam_id: parseInt(examId) });
+                if (fetchedExamQuestion) {
+                    setExamQuestion(fetchedExamQuestion);
+                } else {
+                    setError('Exam Question not found');
+                }
             } else {
-                setError('Exam Question not found');
+                throw new Error('Missing questionId or examId');
             }
         } catch (err) {
             setError('Failed to load exam question');
@@ -38,14 +43,23 @@ export default function ExamQuestionPage() {
 
 
     useEffect(() => {
-        if (questionId && examId) {
-            loadExamQuestion(parseInt(questionId), parseInt(examId));
-        }
+
+        loadExamQuestion();
+
     }, [questionId, examId]);
+
+    const handleSubmit = async (updatedQuestion: Question) => {
+        await updateQuestion(updatedQuestion);
+        if (questionId) {
+            loadExamQuestion();
+        }
+    }
 
 
     return (
         <>
+
+            <QuestionFormModal onSubmit={handleSubmit} question={examQuestion.question} />
             <Box sx={{ display: 'flex', justifyContent: 'right' }}>
                 <FormControlLabel
                     control={<Switch checked={student} onChange={(e) => setStudent(e.currentTarget.checked)} />}
