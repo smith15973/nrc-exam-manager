@@ -6,27 +6,34 @@ import { useParams } from 'react-router-dom';
 // import QuestionForm from '../components/QuestionForm';
 import ConfirmDelete from '../../../common/components/ConfirmDelete';
 import QuestionTemplate from '../components/QuestionTemplate';
+import QuestionFormModal from '../components/QuestionForm';
 
 
 export default function QuestionPage() {
     const [question, setQuestion] = useState(defaultQuestion);
     const { questionId } = useParams<{ questionId: string }>();
-    const { getQuestionComplete,  deleteQuestion } = useDatabase();
+    const { getQuestionComplete, deleteQuestion } = useDatabase();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [student, setStudent] = useState(false);
+    const { updateQuestion } = useDatabase();
 
 
     // Single source of truth for loading question data
-    const loadQuestion = async (id: number) => {
+    const loadQuestion = async () => {
         try {
             setLoading(true);
             setError(null);
-            const fetchedQuestion = await getQuestionComplete(id);
-            if (fetchedQuestion) {
-                setQuestion(fetchedQuestion);
+            if (questionId) {
+                const fetchedQuestion = await getQuestionComplete(parseInt(questionId));
+
+                if (fetchedQuestion) {
+                    setQuestion(fetchedQuestion);
+                } else {
+                    setError('Question not found');
+                }
             } else {
-                setError('Question not found');
+                throw new Error('No questionId provided');
             }
         } catch (err) {
             setError('Failed to load question');
@@ -40,7 +47,7 @@ export default function QuestionPage() {
     // Only fetch when questionId changes (initial load)
     useEffect(() => {
         if (questionId) {
-            loadQuestion(parseInt(questionId));
+            loadQuestion();
         }
     }, [questionId]);
 
@@ -51,6 +58,13 @@ export default function QuestionPage() {
                 <CircularProgress />
             </div>
         );
+    }
+
+    const handleSubmit = async (updatedQuestion: Question) => {
+        await updateQuestion(updatedQuestion);
+        if (questionId) {
+            loadQuestion();
+        }
     }
 
 
@@ -64,7 +78,7 @@ export default function QuestionPage() {
                 />
             </Box>
             <Box display={'flex'} justifyContent={'space-between'}>
-                {/* <QuestionForm question={question} onSubmit={handleSubmit} /> */}
+                <QuestionFormModal onSubmit={handleSubmit} question={question} />
                 <ConfirmDelete
                     message='Are you sure you want to delete this question? This will remove it from all exam associations! This action cannot be undone!'
                     onConfirmDelete={() => deleteQuestion(question.question_id)}
