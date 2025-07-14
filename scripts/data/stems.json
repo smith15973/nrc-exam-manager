@@ -44,23 +44,43 @@
         "stem_statement": "Ability to manually operate and/or monitor the (SYSTEM) in the control room"
     },
     {
-        "stem_id": "E/AK1",
+        "stem_id": "AK1",
         "stem_statement": "Knowledge of the operational implications and/or cause and effect relationships of the following concepts as they apply to the (EVOLUTION)"
     },
     {
-        "stem_id": "E/AK2",
+        "stem_id": "AK2",
         "stem_statement": "Knowledge of the relationship between the (EVOLUTION) and the following systems or components"
     },
     {
-        "stem_id": "E/AK3",
+        "stem_id": "AK3",
         "stem_statement": "Knowledge of the reasons for the following responses and/or actions as they apply to the (EVOLUTION)"
     },
     {
-        "stem_id": "E/AA1",
+        "stem_id": "AA1",
         "stem_statement": "Ability to operate and/or monitor the following as they apply to (EVOLUTION)"
     },
     {
-        "stem_id": "E/AA2",
+        "stem_id": "AA2",
+        "stem_statement": "Ability to determine and/or interpret the following as they apply to (EVOLUTION)"
+    },
+    {
+        "stem_id": "EK1",
+        "stem_statement": "Knowledge of the operational implications and/or cause and effect relationships of the following concepts as they apply to the (EVOLUTION)"
+    },
+    {
+        "stem_id": "EK2",
+        "stem_statement": "Knowledge of the relationship between the (EVOLUTION) and the following systems or components"
+    },
+    {
+        "stem_id": "EK3",
+        "stem_statement": "Knowledge of the reasons for the following responses and/or actions as they apply to the (EVOLUTION)"
+    },
+    {
+        "stem_id": "EA1",
+        "stem_statement": "Ability to operate and/or monitor the following as they apply to (EVOLUTION)"
+    },
+    {
+        "stem_id": "EA2",
         "stem_statement": "Ability to determine and/or interpret the following as they apply to (EVOLUTION)"
     },
     {
@@ -72,23 +92,43 @@
         "stem_statement": "Ability to manually operate and/or monitor the (SYSTEM) in the control room"
     },
     {
-        "stem_id": "E/AK1",
+        "stem_id": "EK1",
         "stem_statement": "Knowledge of the operational implications and/or cause and effect relationships of the following concepts as they apply to the (EVOLUTION)"
     },
     {
-        "stem_id": "E/AK2",
+        "stem_id": "EK2",
         "stem_statement": "Knowledge of the relationship between the (EVOLUTION) and the following systems or components"
     },
     {
-        "stem_id": "E/AK3",
+        "stem_id": "EK3",
         "stem_statement": "Knowledge of the reasons for the following responses and/or actions as they apply to the (EVOLUTION)"
     },
     {
-        "stem_id": "E/AA1",
+        "stem_id": "EA1",
         "stem_statement": "Ability to operate and/or monitor the following as they apply to (EVOLUTION)"
     },
     {
-        "stem_id": "E/AA2",
+        "stem_id": "EA2",
+        "stem_statement": "Ability to determine and/or interpret the following as they apply to (EVOLUTION)"
+    },
+    {
+        "stem_id": "AK1",
+        "stem_statement": "Knowledge of the operational implications and/or cause and effect relationships of the following concepts as they apply to the (EVOLUTION)"
+    },
+    {
+        "stem_id": "AK2",
+        "stem_statement": "Knowledge of the relationship between the (EVOLUTION) and the following systems or components"
+    },
+    {
+        "stem_id": "AK3",
+        "stem_statement": "Knowledge of the reasons for the following responses and/or actions as they apply to the (EVOLUTION)"
+    },
+    {
+        "stem_id": "AA1",
+        "stem_statement": "Ability to operate and/or monitor the following as they apply to (EVOLUTION)"
+    },
+    {
+        "stem_id": "AA2",
         "stem_statement": "Ability to determine and/or interpret the following as they apply to (EVOLUTION)"
     }
 ]
