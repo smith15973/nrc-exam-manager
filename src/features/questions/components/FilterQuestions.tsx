@@ -85,7 +85,7 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                         />
                     </Box>
 
-                    <Box sx={{ pb: 2, display: 'flex' }}>
+                    <Box sx={{ pt: 2, display: 'flex' }}>
                         <Box sx={{ flex: 1 }}>
                             <FormControl>
                                 <FormLabel id="exam-level-radio-group">Exam Level</FormLabel>
@@ -168,7 +168,7 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                     </Box>
 
                     {/* System_KAs */}
-                    <Box sx={{ pb: 2 }} >
+                    <Box sx={{ pt: 2 }} >
                         <SystemKaSelect
                             system_kas={system_kas}
                             handleChange={handleSystemKaChange}
@@ -178,7 +178,7 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
 
                     {/* Exams */}
                     <Box
-                        sx={{ pt: 2 }}
+                        // sx={{ pt: 2 }}
                     >
                         <CheckExams
                             examOptions={exams}
