@@ -243,35 +243,6 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Button
-                variant="outlined"
-                onClick={goToPrevious}
-                disabled={
-                  !currentQuestionNumber ||
-                  reviewedQuestions.findIndex((q) => q.questionNumber === currentQuestionNumber) === 0
-                }
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={goToNext}
-                disabled={
-                  !currentQuestionNumber ||
-                  reviewedQuestions.findIndex((q) => q.questionNumber === currentQuestionNumber) ===
-                  reviewedQuestions.length - 1
-                }
-              >
-                Next
-              </Button>
-              <Button
-                variant="contained"
-                color="success"
-                onClick={handleImportCurrentQuestion}
-                disabled={currentQuestionNumber === null}
-              >
-                Import Current Question
-              </Button>
-              <Button
                 variant="contained"
                 color="error"
                 onClick={() => {
@@ -298,9 +269,45 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
             <Typography>No questions to display. Try importing again.</Typography>
           )}
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ display: 'flex', gap: 1, justifyContent: 'space-between', p:2 }}>
+
+          {/* <Button disabled={reviewedQuestions.length <= 0} onClick={handleConfirmImports}>Import All</Button> */}
+
           <Button onClick={handleClose}>Cancel</Button>
-          <Button disabled={reviewedQuestions.length <= 0} onClick={handleConfirmImports}>Import All</Button>
+
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleImportCurrentQuestion}
+            disabled={currentQuestionNumber === null}
+          >
+            Import Current Question
+          </Button>
+
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              variant="outlined"
+              onClick={goToPrevious}
+              disabled={
+                !currentQuestionNumber ||
+                reviewedQuestions.findIndex((q) => q.questionNumber === currentQuestionNumber) === 0
+              }
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={goToNext}
+              disabled={
+                !currentQuestionNumber ||
+                reviewedQuestions.findIndex((q) => q.questionNumber === currentQuestionNumber) ===
+                reviewedQuestions.length - 1
+              }
+            >
+              Next
+            </Button>
+          </Box>
+
         </DialogActions>
       </Dialog>
       <Button onClick={handleImport}>Import Questions</Button>
