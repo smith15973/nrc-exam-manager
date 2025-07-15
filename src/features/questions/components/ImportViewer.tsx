@@ -239,7 +239,7 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
         <DialogTitle>
           <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h6">
-              Question {currentQuestionNumber} of {reviewedQuestions.length}
+              {reviewedQuestions.length} Remaining : Question {currentQuestionNumber} of {Math.max(0, ...reviewedQuestions.map(q => q.questionNumber))}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Button
