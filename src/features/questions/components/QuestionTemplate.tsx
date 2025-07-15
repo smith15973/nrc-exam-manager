@@ -1,5 +1,6 @@
 import { Box, Divider, Typography } from "@mui/material";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 type QuestionTemplateProps = {
@@ -24,6 +25,8 @@ export default function QuestionTemplate({ question, print = false, student = fa
     useEffect(() => {
         console.log("eqData", examQuestionData)
     }, [examQuestionData])
+
+    const navigate = useNavigate();
 
     const answers = [
         {
@@ -258,6 +261,7 @@ export default function QuestionTemplate({ question, print = false, student = fa
                                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', ...printStyles }}>
                                     {question.system_kas?.map((system_ka) => (
                                         <Box
+                                            onClick={() => navigate(`/system_kas/${system_ka.system_ka_number}`)}
                                             key={system_ka.system_ka_number}
                                             sx={{
                                                 px: 1.5,
@@ -266,7 +270,8 @@ export default function QuestionTemplate({ question, print = false, student = fa
                                                 borderRadius: 1,
                                                 border: '1px solid',
                                                 borderColor: 'primary.300',
-                                                color: system_ka.system_ka_number === main_system_ka?.system_ka_number ? 'green' : ''
+                                                color: system_ka.system_ka_number === main_system_ka?.system_ka_number ? 'green' : '',
+                                                cursor: 'pointer', // Add pointer cursor for link style
                                                 // ...printStyles
                                             }}
                                         >
@@ -302,16 +307,28 @@ export default function QuestionTemplate({ question, print = false, student = fa
                                 <Box sx={{ bgcolor: 'grey.50', borderRadius: 1, p: 1.5, ...printStyles }}>
                                     {question.question_exams && question.question_exams.length > 0 ? question.question_exams.map((qe, index) => (
                                         <Box
+                                        onClick={() => navigate(`/exams/${qe.exam_id}`)}
+                                        sx={{
+                                            cursor: 'pointer',
+                                            '&:hover': {
+                                                bgcolor: 'primary.100',
+                                            },
+                                            ...printStyles,
+                                            borderBottom: question.question_exams && index < question.question_exams.length - 1 ? '1px solid' : 'none',
+                                            borderColor: 'grey.300',
+                                            py: 0.5,
+                                            color: qe.exam_id === examQuestionData?.exam_id ? 'green' : ''
+                                        }}
                                             key={qe.exam_id}
-                                            sx={{
-                                                display: 'flex',
-                                                // justifyContent: 'space-between',
-                                                ...printStyles,
-                                                borderBottom: question.question_exams && index < question.question_exams.length - 1 ? '1px solid' : 'none',
-                                                borderColor: 'grey.300',
-                                                py: 0.5,
-                                                color: qe.exam_id === examQuestionData?.exam_id ? 'green' : ''
-                                            }}
+                                            // sx={{
+                                            //     display: 'flex',
+                                            //     // justifyContent: 'space-between',
+                                            //     ...printStyles,
+                                            //     borderBottom: question.question_exams && index < question.question_exams.length - 1 ? '1px solid' : 'none',
+                                            //     borderColor: 'grey.300',
+                                            //     py: 0.5,
+                                            //     color: qe.exam_id === examQuestionData?.exam_id ? 'green' : ''
+                                            // }}
                                         >
                                             <Typography variant="body2" sx={{ fontWeight: 'bold', ...printStyles }}>
                                                 Question #{qe.question_number}:
