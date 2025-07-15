@@ -25,7 +25,10 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
         onFilterChange('system_kaNums', idList)
     }
 
-    const handleRadioClick = (key: string, value: string | number) => {
+    const handleRadioClick = <K extends keyof QuestionFilters>(
+        key: K,
+        value: QuestionFilters[K]
+    ) => {
         if (filters[key] === value) {
             onFilterChange(key, undefined);
         }
