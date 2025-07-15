@@ -94,7 +94,7 @@ export class QuestionRepository {
                         cognitive_level,
                         technical_references,
                         references_provided,
-                        objective,
+                        objective)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                             [
                                 question.question_text,
