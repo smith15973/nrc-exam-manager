@@ -5,14 +5,14 @@ import { QuestionFormContent } from './QuestionForm';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 
 interface ImportViewerProps {
-  onSubmit: (questions: Question[]) => void;
+  onImport: () => void;
 }
 
 interface ExtendedQuestion extends Question {
   questionNumber: number;
 }
 
-export default function ImportViewer({ onSubmit }: ImportViewerProps) {
+export default function ImportViewer({ onImport }: ImportViewerProps) {
   const [open, setOpen] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [reviewedQuestions, setReviewedQuestions] = useState<ExtendedQuestion[]>([]);
@@ -21,7 +21,7 @@ export default function ImportViewer({ onSubmit }: ImportViewerProps) {
 
   const currentQuestion = reviewedQuestions.find((q) => q.questionNumber === currentQuestionNumber) || defaultQuestion;
   const [selectedSystemKas, setSelectedSystemKas] = useState<string[]>([]);
-  const { getExamByName } = useDatabase();
+  const { getExamByName, addQuestion, addQuestionsBatch } = useDatabase();
 
 
   const [answers, setAnswers] = useState<[Answer, Answer, Answer, Answer]>([
@@ -121,6 +121,19 @@ export default function ImportViewer({ onSubmit }: ImportViewerProps) {
     });
   };
 
+  const handleImportCurrentQuestion = async () => {
+    if (!currentQuestionNumber) return;
+
+    try {
+      await addQuestion(currentQuestion);
+      handleRemoveQuestion(currentQuestionNumber);
+      onImport();
+    } catch (error) {
+      console.error('Error importing current question:', error);
+      // You might want to show an error message to the user here
+    }
+  };
+
   const handleImport = async () => {
     try {
       const result = await window.files.import.questions();
@@ -143,7 +156,7 @@ export default function ImportViewer({ onSubmit }: ImportViewerProps) {
         }
       });
 
-      
+
 
 
 
@@ -188,9 +201,11 @@ export default function ImportViewer({ onSubmit }: ImportViewerProps) {
     setOpen(false);
   };
 
-  const handleConfirmImports = () => {
+  const handleConfirmImports = async () => {
     console.log('Submitting reviewed questions:', reviewedQuestions);
-    onSubmit(reviewedQuestions);
+    const result = await addQuestionsBatch(reviewedQuestions)
+    console.log(result)
+    onImport();
     setOpen(false);
   };
 
@@ -247,6 +262,14 @@ export default function ImportViewer({ onSubmit }: ImportViewerProps) {
                 }
               >
                 Next
+              </Button>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleImportCurrentQuestion}
+                disabled={currentQuestionNumber === null}
+              >
+                Import Current Question
               </Button>
               <Button
                 variant="contained"

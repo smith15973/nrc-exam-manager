@@ -12,7 +12,7 @@ import QuestionFormModal from "../components/QuestionForm";
 
 
 export default function QuestionsPage() {
-    const { addQuestion, addQuestionsBatch, getQuestionsComplete, deleteQuestion } = useDatabase();
+    const { addQuestion, getQuestionsComplete, deleteQuestion } = useDatabase();
     const [questions, setQuestions] = useState<Question[]>([]);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
@@ -46,9 +46,7 @@ export default function QuestionsPage() {
         setSelectedIds(newSelectedIds)
     }
 
-    const handleImport = async (questions: Question[]) => {
-        const result = await addQuestionsBatch(questions)
-        console.log(result)
+    const handleImport = async () => {
         await loadQuestions();
         setSelectedIds([]);
     }
@@ -72,7 +70,7 @@ export default function QuestionsPage() {
     return (
         <>
             <QuestionFormModal onSubmit={handleSubmit} />
-            <ImportViewer onSubmit={handleImport} />
+            <ImportViewer onImport={handleImport} />
             <ExportQuestionsButton questionIds={selectedIds} onExport={() => { setSelectedIds([]) }} />
             <ConfirmDelete
                 onConfirmDelete={handleDeleteQuestions}
