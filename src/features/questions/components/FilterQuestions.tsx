@@ -25,6 +25,12 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
         onFilterChange('system_kaNums', idList)
     }
 
+    const handleRadioClick = (key: string, value: string | number) => {
+        if (filters[key] === value) {
+            onFilterChange(key, undefined);
+        }
+    };
+
     return (
         <>
             <Dialog
@@ -92,11 +98,21 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                                 <RadioGroup
                                     aria-labelledby="exam-level-radio-group"
                                     name="controlled-exam-level-radio-group"
-                                    value={filters.exam_level || 0}
+                                    value={filters.exam_level ?? ''}
                                     onChange={(e) => onFilterChange('exam_level', parseInt(e.target.value))}
                                 >
-                                    <FormControlLabel value={0} control={<Radio />} label="RO" />
-                                    <FormControlLabel value={1} control={<Radio />} label="SRO" />
+                                    <FormControlLabel
+                                        value={0}
+                                        control={<Radio />}
+                                        label="RO"
+                                        onClick={() => handleRadioClick('exam_level', 0)}
+                                    />
+                                    <FormControlLabel
+                                        value={1}
+                                        control={<Radio />}
+                                        label="SRO"
+                                        onClick={() => handleRadioClick('exam_level', 1)}
+                                    />
                                 </RadioGroup>
                             </FormControl>
                         </Box>
@@ -106,11 +122,11 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                                 <RadioGroup
                                     aria-labelledby="cognitive-level-radio-group"
                                     name="controlled-cognitive-level-radio-group"
-                                    value={filters.cognitive_level || 0}
+                                    value={filters.cognitive_level ?? ''}
                                     onChange={(e) => onFilterChange('cognitive_level', parseInt(e.target.value))}
                                 >
-                                    <FormControlLabel value={0} control={<Radio />} label="LOW" />
-                                    <FormControlLabel value={1} control={<Radio />} label="HIGH" />
+                                    <FormControlLabel value={0} control={<Radio />} label="LOW" onClick={() => handleRadioClick('cognitive_level', 0)} />
+                                    <FormControlLabel value={1} control={<Radio />} label="HIGH" onClick={() => handleRadioClick('cognitive_level', 1)} />
                                 </RadioGroup>
                             </FormControl>
                         </Box>
@@ -178,7 +194,7 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
 
                     {/* Exams */}
                     <Box
-                        // sx={{ pt: 2 }}
+                    // sx={{ pt: 2 }}
                     >
                         <CheckExams
                             examOptions={exams}
