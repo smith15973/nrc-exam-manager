@@ -115,14 +115,14 @@ export default function ExamPage() {
     const handleExport = async () => {
 
         const questionIds = examQuestions.map(question => question.question_id) ?? [];
-        console.log(questionIds)
+        // console.log(questionIds)
         const result = await window.files.export.questions(questionIds);
-        console.log(result);
+        // console.log(result);
     }
 
     const handleImport = async (questions: Question[]) => {
         const result = await addQuestionsBatch(questions)
-        console.log(result)
+        // console.log(result)
         await loadQuestions();
     }
 
@@ -147,7 +147,7 @@ export default function ExamPage() {
     }
 
     const handleFilterChange = (key: string, value: unknown) => {
-        console.log(value);
+        // console.log(value);
         setFilters((prev) => {
             const newFilters = { ...prev, [key]: value };
             if (examId && (!newFilters.examIds || !newFilters.examIds.includes(examId))) {

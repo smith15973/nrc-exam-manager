@@ -303,9 +303,9 @@ export default function QuestionFormModal(props: QuestionFormProps) {
     }, [questionForm.system_kas]);
 
     const handleChange = (key: string, value: unknown) => {
-        console.log(key, value);
+        // console.log(key, value);
         setQuestionForm((prev) => ({ ...prev, [key]: value }));
-        console.log(questionForm);
+        // console.log(questionForm);
     };
 
     const handleQuestionExamChange = (key: string, value: unknown, idx?: number) => {

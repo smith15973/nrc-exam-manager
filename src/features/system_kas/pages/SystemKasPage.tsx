@@ -12,7 +12,7 @@ export default function SystemKasPage() {
 
     const loadSystemKas = async () => {
         const fetchedSystemKas = await getSystemKas();
-        console.log(fetchedSystemKas)
+        // console.log(fetchedSystemKas)
         setSystemKas(fetchedSystemKas);
     }
 

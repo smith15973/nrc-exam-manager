@@ -20,10 +20,10 @@ export default function QuestionTemplate({ question, print = false, student = fa
 
 
     useEffect(() => {
-        console.log("main_system_ka", main_system_ka)
+        // console.log("main_system_ka", main_system_ka)
     }, [main_system_ka])
     useEffect(() => {
-        console.log("eqData", examQuestionData)
+        // console.log("eqData", examQuestionData)
     }, [examQuestionData])
 
     const navigate = useNavigate();

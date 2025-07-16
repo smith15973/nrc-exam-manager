@@ -167,7 +167,7 @@ export default function SystemKaSelect(props: SystemKaSelectProps) {
     newValue: SystemKa[]
   ) => {
     // Pass the full SystemKa objects, not just IDs
-    console.log('New selected SystemKas:', newValue);
+    // console.log('New selected SystemKas:', newValue);
     handleChange("system_kas", newValue);
   };
 

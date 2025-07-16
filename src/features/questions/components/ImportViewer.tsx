@@ -151,7 +151,6 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
               getExamByName(qe.exam_name)
             )
           );
-          console.log(exams)
           question.exam_ids = exams.map(exam => exam?.exam_id).filter((id): id is number => id !== undefined);
         }
       });
@@ -202,9 +201,9 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
   };
 
   const handleConfirmImports = async () => {
-    console.log('Submitting reviewed questions:', reviewedQuestions);
+    // console.log('Submitting reviewed questions:', reviewedQuestions);
     const result = await addQuestionsBatch(reviewedQuestions)
-    console.log(result)
+    // console.log(result)
     onImport();
     setOpen(false);
   };

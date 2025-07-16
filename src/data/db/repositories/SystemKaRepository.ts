@@ -11,8 +11,6 @@ export class SystemKaRepository {
         return;
       }
 
-      console.log("systemKA",system_ka)
-
       this.db.run(
         'INSERT INTO system_kas (system_number, ka_number, ka_statement , ro_importance, sro_importance, cfr_content, category) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [system_ka.system_number, system_ka.ka_number, system_ka.ka_statement, system_ka.ro_importance, system_ka.sro_importance, system_ka.cfr_content, system_ka.category],

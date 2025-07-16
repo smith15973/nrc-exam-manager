@@ -277,7 +277,6 @@ export class QuestionRepository {
 
     // Extract repetitive insertion logic into separate methods
     async insertExamRelations(examQuestions: ExamQuestion[]): Promise<void> {
-        console.log("INSERTING EXAM RELATIONS", examQuestions)
         const insertPromises = examQuestions.map(examQ =>
             new Promise<void>((resolve, reject) => {
                 this.db.run(

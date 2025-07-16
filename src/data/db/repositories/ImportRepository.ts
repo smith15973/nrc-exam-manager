@@ -371,7 +371,7 @@ export class ImportRepository {
     }
 
     const fetchedQuestion = await this.db.questions.getOne({ question_text: cleanedQuestion.question_text });
-    console.log(fetchedQuestion)
+    // console.log(fetchedQuestion)
     if (fetchedQuestion) {
       warnings.push(`Duplicate question found in database with ID: ${fetchedQuestion.question_id}`);
     }
@@ -574,8 +574,6 @@ export class ImportRepository {
           });
         }
       }
-
-      console.log("RESULTS", questions);
 
       return {
         questions,

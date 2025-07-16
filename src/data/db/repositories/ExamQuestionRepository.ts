@@ -11,8 +11,6 @@ export class ExamQuestionRepository {
         return;
       }
 
-      console.log("examQuestion", examQuestion);
-
       this.db.run(
         `INSERT INTO exam_questions (
           exam_id, 

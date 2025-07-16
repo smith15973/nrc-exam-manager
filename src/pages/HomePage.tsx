@@ -7,7 +7,7 @@ export default function HomePage() {
     const handleChangeDatabase = async () => {
         try {
         const result = await window.files.changeDBLocation();
-        console.log(result);
+        // console.log(result);
         } catch (err) {
             console.error(err);
         }
