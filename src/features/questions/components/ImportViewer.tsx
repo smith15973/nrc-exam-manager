@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { defaultQuestion } from '../../../data/db/schema';
-import { Box, Button, Typography, Alert, Dialog, DialogContent, DialogActions, DialogTitle } from '@mui/material';
+import { Box, Button, Typography, Alert, Dialog, DialogContent, DialogActions, DialogTitle, Tooltip } from '@mui/material';
 import { QuestionFormContent } from './QuestionForm';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 
@@ -213,17 +213,17 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
   };
 
   const getButtonColor = () => {
-          switch (validationStatus.state) {
-              case 'error':
-                  return 'error';
-              case 'warning':
-                  return 'warning';
-              case 'success':
-                  return 'success';
-              default:
-                  return 'primary';
-          }
-      };
+    switch (validationStatus.state) {
+      case 'error':
+        return 'error';
+      case 'warning':
+        return 'warning';
+      case 'success':
+        return 'success';
+      default:
+        return 'primary';
+    }
+  };
 
   function errorDisplay() {
     const relevantErrors =
@@ -292,14 +292,17 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
 
           <Button onClick={handleClose}>Cancel</Button>
 
-          <Button
-            variant="contained"
-            color={getButtonColor()}
-            onClick={handleImportCurrentQuestion}
-            disabled={validationStatus.state === 'error' || currentQuestionNumber === null}
-          >
-            Import Current Question
-          </Button>
+          <Tooltip title={validationStatus.message}>
+            <Button
+              variant="contained"
+              color={getButtonColor()}
+              onClick={handleImportCurrentQuestion}
+              disabled={validationStatus.state === 'error' || currentQuestionNumber === null}
+
+            >
+              Import Current Question
+            </Button>
+          </Tooltip>
 
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button
@@ -326,7 +329,7 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
           </Box>
 
         </DialogActions>
-      </Dialog>
+      </Dialog >
       <Button onClick={handleImport}>Import Questions</Button>
       {reviewedQuestions.length === 0 && errorDisplay()}
     </>

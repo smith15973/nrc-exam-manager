@@ -73,13 +73,54 @@ export function QuestionFormContent({
     };
 
     const areSystemKasValid = () => {
-        console.log(questionForm)
-    }
+        return (questionForm.system_kas?.length ?? 0) > 0;
+    };
+
+    const getExamQuestionsValidationDetails = () => {
+        // If no exams, return warning
+        if ((questionForm.question_exams?.length ?? 0) === 0) {
+            return { status: 'warning', message: 'No exams associated with this question' };
+        }
+
+        // Check each exam question for issues
+        for (const qe of questionForm.question_exams || []) {
+            const exam_name = exams.find(e => e.exam_id === qe.exam_id)?.name
+            // Check for Primary System KA
+            if (!qe.main_system_ka_ka || !qe.main_system_ka_system) {
+                return { status: 'warning', message: `Missing Primary System KA number for exam '${exam_name}'` };
+            }
+
+            // Check if Primary System KA matches available System KAs
+            const primarySystemKa = `${qe.main_system_ka_system}_${qe.main_system_ka_ka}`;
+            const availableSystemKas = questionForm.system_kas?.map(sk => sk.system_ka_number) || [];
+            if (!availableSystemKas.includes(primarySystemKa)) {
+                return { status: 'error', message: `Primary System KA number does not match available System KA numbers for exam '${exam_name}'` };
+            }
+
+            // Check for KA match justification
+            if (!qe.ka_match_justification || qe.ka_match_justification.trim() === '') {
+                return { status: 'warning', message: `Missing KA match justification for exam '${exam_name}'` };
+            }
+
+            // Check for SRO match justification if exam level is SRO
+            if (questionForm.exam_level === 1 && (!qe.sro_match_justification || qe.sro_match_justification.trim() === '')) {
+                return { status: 'warning', message: `Missing SRO match justification for exam '${exam_name}'` };
+            }
+
+            // Check for answers order
+            if (!qe.answers_order || qe.answers_order.trim() === '') {
+                return { status: 'warning', message: `Missing answers order for exam '${exam_name}'` };
+            }
+        }
+
+        return { status: 'success', message: 'All exam questions are valid' };
+    };
 
     const getValidationState = () => {
         const optionalFieldsValid = isTechReferencesValid() && isReferencesProvidedValid() && isObjectiveValid();
-        areSystemKasValid();
+        const examQuestionsDetails = getExamQuestionsValidationDetails();
 
+        // Check for errors first (blocking validation)
         if (!isQuestionTextValid()) {
             return { state: 'error', message: 'Question text is required.' };
         }
@@ -90,11 +131,25 @@ export function QuestionFormContent({
             return { state: 'error', message: 'All answers must have text.' };
         }
         if (!areAnswerJustificationsValid()) {
-            return { state: 'error', message: 'All answer justifcations must have text.' };
+            return { state: 'error', message: 'All answer justifications must have text.' };
+        }
+
+        // Check for exam questions errors
+        if (examQuestionsDetails.status === 'error') {
+            return { state: 'error', message: examQuestionsDetails.message };
+        }
+
+        // Check for warnings (non-blocking validation)
+        if (!areSystemKasValid()) {
+            return { state: 'warning', message: 'Question has no System KAs associated.' };
+        }
+        if (examQuestionsDetails.status === 'warning') {
+            return { state: 'warning', message: examQuestionsDetails.message };
         }
         if (!optionalFieldsValid) {
             return { state: 'warning', message: 'Some optional fields (references or objective) are incomplete.' };
         }
+
         return { state: 'success', message: 'All fields are valid.' };
     };
 
