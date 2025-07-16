@@ -421,7 +421,11 @@ export default function QuestionsTable(props: QuestionTableProps) {
   };
 
   return (
-    <Box sx={{ height: 600, width: '100%', py: 2 }}>
+    <Box sx={{ height: '80vh', 
+    width: '100%', 
+    display: 'flex', 
+    flexDirection: 'column',
+    py: 2  }}>
       <QuestionsTableToolbar
         numSelected={selectedIds.length}
         searchQuery={filters?.query || ''}
@@ -433,7 +437,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
         filters={filters || {}}
         onResetFilters={onResetFilters}
       />
-      <Paper style={{ height: 600, width: '100%' }}>
+      <Paper style={{ flexGrow: 1, width:'100%', minHeight: 0 }}>
         <TableVirtuoso
           data={sortedQuestions}
           components={VirtuosoTableComponents}
