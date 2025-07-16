@@ -245,16 +245,59 @@ export class ImportRepository {
       if (systemKaNumbers.length > 0) {
         const validatedNumbers: string[] = [];
 
-        for (const systemKaNumber of systemKaNumbers) {
+        for (const originalNumber of systemKaNumbers) {
+          // Try original number first
+          let baseNumber = originalNumber;
+          let systemKa;
           try {
-            const systemKa = await this.db.system_kas.get({ system_ka_number: systemKaNumber });
+            systemKa = await this.db.system_kas.get({ system_ka_number: originalNumber });
             if (systemKa) {
-              validatedNumbers.push(systemKaNumber);
-            } else {
-              warnings.push(`System KA number '${systemKaNumber}' not found in database`);
+              validatedNumbers.push(originalNumber);
+              continue;
             }
           } catch (error) {
-            warnings.push(`Error looking up System KA '${systemKaNumber}': ${(error as Error).message}`);
+            // Original number not found, continue to try prefixes
+          }
+          // If the originalNumber starts with '000', add a warning
+          if (originalNumber.startsWith('000')) {
+            // Remove the first three zeros from the originalNumber
+            baseNumber = originalNumber.replace(/^000/, '');
+          }
+
+          try {
+            systemKa = await this.db.system_kas.get({ system_ka_number: baseNumber });
+            if (systemKa) {
+              validatedNumbers.push(baseNumber);
+                const system_name = (await this.db.systems.get({ system_number: systemKa.system_number })).system_name
+                warnings.push(`Close match '${baseNumber} (${system_name})' found for System KA number '${originalNumber}'`);
+                continue
+            }
+          } catch (error) {
+            // Base number not found, continue to try prefixes
+          }
+
+          // Try with prefixes if original not found
+          const prefixesToTry = ["APE", "EPE"];
+
+          let found = false;
+          for (const prefix of prefixesToTry) {
+            const alteredNumber = `${prefix} ${baseNumber}`;
+            try {
+              systemKa = await this.db.system_kas.get({ system_ka_number: alteredNumber });
+              if (systemKa) {
+                validatedNumbers.push(alteredNumber);
+                const system_name = (await this.db.systems.get({ system_number: systemKa.system_number })).system_name
+                warnings.push(`Close match '${alteredNumber} (${system_name})' found for System KA number '${originalNumber}'`);
+                found = true;
+                break;
+              }
+            } catch (error) {
+              // This altered number not found, continue to next prefix
+            }
+          }
+
+          if (!found) {
+            warnings.push(`System KA number '${originalNumber}' not found in database`);
           }
         }
 
