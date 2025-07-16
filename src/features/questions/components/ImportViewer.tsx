@@ -22,6 +22,10 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
   const currentQuestion = reviewedQuestions.find((q) => q.questionNumber === currentQuestionNumber) || defaultQuestion;
   const [selectedSystemKas, setSelectedSystemKas] = useState<string[]>([]);
   const { getExamByName, addQuestion, addQuestionsBatch } = useDatabase();
+  const [validationStatus, setValidationStatus] = useState<{ state: string; message: string }>({
+    state: 'error',
+    message: 'Form incomplete',
+  });
 
 
   const [answers, setAnswers] = useState<[Answer, Answer, Answer, Answer]>([
@@ -208,6 +212,19 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
     setOpen(false);
   };
 
+  const getButtonColor = () => {
+          switch (validationStatus.state) {
+              case 'error':
+                  return 'error';
+              case 'warning':
+                  return 'warning';
+              case 'success':
+                  return 'success';
+              default:
+                  return 'primary';
+          }
+      };
+
   function errorDisplay() {
     const relevantErrors =
       importErrors.find((error) => error.questionNumber === currentQuestionNumber)?.msgs || [];
@@ -263,12 +280,13 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
               handleChange={handleChange}
               handleQuestionExamChange={handleQuestionExamChange}
               answers={answers}
+              validationState={setValidationStatus}
             />
           ) : (
             <Typography>No questions to display. Try importing again.</Typography>
           )}
         </DialogContent>
-        <DialogActions sx={{ display: 'flex', gap: 1, justifyContent: 'space-between', p:2 }}>
+        <DialogActions sx={{ display: 'flex', gap: 1, justifyContent: 'space-between', p: 2 }}>
 
           {/* <Button disabled={reviewedQuestions.length <= 0} onClick={handleConfirmImports}>Import All</Button> */}
 
@@ -276,9 +294,9 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
 
           <Button
             variant="contained"
-            color="success"
+            color={getButtonColor()}
             onClick={handleImportCurrentQuestion}
-            disabled={currentQuestionNumber === null}
+            disabled={validationStatus.state === 'error' || currentQuestionNumber === null}
           >
             Import Current Question
           </Button>
