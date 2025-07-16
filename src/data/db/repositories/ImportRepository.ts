@@ -258,10 +258,14 @@ export class ImportRepository {
           } catch (error) {
             // Original number not found, continue to try prefixes
           }
-          // If the originalNumber starts with '000', add a warning
-          if (originalNumber.startsWith('000')) {
+          // If the originalNumber starts with '000'
+          if (originalNumber.startsWith('000') && originalNumber.includes('_')) {
             // Remove the first three zeros from the originalNumber
-            baseNumber = originalNumber.replace(/^000/, '');
+
+            const [system_number, ka_number] = originalNumber.split('_');
+            // Format system_number as a 3-digit string
+            const formattedSystemNumber = String(parseInt(system_number, 10)).padStart(3, '0');
+            baseNumber = `${formattedSystemNumber}_${ka_number}`;
           }
 
           try {
@@ -351,8 +355,13 @@ export class ImportRepository {
                   if (!found) {
                     // Try with leading zeros removed
                     let baseNumber = mainSystemKaNumber;
-                    if (mainSystemKaNumber.startsWith('000')) {
-                      baseNumber = mainSystemKaNumber.replace(/^000/, '');
+                    if (mainSystemKaNumber.startsWith('000') && mainSystemKaNumber.includes('_')) {
+                      // Remove the first three zeros from the originalNumber
+
+                      const [system_number, ka_number] = mainSystemKaNumber.split('_');
+                      // Format system_number as a 3-digit string
+                      const formattedSystemNumber = String(parseInt(system_number, 10)).padStart(3, '0');
+                      baseNumber = `${formattedSystemNumber}_${ka_number}`;
                       found = question.system_ka_numbers?.includes(baseNumber);
                       if (found) matchedNumber = baseNumber;
                     }
