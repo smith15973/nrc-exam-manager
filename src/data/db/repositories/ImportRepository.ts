@@ -268,9 +268,9 @@ export class ImportRepository {
             systemKa = await this.db.system_kas.get({ system_ka_number: baseNumber });
             if (systemKa) {
               validatedNumbers.push(baseNumber);
-                const system_name = (await this.db.systems.get({ system_number: systemKa.system_number })).system_name
-                warnings.push(`Close match '${baseNumber} (${system_name})' found for System KA number '${originalNumber}'`);
-                continue
+              const system_name = (await this.db.systems.get({ system_number: systemKa.system_number })).system_name
+              warnings.push(`Close match '${baseNumber} (${system_name})' found for System KA number '${originalNumber}'`);
+              continue
             }
           } catch (error) {
             // Base number not found, continue to try prefixes
@@ -333,21 +333,54 @@ export class ImportRepository {
       // Validate exams and get exam_ids
       if (question.question_exams) {
         const examIds: number[] = [];
-
         for (const qe of question.question_exams) {
           if (qe.exam_name) {
+            let exam;
             try {
-              const exam = await this.db.exams.get({ name: qe.exam_name });
+              exam = await this.db.exams.get({ name: qe.exam_name });
               if (exam) {
                 examIds.push(exam.exam_id);
                 if (qe.main_system && qe.main_ka) {
                   // Check if the main_system/main_ka combination exists in the question's system_ka_numbers
-                  const mainSystemKaNumber = `${qe.main_system}_${qe.main_ka}`; // Assuming format like "001.001"
+                  const mainSystemKaNumber = `${qe.main_system}_${qe.main_ka}`;
 
-                  if (!question.system_ka_numbers?.includes(mainSystemKaNumber)) {
+                  // Try to find exact match first
+                  let found = question.system_ka_numbers?.includes(mainSystemKaNumber);
+                  let matchedNumber = mainSystemKaNumber;
+
+                  if (!found) {
+                    // Try with leading zeros removed
+                    let baseNumber = mainSystemKaNumber;
+                    if (mainSystemKaNumber.startsWith('000')) {
+                      baseNumber = mainSystemKaNumber.replace(/^000/, '');
+                      found = question.system_ka_numbers?.includes(baseNumber);
+                      if (found) matchedNumber = baseNumber;
+                    }
+
+                    if (!found) {
+                      // Try with prefixes
+                      const prefixesToTry = ["APE", "EPE"];
+                      for (const prefix of prefixesToTry) {
+                        const alteredNumber = `${prefix} ${baseNumber}`;
+                        if (question.system_ka_numbers?.includes(alteredNumber)) {
+                          found = true;
+                          matchedNumber = alteredNumber;
+                          break;
+                        }
+                      }
+                    }
+                  }
+
+                  if (!found) {
                     warnings.push(`Main SystemKa '${qe.main_system}_${qe.main_ka}' from exam '${exam.name}' is not in the question's system_ka_numbers. It has been reset.`);
                     qe.main_ka = '';
                     qe.main_system = '';
+                  } else if (matchedNumber !== mainSystemKaNumber) {
+                    // Update qe.main_system and qe.main_ka to match the found number
+                    const [newMainSystem, newMainKa] = matchedNumber.split('_');
+                    qe.main_system = newMainSystem;
+                    qe.main_ka = newMainKa;
+                    warnings.push(`Main SystemKa '${mainSystemKaNumber}' from exam '${exam.name}' updated to '${matchedNumber}' to match system_ka_numbers.`);
                   }
                 } else if (qe.main_system && !qe.main_ka) {
                   warnings.push(`Main system '${qe.main_system}' provided but main_ka is missing from exam '${exam.name}'. It has been reset.`);
@@ -365,10 +398,7 @@ export class ImportRepository {
               warnings.push(`Error looking up exam '${qe.exam_name}': ${(error as Error).message}`);
             }
           }
-
-
         }
-
         if (examIds.length > 0) {
           question.exam_ids = examIds;
         }
