@@ -17,24 +17,86 @@ interface QuestionFormProps {
 
 interface QuestionFormContentProps {
     questionForm: Question;
-    // setQuestionForm: React.Dispatch<React.SetStateAction<Question>>;
     selectedSystemKas: string[];
-    // setSelectedSystemKas: React.Dispatch<React.SetStateAction<string[]>>;
     handleChange: (key: string, value: unknown) => void;
     handleQuestionExamChange: (key: string, value: unknown, idx?: number) => void;
     answers: [Answer, Answer, Answer, Answer];
+    validationState?: (validationResult: { state: string; message: string }) => void;
+
 }
 
 export function QuestionFormContent({
     questionForm,
-    // setQuestionForm,
     selectedSystemKas,
-    // setSelectedSystemKas,
     handleChange,
     handleQuestionExamChange,
-    answers
+    answers,
+    validationState = () => { return },
 }: QuestionFormContentProps) {
     const { exams, system_kas, addSystemKa } = useDatabase();
+    useEffect(() => {
+        validationState(getValidationState());
+    }, [questionForm, answers]);
+
+    // Validation state
+    const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+    // Validation functions
+    const isQuestionTextValid = () => {
+        return questionForm.question_text && questionForm.question_text.trim() !== '';
+    };
+
+    const isTechReferencesValid = () => {
+        return questionForm.technical_references && questionForm.technical_references.trim() !== '';
+    };
+
+    const isReferencesProvidedValid = () => {
+        return questionForm.references_provided && questionForm.references_provided.trim() !== '';
+    };
+
+    const isObjectiveValid = () => {
+        return questionForm.objective && questionForm.objective.trim() !== '';
+    };
+
+    const isCorrectAnswerValid = () => {
+        return questionForm.correct_answer === "A" ||
+            questionForm.correct_answer === "B" ||
+            questionForm.correct_answer === "C" ||
+            questionForm.correct_answer === "D";
+    };
+
+    const areAnswersValid = () => {
+        return answers.every(a => a.answer_text && a.answer_text.trim() !== '');
+    };
+
+    const areSystemKasValid = () => {
+        console.log(questionForm)
+    }
+
+    const getValidationState = () => {
+        const optionalFieldsValid = isTechReferencesValid() && isReferencesProvidedValid() && isObjectiveValid();
+        areSystemKasValid();
+
+        if (!isQuestionTextValid()) {
+            return { state: 'error', message: 'Question text is required.' };
+        }
+        if (!isCorrectAnswerValid()) {
+            return { state: 'error', message: 'A valid correct answer (A–D) is required.' };
+        }
+        if (!areAnswersValid()) {
+            return { state: 'error', message: 'All answers must have text.' };
+        }
+        if (!optionalFieldsValid) {
+            return { state: 'warning', message: 'Some optional fields (references or objective) are incomplete.' };
+        }
+        return { state: 'success', message: 'All fields are valid.' };
+    };
+
+
+    const handleFieldBlur = (fieldName: string) => {
+        setTouched(prev => ({ ...prev, [fieldName]: true }));
+    };
+
 
     // Responsive container styles
     const containerSx: SxProps = {
@@ -55,7 +117,6 @@ export function QuestionFormContent({
         await addSystemKa(system_ka);
     }
 
-
     return (
         <Box sx={containerSx}>
             {/* Question Form Section */}
@@ -66,10 +127,20 @@ export function QuestionFormContent({
                         type={'text'}
                         value={questionForm.question_text || ''}
                         onChange={(e) => handleChange('question_text', e.target.value)}
+                        onBlur={() => handleFieldBlur('question_text')}
                         label={"Question"}
                         required={true}
                         rows={5}
                         multiline={true}
+                        error={touched.question_text && !isQuestionTextValid()}
+                        helperText={touched.question_text && !isQuestionTextValid() ? 'Question is required' : ''}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: touched.question_text && !isQuestionTextValid() ? 'error.main' : 'default',
+                                },
+                            },
+                        }}
                     />
                 </Box>
                 <Box sx={{ pb: 2 }}>
@@ -78,9 +149,17 @@ export function QuestionFormContent({
                         type={'text'}
                         value={questionForm.technical_references || ''}
                         onChange={(e) => handleChange('technical_references', e.target.value)}
+                        onBlur={() => handleFieldBlur('technical_references')}
                         label={"Technical References"}
                         rows={2}
                         multiline={true}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: touched.technical_references && !isTechReferencesValid() ? '#ed6c02' : 'default',
+                                },
+                            },
+                        }}
                     />
                 </Box>
                 <Box sx={{ pb: 2 }}>
@@ -89,9 +168,17 @@ export function QuestionFormContent({
                         type={'text'}
                         value={questionForm.references_provided || ''}
                         onChange={(e) => handleChange('references_provided', e.target.value)}
+                        onBlur={() => handleFieldBlur('references_provided')}
                         label={"References Provided"}
                         rows={2}
                         multiline={true}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: touched.references_provided && !isReferencesProvidedValid() ? '#ed6c02' : 'default',
+                                },
+                            },
+                        }}
                     />
                 </Box>
                 <Box sx={{ pb: 2 }}>
@@ -100,7 +187,15 @@ export function QuestionFormContent({
                         type={'text'}
                         value={questionForm.objective || ''}
                         onChange={(e) => handleChange('objective', e.target.value)}
+                        onBlur={() => handleFieldBlur('objective')}
                         label={"Objective"}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: touched.objective && !isObjectiveValid() ? '#ed6c02' : 'default',
+                                },
+                            },
+                        }}
                     />
                 </Box>
                 <Box sx={{ pb: 2, display: 'flex' }}>
@@ -217,6 +312,7 @@ export function QuestionFormContent({
                         : 'No Exams'}
                 </Box>
             </Box>
+
             {/* Answers Section */}
             <Box>
                 {answers.map((answer, idx) => {
@@ -241,6 +337,10 @@ export default function QuestionFormModal(props: QuestionFormProps) {
     const [selectedSystemKas, setSelectedSystemKas] = useState<string[]>([]);
     const [open, setOpen] = useState(false);
     const { exams } = useDatabase();
+    const [validationStatus, setValidationStatus] = useState<{ state: string; message: string }>({
+        state: 'error',
+        message: 'Form incomplete',
+    });
 
     const answers: [Answer, Answer, Answer, Answer] = [
         {
@@ -303,9 +403,7 @@ export default function QuestionFormModal(props: QuestionFormProps) {
     }, [questionForm.system_kas]);
 
     const handleChange = (key: string, value: unknown) => {
-        // console.log(key, value);
         setQuestionForm((prev) => ({ ...prev, [key]: value }));
-        // console.log(questionForm);
     };
 
     const handleQuestionExamChange = (key: string, value: unknown, idx?: number) => {
@@ -330,18 +428,6 @@ export default function QuestionFormModal(props: QuestionFormProps) {
         setOpen(false);
     };
 
-    const validateForm = () => {
-        if (!questionForm.question_text) { return false; }
-        if (questionForm.correct_answer !== "A" &&
-            questionForm.correct_answer !== "B" &&
-            questionForm.correct_answer !== "C" &&
-            questionForm.correct_answer !== "D") {
-            return false;
-        }
-        if (!answers.every(a => a.answer_text && a.answer_text.trim() !== '')) { return false; }
-        return true;
-    };
-
     return (
         <>
             <FormDialog
@@ -350,7 +436,7 @@ export default function QuestionFormModal(props: QuestionFormProps) {
                 submitText={`${question ? 'Update' : 'Add'} Question`}
                 onSubmit={handleSubmit}
                 onClose={() => setOpen(false)}
-                validate={validateForm}
+                validate={() => validationStatus.state !== 'error'}
                 maxWidth='lg'
                 fullWidth={true}
             >
@@ -360,6 +446,7 @@ export default function QuestionFormModal(props: QuestionFormProps) {
                     handleChange={handleChange}
                     handleQuestionExamChange={handleQuestionExamChange}
                     answers={answers}
+                    validationState={setValidationStatus}
                 />
             </FormDialog>
             <Button
