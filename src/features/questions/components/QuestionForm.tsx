@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { defaultQuestion } from '../../../data/db/schema';
 import { Box, Button, TextField, SxProps, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Typography, Autocomplete } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
-import AnswerForm from './AnswerForm';
+import AnswersForm from './AnswersForm';
 import { FormDialog } from '../../../common/components/FormDialog';
 import SystemKaSelect from '../../../features/system_kas/components/SystemKaSelect';
 import ExamQuestionSelect from '../../exams/components/ExamQuestionSelect';
@@ -315,17 +315,10 @@ export function QuestionFormContent({
 
             {/* Answers Section */}
             <Box>
-                {answers.map((answer, idx) => {
-                    const letter = String.fromCharCode(65 + idx);
-                    return (
-                        <AnswerForm
-                            onChange={handleChange}
-                            answer={answer}
-                            letterChoice={letter}
-                            key={idx}
-                        />
-                    )
-                })}
+                <AnswersForm
+                    onChange={handleChange}
+                    answers={answers}
+                />
             </Box>
         </Box>
     );

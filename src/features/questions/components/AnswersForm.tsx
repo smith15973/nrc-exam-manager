@@ -7,9 +7,9 @@ interface AnswerFormProps {
     letterChoice: string;
 }
 
-export default function AnswerForm(props: AnswerFormProps) {
+export function AnswerForm(props: AnswerFormProps) {
     const { answer, onChange, letterChoice } = props;
-    
+
     // Track which fields have been touched (blurred)
     const [touched, setTouched] = useState<Record<string, boolean>>({});
 
@@ -84,5 +84,28 @@ export default function AnswerForm(props: AnswerFormProps) {
                 sx={{ marginLeft: 2 }}
             />
         </Box>
+    );
+}
+
+interface AnswersFormProps {
+    answers: Answer[];
+    onChange: (key: string, value: unknown) => void;
+}
+
+export default function AnswersForm({ answers, onChange }: AnswersFormProps) {
+    return (
+        <>
+            {answers.map((answer, idx) => {
+                const letter = String.fromCharCode(65 + idx);
+                return (
+                    <AnswerForm
+                        onChange={onChange}
+                        answer={answer}
+                        letterChoice={letter}
+                        key={idx}
+                    />
+                );
+            })}
+        </>
     );
 }
