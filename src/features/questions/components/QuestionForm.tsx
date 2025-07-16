@@ -68,6 +68,9 @@ export function QuestionFormContent({
     const areAnswersValid = () => {
         return answers.every(a => a.answer_text && a.answer_text.trim() !== '');
     };
+    const areAnswerJustificationsValid = () => {
+        return answers.every(a => a.justification && a.justification.trim() !== '');
+    };
 
     const areSystemKasValid = () => {
         console.log(questionForm)
@@ -85,6 +88,9 @@ export function QuestionFormContent({
         }
         if (!areAnswersValid()) {
             return { state: 'error', message: 'All answers must have text.' };
+        }
+        if (!areAnswerJustificationsValid()) {
+            return { state: 'error', message: 'All answer justifcations must have text.' };
         }
         if (!optionalFieldsValid) {
             return { state: 'warning', message: 'Some optional fields (references or objective) are incomplete.' };
