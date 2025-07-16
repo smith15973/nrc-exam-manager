@@ -432,8 +432,21 @@ export class QuestionRepository {
                 query += (filters?.query?.trim() ? ' AND ' : ' WHERE ') + conditions.join(' AND ');
             }
 
-            // Add ORDER BY and LIMIT 1 for single record retrieval
-            query += ' ORDER BY q.question_id LIMIT 1';
+            // Build ORDER BY clause first
+            let orderByClause = 'ORDER BY ';
+            if (filters?.sort_by) {
+                const validSortColumns = [
+                    'question_id', 'question_text', 'exam_level', 'cognitive_level', 'objective', 'technical_references'
+                ];
+                const sortColumn = validSortColumns.includes(filters.sort_by) ? filters.sort_by : 'question_id';
+                const sortOrder = filters.sort_order === 'desc' ? 'DESC' : 'ASC';
+                orderByClause += `q.${sortColumn} ${sortOrder}`;
+            } else {
+                orderByClause += 'q.question_id ASC';
+            }
+
+            // Add ORDER BY and LIMIT for single record retrieval
+            query += ` ${orderByClause} LIMIT 1`;
 
             // console.log("Final Query:", query);
             // console.log("Params:", params);
@@ -555,7 +568,21 @@ export class QuestionRepository {
                 query += (filters?.query?.trim() ? ' AND ' : ' WHERE ') + conditions.join(' AND ');
             }
 
-            query += ' ORDER BY q.question_id';
+            // Build ORDER BY clause first
+            let orderByClause = 'ORDER BY ';
+            if (filters?.sort_by) {
+                const validSortColumns = [
+                    'question_id', 'question_text', 'exam_level', 'cognitive_level', 'objective', 'technical_references'
+                ];
+                const sortColumn = validSortColumns.includes(filters.sort_by) ? filters.sort_by : 'question_id';
+                const sortOrder = filters.sort_order === 'desc' ? 'DESC' : 'ASC';
+                orderByClause += `q.${sortColumn} ${sortOrder}`;
+            } else {
+                orderByClause += 'q.question_id ASC';
+            }
+
+            // Add ORDER BY and LIMIT for single record retrieval
+            query += ` ${orderByClause}`;
 
             // console.log("Final Query:", query);
             // console.log("Params:", params);
@@ -648,6 +675,22 @@ export class QuestionRepository {
             if (conditions.length > 0) {
                 query += ' WHERE ' + conditions.join(' AND ');
             }
+
+            // Build ORDER BY clause first
+            let orderByClause = 'ORDER BY ';
+            if (filters?.sort_by) {
+                const validSortColumns = [
+                    'question_id', 'question_text', 'exam_level', 'cognitive_level', 'objective', 'technical_references'
+                ];
+                const sortColumn = validSortColumns.includes(filters.sort_by) ? filters.sort_by : 'question_id';
+                const sortOrder = filters.sort_order === 'desc' ? 'DESC' : 'ASC';
+                orderByClause += `q.${sortColumn} ${sortOrder}`;
+            } else {
+                orderByClause += 'q.question_id ASC';
+            }
+
+            // Add ORDER BY and LIMIT for single record retrieval
+            query += ` ${orderByClause}`;
 
             this.db.all(query, params, (err, rows: Question[]) => {
                 if (err) {

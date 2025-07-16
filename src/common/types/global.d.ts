@@ -308,5 +308,7 @@ interface QuestionFilters {
   cognitive_level?: 0 | 1 | '';
   objective?: string;
   technical_references?: string;
+  sort_by?: string;
+  sort_order?: string;
 
 }
