@@ -402,12 +402,6 @@ export class ImportRepository {
         cleanedQuestion[field] = '';
         warnings.push(`${field} was missing - set to empty string`);
       }
-
-      // Truncate long answer text
-      if (cleanedQuestion[field] && cleanedQuestion[field].length > 500) {
-        cleanedQuestion[field] = cleanedQuestion[field].substring(0, 500);
-        warnings.push(`${field} was too long - truncated to 500 characters`);
-      }
     });
 
     justificationFields.forEach(field => {
@@ -416,12 +410,6 @@ export class ImportRepository {
         warnings.push(`${field} was missing - set to empty string`);
       }
     });
-
-    // Truncate long question text
-    if (cleanedQuestion.question_text && cleanedQuestion.question_text.length > 1000) {
-      cleanedQuestion.question_text = cleanedQuestion.question_text.substring(0, 1000);
-      warnings.push('Question text was too long - truncated to 1000 characters');
-    }
 
     // Clean question_exams if present
     if (cleanedQuestion.question_exams) {
