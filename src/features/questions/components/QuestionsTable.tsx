@@ -12,9 +12,26 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  IconButton,
 } from '@mui/material';
+import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 import { TableVirtuoso, TableComponents } from 'react-virtuoso';
 import QuestionsTableToolbar from './QuestionsTableToolbar';
+
+// Types
+type SortDirection = 'off' | 'asc' | 'desc';
+type SortField = 'question_text' | 'question_id' | 'system_kas' | 'exams' | 'exam_level';
+
+interface SortConfig {
+  field: SortField | null;
+  direction: SortDirection;
+}
+
+interface SortIndicatorProps {
+  field: SortField;
+  sortConfig: SortConfig;
+  onSort: (field: SortField) => void;
+}
 
 interface QuestionTableProps {
   questions: Question[];
@@ -27,12 +44,110 @@ interface QuestionTableProps {
   examId?: number;
 }
 
+// Define sort states
+const SORT_STATES: Record<string, SortDirection> = {
+  OFF: 'off',
+  ASC: 'asc',
+  DESC: 'desc'
+} as const;
+
+// Column configuration with flexible widths
+const COLUMN_CONFIG = {
+  checkbox: {
+    minWidth: 48,
+    flex: 0,
+    basis: '48px',
+    maxWidth: '48px'  // Add this
+  },
+  question_id: {
+    minWidth: 0,
+    flex: 0,
+    basis: '20px',
+    maxWidth: '24px'  // Add this
+  },
+  question: {
+    minWidth: 200,
+    flex: 0,
+    basis: '50%',
+    maxWidth: '500px'  // Add this
+  },
+  systemKA: {
+    minWidth: 100,
+    flex: 0,
+    basis: '15%',
+    maxWidth: '500px'  // Add this
+  },
+  exams: {
+    minWidth: 100,
+    flex: 0,
+    basis: '15%',
+    maxWidth: '500px'  // Add this
+  },
+  examLevel: {
+    minWidth: 80,
+    flex: 0,
+    basis: '10%',
+    maxWidth: '500px'  // Add this
+  },
+  view: {
+    minWidth: 80,
+    flex: 0,
+    basis: '10%',
+    maxWidth: '500px'  // Add this
+  }
+};
+
+const getFlexibleWidth = (config: typeof COLUMN_CONFIG[keyof typeof COLUMN_CONFIG]) => ({
+  minWidth: config.minWidth,
+  flex: `${config.flex} 1 ${config.basis}`,
+  maxWidth: config.maxWidth || (config.flex > 2 ? 'none' : `${config.minWidth * 3}px`)
+});
+
+// Sort indicator component
+const SortIndicator: React.FC<SortIndicatorProps> = ({ field, sortConfig, onSort }) => {
+  const isActive = sortConfig.field === field;
+  const direction = isActive ? sortConfig.direction : SORT_STATES.OFF;
+
+  return (
+    <IconButton
+      size="small"
+      onClick={() => onSort(field)}
+      sx={{
+        ml: 1,
+        padding: '2px',
+        '&:hover': {
+          backgroundColor: 'action.hover'
+        }
+      }}
+      aria-label={`Sort by ${field}`}
+    >
+      {direction === SORT_STATES.OFF && (
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '16px',
+          justifyContent: 'center'
+        }}>
+          <KeyboardArrowUp sx={{ fontSize: '12px', opacity: 0.3, marginBottom: '-2px' }} />
+          <KeyboardArrowDown sx={{ fontSize: '12px', opacity: 0.3, marginTop: '-2px' }} />
+        </Box>
+      )}
+      {direction === SORT_STATES.ASC && (
+        <KeyboardArrowUp sx={{ fontSize: '16px', color: 'primary.main' }} />
+      )}
+      {direction === SORT_STATES.DESC && (
+        <KeyboardArrowDown sx={{ fontSize: '16px', color: 'primary.main' }} />
+      )}
+    </IconButton>
+  );
+};
+
 const VirtuosoTableComponents: TableComponents<Question> = {
   Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
     <TableContainer component={Paper} {...props} ref={ref} />
   )),
   Table: (props) => (
-    <Table {...props} sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }} />
+    <Table {...props} sx={{ borderCollapse: 'separate', tableLayout: 'auto' }} />
   ),
   TableHead: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
     <TableHead {...props} ref={ref} />
@@ -45,8 +160,83 @@ const VirtuosoTableComponents: TableComponents<Question> = {
 
 export default function QuestionsTable(props: QuestionTableProps) {
   const [openFilters, setOpenFilters] = useState(false);
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    field: null,
+    direction: SORT_STATES.OFF
+  });
+
   const { questions, checkable = false, selectedIds = [], onSelectionChange, filters, onFilterChange, onResetFilters, examId } = props;
   const navigate = useNavigate();
+
+  // Sort handler function
+  const handleSort = (field: SortField): void => {
+    setSortConfig((prevConfig: SortConfig) => {
+      if (prevConfig.field !== field) {
+        // New field selected, start with ascending
+        return { field, direction: SORT_STATES.ASC };
+      }
+
+      // Same field clicked, cycle through states
+      switch (prevConfig.direction) {
+        case SORT_STATES.OFF:
+          return { field, direction: SORT_STATES.ASC };
+        case SORT_STATES.ASC:
+          return { field, direction: SORT_STATES.DESC };
+        case SORT_STATES.DESC:
+          return { field: null, direction: SORT_STATES.OFF };
+        default:
+          return { field, direction: SORT_STATES.ASC };
+      }
+    });
+  };
+
+  // Sort the questions based on current sort config
+  const sortedQuestions = React.useMemo(() => {
+    if (!sortConfig.field || sortConfig.direction === SORT_STATES.OFF) {
+      return questions;
+    }
+
+    return [...questions].sort((a, b) => {
+      let aValue: string | number = '';
+      let bValue: string | number = '';
+
+      switch (sortConfig.field) {
+        case 'question_id':
+          aValue = a.question_id || 0;
+          bValue = b.question_id || 0;
+          break;
+        case 'question_text':
+          aValue = a.question_text || '';
+          bValue = b.question_text || '';
+          break;
+        case 'system_kas':
+          aValue = a.system_kas?.length || 0;
+          bValue = b.system_kas?.length || 0;
+          break;
+        case 'exams':
+          aValue = a.exams?.length || 0;
+          bValue = b.exams?.length || 0;
+          break;
+        case 'exam_level':
+          aValue = a.exam_level || 0;
+          bValue = b.exam_level || 0;
+          break;
+        default:
+          return 0;
+      }
+
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+
+      if (sortConfig.direction === SORT_STATES.ASC) {
+        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      } else {
+        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+      }
+    });
+  }, [questions, sortConfig]);
 
   const handleNavigate = (questionId: number) => {
     if (examId) {
@@ -74,7 +264,10 @@ export default function QuestionsTable(props: QuestionTableProps) {
   function fixedHeaderContent() {
     return (
       <TableRow sx={{ backgroundColor: 'background.paper' }}>
-        <TableCell padding="checkbox" sx={{ width: 48 }}>
+        <TableCell
+          padding="checkbox"
+          sx={getFlexibleWidth(COLUMN_CONFIG.checkbox)}
+        >
           {checkable && (
             <Checkbox
               color="primary"
@@ -87,11 +280,57 @@ export default function QuestionsTable(props: QuestionTableProps) {
             />
           )}
         </TableCell>
-        <TableCell sx={{ width: '40%' }}>Question</TableCell>
-        <TableCell align="right" sx={{ width: '15%' }}>System KA #s</TableCell>
-        <TableCell align="right" sx={{ width: '15%' }}>Exams</TableCell>
-        <TableCell align="right" sx={{ width: '10%' }}>Exam Level</TableCell>
-        <TableCell align="right" sx={{ width: '10%' }}>View</TableCell>
+
+        <TableCell sx={getFlexibleWidth(COLUMN_CONFIG.question_id)}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            ID
+            <SortIndicator field="question_id" sortConfig={sortConfig} onSort={handleSort} />
+          </Box>
+        </TableCell>
+
+        <TableCell sx={getFlexibleWidth(COLUMN_CONFIG.question)}>
+          <Box sx={{ display: 'flex', alignItems: 'left' }}>
+            Question
+            <SortIndicator field="question_text" sortConfig={sortConfig} onSort={handleSort} />
+          </Box>
+        </TableCell>
+
+        <TableCell
+          align="right"
+          sx={getFlexibleWidth(COLUMN_CONFIG.systemKA)}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+            System KA #s
+            <SortIndicator field="system_kas" sortConfig={sortConfig} onSort={handleSort} />
+          </Box>
+        </TableCell>
+
+        <TableCell
+          align="right"
+          sx={getFlexibleWidth(COLUMN_CONFIG.exams)}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+            Exams
+            <SortIndicator field="exams" sortConfig={sortConfig} onSort={handleSort} />
+          </Box>
+        </TableCell>
+
+        <TableCell
+          align="right"
+          sx={getFlexibleWidth(COLUMN_CONFIG.examLevel)}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+            Exam Level
+            <SortIndicator field="exam_level" sortConfig={sortConfig} onSort={handleSort} />
+          </Box>
+        </TableCell>
+
+        <TableCell
+          align="right"
+          sx={getFlexibleWidth(COLUMN_CONFIG.view)}
+        >
+          View
+        </TableCell>
       </TableRow>
     );
   }
@@ -115,13 +354,15 @@ export default function QuestionsTable(props: QuestionTableProps) {
             />
           )}
         </TableCell>
+        <TableCell align="left">
+          {row.question_id}
+        </TableCell>
         <TableCell
           component="th"
           id={labelId}
           scope="row"
           sx={{
-            width: '40%',
-            maxWidth: '40%',
+            minWidth: COLUMN_CONFIG.question.minWidth,
             wordBreak: 'break-all',
             overflowWrap: 'break-word',
             whiteSpace: 'pre-wrap',
@@ -191,11 +432,10 @@ export default function QuestionsTable(props: QuestionTableProps) {
         onFilterChange={onFilterChange}
         filters={filters || {}}
         onResetFilters={onResetFilters}
-
       />
       <Paper style={{ height: 600, width: '100%' }}>
         <TableVirtuoso
-          data={questions}
+          data={sortedQuestions}
           components={VirtuosoTableComponents}
           fixedHeaderContent={fixedHeaderContent}
           itemContent={rowContent}
