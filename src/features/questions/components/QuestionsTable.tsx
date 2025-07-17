@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -57,49 +57,49 @@ const COLUMN_CONFIG = {
     minWidth: 48,
     flex: 0,
     basis: '48px',
-    maxWidth: '48px'  // Add this
+    maxWidth: '48px'
   },
   question_id: {
     minWidth: 0,
     flex: 0,
     basis: '48px',
-    maxWidth: '48px'  // Add this
+    maxWidth: '48px'
   },
   question_number: {
     minWidth: 0,
     flex: 0,
     basis: '48px',
-    maxWidth: '48px'  // Add this
+    maxWidth: '48px'
   },
   question: {
     minWidth: 200,
     flex: 0,
     basis: '50%',
-    maxWidth: '500px'  // Add this
+    maxWidth: '500px'
   },
   systemKA: {
     minWidth: 100,
     flex: 0,
     basis: '15%',
-    maxWidth: '500px'  // Add this
+    maxWidth: '500px'
   },
   exams: {
     minWidth: 100,
     flex: 0,
     basis: '15%',
-    maxWidth: '500px'  // Add this
+    maxWidth: '500px'
   },
   examLevel: {
     minWidth: 80,
     flex: 0,
     basis: '10%',
-    maxWidth: '500px'  // Add this
+    maxWidth: '500px'
   },
   view: {
     minWidth: 80,
     flex: 0,
     basis: '10%',
-    maxWidth: '500px'  // Add this
+    maxWidth: '500px'
   }
 };
 
@@ -174,6 +174,15 @@ export default function QuestionsTable(props: QuestionTableProps) {
   const { questions, checkable = false, selectedIds = [], onSelectionChange, filters, onFilterChange, onResetFilters, examId } = props;
   const navigate = useNavigate();
 
+  // Set default sort based on examId presence
+  useEffect(() => {
+    const defaultField = examId ? 'question_number' : 'question_id';
+    setSortConfig({
+      field: defaultField,
+      direction: SORT_STATES.ASC
+    });
+  }, [examId]);
+
   // Sort handler function
   const handleSort = (field: SortField): void => {
     setSortConfig((prevConfig: SortConfig) => {
@@ -246,7 +255,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
         return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       }
     });
-  }, [questions, sortConfig]);
+  }, [questions, sortConfig, examId]);
 
   const handleNavigate = (questionId: number) => {
     if (examId) {
@@ -298,12 +307,14 @@ export default function QuestionsTable(props: QuestionTableProps) {
           </Box>
         </TableCell>
 
-        <TableCell sx={getFlexibleWidth(COLUMN_CONFIG.question_number)}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            Q#
-            <SortIndicator field="question_number" sortConfig={sortConfig} onSort={handleSort} />
-          </Box>
-        </TableCell>
+        {examId && (
+          <TableCell sx={getFlexibleWidth(COLUMN_CONFIG.question_number)}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              Q#
+              <SortIndicator field="question_number" sortConfig={sortConfig} onSort={handleSort} />
+            </Box>
+          </TableCell>
+        )}
 
         <TableCell sx={getFlexibleWidth(COLUMN_CONFIG.question)}>
           <Box sx={{ display: 'flex', alignItems: 'left' }}>
@@ -375,12 +386,11 @@ export default function QuestionsTable(props: QuestionTableProps) {
         <TableCell align="left">
           {row.question_id}
         </TableCell>
-        {examId ?
+        {examId && (
           <TableCell align="left">
             {questionNumber}
           </TableCell>
-          : ''
-        }
+        )}
         <TableCell
           component="th"
           id={labelId}
