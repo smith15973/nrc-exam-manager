@@ -216,8 +216,9 @@ export default function ExamPage() {
                     onResetFilters={() => setFilters({})}
                     examId={examId}
                 /> : examQuestions?.map((examQuestion) => {
+                    const examQuestionData = examQuestion.question_exams?.find(qe => qe.exam_id === examId)
                     return (
-                        <QuestionTemplate key={examQuestion.question_id} question={examQuestion} examName={exam.name} student={student} />
+                        <QuestionTemplate key={examQuestion.question_id} question={examQuestion} examName={exam.name} student={student} examQuestionData={examQuestionData}/>
                     )
                 })}
 
