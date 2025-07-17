@@ -20,7 +20,7 @@ import QuestionsTableToolbar from './QuestionsTableToolbar';
 
 // Types
 type SortDirection = 'off' | 'asc' | 'desc';
-type SortField = 'question_text' | 'question_id' | 'system_kas' | 'exams' | 'exam_level';
+type SortField = 'question_text' | 'question_id' | 'system_kas' | 'exams' | 'exam_level' | 'question_number';
 
 interface SortConfig {
   field: SortField | null;
@@ -62,8 +62,14 @@ const COLUMN_CONFIG = {
   question_id: {
     minWidth: 0,
     flex: 0,
-    basis: '20px',
-    maxWidth: '24px'  // Add this
+    basis: '48px',
+    maxWidth: '48px'  // Add this
+  },
+  question_number: {
+    minWidth: 0,
+    flex: 0,
+    basis: '48px',
+    maxWidth: '48px'  // Add this
   },
   question: {
     minWidth: 200,
@@ -205,6 +211,10 @@ export default function QuestionsTable(props: QuestionTableProps) {
           aValue = a.question_id || 0;
           bValue = b.question_id || 0;
           break;
+        case 'question_number':
+          aValue = a.question_exams?.find(qe => qe.exam_id === examId)?.question_number || 0;
+          bValue = b.question_exams?.find(qe => qe.exam_id === examId)?.question_number || 0;
+          break;
         case 'question_text':
           aValue = a.question_text || '';
           bValue = b.question_text || '';
@@ -288,6 +298,13 @@ export default function QuestionsTable(props: QuestionTableProps) {
           </Box>
         </TableCell>
 
+        <TableCell sx={getFlexibleWidth(COLUMN_CONFIG.question_number)}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            Q#
+            <SortIndicator field="question_number" sortConfig={sortConfig} onSort={handleSort} />
+          </Box>
+        </TableCell>
+
         <TableCell sx={getFlexibleWidth(COLUMN_CONFIG.question)}>
           <Box sx={{ display: 'flex', alignItems: 'left' }}>
             Question
@@ -338,6 +355,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
   function rowContent(_index: number, row: Question) {
     const isItemSelected = selectedIds.includes(row.question_id);
     const labelId = `question-table-checkbox-${row.question_id}`;
+    const questionNumber = row.question_exams?.find(qe => qe.exam_id === examId)?.question_number
 
     return (
       <React.Fragment>
@@ -357,6 +375,12 @@ export default function QuestionsTable(props: QuestionTableProps) {
         <TableCell align="left">
           {row.question_id}
         </TableCell>
+        {examId ?
+          <TableCell align="left">
+            {questionNumber}
+          </TableCell>
+          : ''
+        }
         <TableCell
           component="th"
           id={labelId}
@@ -421,11 +445,13 @@ export default function QuestionsTable(props: QuestionTableProps) {
   };
 
   return (
-    <Box sx={{ height: '80vh', 
-    width: '100%', 
-    display: 'flex', 
-    flexDirection: 'column',
-    py: 2  }}>
+    <Box sx={{
+      height: '80vh',
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      py: 2
+    }}>
       <QuestionsTableToolbar
         numSelected={selectedIds.length}
         searchQuery={filters?.query || ''}
@@ -437,7 +463,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
         filters={filters || {}}
         onResetFilters={onResetFilters}
       />
-      <Paper style={{ flexGrow: 1, width:'100%', minHeight: 0 }}>
+      <Paper style={{ flexGrow: 1, width: '100%', minHeight: 0 }}>
         <TableVirtuoso
           data={sortedQuestions}
           components={VirtuosoTableComponents}
