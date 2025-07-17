@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import { defaultQuestion } from '../../../data/db/schema';
-import { Box, Button, TextField, SxProps, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Typography, Autocomplete } from '@mui/material';
+import { Box, Button, TextField, SxProps, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import AnswersForm from './AnswersForm';
 import { FormDialog } from '../../../common/components/FormDialog';
 import SystemKaSelect from '../../../features/system_kas/components/SystemKaSelect';
 import ExamQuestionSelect from '../../exams/components/ExamQuestionSelect';
 import SystemKaForm from '../../../features/system_kas/components/SystemKaForm';
+import ExamQuestionsForm from '../../../features/examsQuestions/components/ExamQuestionsForm';
 
 interface QuestionFormProps {
     question?: Question;
@@ -33,10 +34,8 @@ export function QuestionFormContent({
     validationState = () => { return },
 }: QuestionFormContentProps) {
     const { exams, system_kas, addSystemKa } = useDatabase();
-    
     // Validation state
     const [touched, setTouched] = useState<Record<string, boolean>>({});
-    const [examQuestionTouched, setExamQuestionTouched] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
         validationState(getValidationState());
@@ -75,56 +74,6 @@ export function QuestionFormContent({
         }
 
         return { errors, warnings };
-    };
-
-    // Individual field validation functions
-    const isPrimarySystemKaValid = (qe: ExamQuestion, questionForm: Question) => {
-        if (!qe.main_system_ka_ka || !qe.main_system_ka_system) {
-            return { valid: false, type: 'warning' as const };
-        }
-        
-        const primarySystemKa = `${qe.main_system_ka_system}_${qe.main_system_ka_ka}`;
-        const availableSystemKas = questionForm.system_kas?.map(sk => sk.system_ka_number) || [];
-        
-        if (!availableSystemKas.includes(primarySystemKa)) {
-            return { valid: false, type: 'error' as const };
-        }
-        
-        return { valid: true, type: 'success' as const };
-    };
-
-    const isKaMatchJustificationValid = (qe: ExamQuestion) => {
-        return qe.ka_match_justification && qe.ka_match_justification.trim() !== '';
-    };
-
-    const isSroMatchJustificationValid = (qe: ExamQuestion, questionForm: Question) => {
-        if (questionForm.exam_level !== 1) return true; // Not required for RO
-        return qe.sro_match_justification && qe.sro_match_justification.trim() !== '';
-    };
-
-    const isAnswersOrderValid = (qe: ExamQuestion) => {
-        return qe.answers_order && qe.answers_order.trim() !== '';
-    };
-
-    // Helper function to get border color based on validation state
-    const getBorderColor = (isValid: boolean, isTouched: boolean, validationType: 'error' | 'warning' = 'warning') => {
-        if (!isTouched) return 'default';
-        if (!isValid) {
-            return validationType === 'error' ? 'error.main' : '#ed6c02';
-        }
-        return 'default';
-    };
-
-    // Helper function to handle exam question field blur
-    const handleExamQuestionBlur = (fieldName: string, examIndex: number) => {
-        const key = `${fieldName}_${examIndex}`;
-        setExamQuestionTouched(prev => ({ ...prev, [key]: true }));
-    };
-
-    // Helper function to check if exam question field is touched
-    const isExamQuestionTouched = (fieldName: string, examIndex: number) => {
-        const key = `${fieldName}_${examIndex}`;
-        return examQuestionTouched[key] || false;
     };
 
     // Updated comprehensive validation function
@@ -382,157 +331,10 @@ export function QuestionFormContent({
                         handleChange={handleQuestionExamChange}
                         selectedList={questionForm.question_exams || []}
                     />
-                    {questionForm.question_exams && questionForm.question_exams.length > 0
-                        ? questionForm.question_exams.map((qe, idx) => {
-                            const examName = exams.find(e => e.exam_id === qe.exam_id)?.name || 'Unknown';
-                            const primarySystemKaValidation = isPrimarySystemKaValid(qe, questionForm);
-                            const kaMatchJustificationValid = isKaMatchJustificationValid(qe);
-                            const sroMatchJustificationValid = isSroMatchJustificationValid(qe, questionForm);
-                            const answersOrderValid = isAnswersOrderValid(qe);
 
-                            return (
-                                <Box key={idx} sx={{ mb: 2, p: 2, border: '1px solid #eee', borderRadius: 2 }}>
-                                    <Typography variant='h6'>{examName}</Typography>
-                                    
-                                    {/* Primary System KA */}
-                                    <Autocomplete
-                                        value={
-                                            qe.main_system_ka_system && qe.main_system_ka_ka
-                                                ? `${qe.main_system_ka_system}_${qe.main_system_ka_ka}`
-                                                : ''
-                                        }
-                                        options={
-                                            (questionForm.system_kas?.map(sk => sk.system_ka_number) || [])
-                                        }
-                                        onChange={(_, newValue) => {
-                                            const [system, ka] = (newValue || '').split('_');
-                                            handleQuestionExamChange('main_system_ka_system', system, idx);
-                                            handleQuestionExamChange('main_system_ka_ka', ka, idx);
-                                        }}
-                                        renderInput={(params) => (
-                                            <TextField 
-                                                {...params} 
-                                                label="Primary System KA" 
-                                                error={
-                                                    isExamQuestionTouched('primary_system_ka', idx) && 
-                                                    !primarySystemKaValidation.valid
-                                                }
-                                                helperText={
-                                                    isExamQuestionTouched('primary_system_ka', idx) && 
-                                                    !primarySystemKaValidation.valid
-                                                        ? primarySystemKaValidation.type === 'error'
-                                                            ? 'Primary System KA must match available System KAs'
-                                                            : 'Primary System KA is required'
-                                                        : ''
-                                                }
-                                            />
-                                        )}
-                                        getOptionLabel={(option) => option || ''}
-                                        isOptionEqualToValue={(option, value) => option === value}
-                                        onBlur={() => handleExamQuestionBlur('primary_system_ka', idx)}
-                                        sx={{
-                                            '& .MuiOutlinedInput-root': {
-                                                '& fieldset': {
-                                                    borderColor: getBorderColor(
-                                                        primarySystemKaValidation.valid,
-                                                        isExamQuestionTouched('primary_system_ka', idx),
-                                                        primarySystemKaValidation.type === 'success' ? undefined : primarySystemKaValidation.type
-                                                    ),
-                                                },
-                                            },
-                                            width: '100%',
-                                            mb: 2
-                                        }}
-                                    />
-                                    
-                                    {/* KA Match Justification */}
-                                    <TextField
-                                        fullWidth
-                                        type={'text'}
-                                        value={qe.ka_match_justification || ''}
-                                        onChange={(e) => handleQuestionExamChange('ka_match_justification', e.target.value, idx)}
-                                        onBlur={() => handleExamQuestionBlur('ka_match_justification', idx)}
-                                        label={"KA Match Justification"}
-                                        required={true}
-                                        rows={2}
-                                        multiline={true}
-                                        sx={{
-                                            '& .MuiOutlinedInput-root': {
-                                                '& fieldset': {
-                                                    borderColor: getBorderColor(
-                                                        !!kaMatchJustificationValid,
-                                                        isExamQuestionTouched('ka_match_justification', idx),
-                                                        'warning'
-                                                    ),
-                                                },
-                                            },
-                                            mb: 2
-                                        }}
-                                    />
-                                    
-                                    {/* SRO Match Justification (only for SRO level) */}
-                                    {questionForm.exam_level === 1 && (
-                                        <TextField
-                                            fullWidth
-                                            type={'text'}
-                                            value={qe.sro_match_justification || ''}
-                                            onChange={(e) => handleQuestionExamChange('sro_match_justification', e.target.value, idx)}
-                                            onBlur={() => handleExamQuestionBlur('sro_match_justification', idx)}
-                                            label={"SRO Match Justification"}
-                                            required
-                                            rows={2}
-                                            multiline={true}
-                                            sx={{
-                                                '& .MuiOutlinedInput-root': {
-                                                    '& fieldset': {
-                                                        borderColor: getBorderColor(
-                                                            !!sroMatchJustificationValid,
-                                                            isExamQuestionTouched('sro_match_justification', idx),
-                                                            'warning'
-                                                        ),
-                                                    },
-                                                },
-                                                mb: 2
-                                            }}
-                                        />
-                                    )}
-                                    
-                                    {/* Answers Order */}
-                                    <Autocomplete
-                                        value={qe.answers_order || ''}
-                                        options={[
-                                            "ABCD", "ABDC", "ACBD", "ACDB", "ADBC", "ADCB",
-                                            "BACD", "BADC", "BCAD", "BCDA", "BDAC", "BDCA",
-                                            "CABD", "CADB", "CBAD", "CBDA", "CDAB", "CDBA",
-                                            "DABC", "DACB", "DBAC", "DBCA", "DCAB", "DCBA"
-                                        ]}
-                                        onChange={(_, newValue) => handleQuestionExamChange('answers_order', newValue, idx)}
-                                        renderInput={(params) => (
-                                            <TextField 
-                                                {...params} 
-                                                label="Answer Order" 
-                                            />
-                                        )}
-                                        getOptionLabel={(option) => option || ''}
-                                        isOptionEqualToValue={(option, value) => option === value}
-                                        onBlur={() => handleExamQuestionBlur('answers_order', idx)}
-                                        sx={{
-                                            '& .MuiOutlinedInput-root': {
-                                                '& fieldset': {
-                                                    borderColor: getBorderColor(
-                                                        !!answersOrderValid,
-                                                        isExamQuestionTouched('answers_order', idx),
-                                                        'warning'
-                                                    ),
-                                                },
-                                            },
-                                            width: '100%'
-                                        }}
-                                    />
-                                </Box>
-                            );
-                        })
-                        : 'No Exams'}
+                    <ExamQuestionsForm questionForm={questionForm} exams={exams} handleQuestionExamChange={handleQuestionExamChange}/>
+
+                    
                 </Box>
             </Box>
 
