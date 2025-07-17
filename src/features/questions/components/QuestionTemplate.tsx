@@ -145,9 +145,9 @@ export default function QuestionTemplate({ question, print = false, student = fa
 
             {/* Question Section */}
             <Box sx={{ mb: 4 }}>
-                {questionNumber ?
+                {examQuestionData ?
                     <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1, color: 'text.primary', ...printStyles }}>
-                        Question {questionNumber}
+                        Question {examQuestionData.question_number}
                     </Typography> : ''
                 }
                 <Typography
