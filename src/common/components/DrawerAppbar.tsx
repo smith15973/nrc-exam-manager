@@ -10,10 +10,12 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import MenuIcon from '@mui/icons-material/Menu';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { getNavItems, getParentRoute, shouldShowBackButton } from '../../app/routes';
 
 interface Props {
   /**
@@ -22,27 +24,32 @@ interface Props {
    */
   window?: () => Window;
 }
+
 const drawerWidth = 240;
-const navItems = [
-  { label: 'Home', link: '/' },
-  { label: 'Question Search', link: '/questions' },
-  { label: 'Plants', link: '/plants' },
-  { label: 'Exams', link: '/exams' },
-  { label: 'Systems', link: '/systems' },
-  { label: 'Stems', link: '/stems' },
-  { label: 'Kas', link: '/kas' },
-  { label: 'SystemKas', link: '/system_kas' },
-  { label: 'Sandbox', link: '/sandbox' },
-];
 
 export default function DrawerAppBar(props: Props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Use the route configuration
+  const navItems = getNavItems();
+  const showBackButton = shouldShowBackButton(location.pathname);
+  const parentRoute = getParentRoute(location.pathname);
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
   };
 
+  const handleBackClick = () => {
+    if (parentRoute) {
+      navigate(parentRoute);
+    } else {
+      // Fallback to browser back
+      navigate(-1);
+    }
+  };
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
@@ -73,15 +80,30 @@ export default function DrawerAppBar(props: Props) {
       <CssBaseline />
       <AppBar component="nav">
         <Toolbar>
+          {/* Mobile menu button or back button */}
           <IconButton
             color="inherit"
-            aria-label="open drawer"
+            aria-label={showBackButton ? "go back" : "open drawer"}
             edge="start"
-            onClick={handleDrawerToggle}
+            onClick={showBackButton ? handleBackClick : handleDrawerToggle}
             sx={{ mr: 2, display: { sm: 'none' } }}
           >
-            <MenuIcon />
+            {showBackButton ? <ArrowBackIcon /> : <MenuIcon />}
           </IconButton>
+          
+          {/* Desktop back button */}
+          {showBackButton && (
+            <IconButton
+              color="inherit"
+              aria-label="go back"
+              edge="start"
+              onClick={handleBackClick}
+              sx={{ mr: 2, display: { xs: 'none', sm: 'block' } }}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          )}
+          
           <Typography
             variant="h6"
             component="div"
@@ -89,20 +111,25 @@ export default function DrawerAppBar(props: Props) {
           >
             NEM
           </Typography>
-          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-            {navItems.map((item) => (
-              <Button
-                key={item.label}
-                component={Link}
-                to={item.link}
-                sx={{ color: '#fff' }}
-              >
-                {item.label}
-              </Button>
-            ))}
-          </Box>
+          
+          {/* Desktop navigation - hide when showing back button to save space */}
+          {!showBackButton && (
+            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+              {navItems.map((item) => (
+                <Button
+                  key={item.label}
+                  component={Link}
+                  to={item.link}
+                  sx={{ color: '#fff' }}
+                >
+                  {item.label}
+                </Button>
+              ))}
+            </Box>
+          )}
         </Toolbar>
       </AppBar>
+      
       <nav>
         <Drawer
           container={container}
@@ -120,9 +147,9 @@ export default function DrawerAppBar(props: Props) {
           {drawer}
         </Drawer>
       </nav>
+      
       <Box component="main" sx={{ p: 3 }}>
         <Toolbar />
-
       </Box>
     </Box>
   );

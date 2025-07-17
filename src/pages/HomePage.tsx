@@ -16,7 +16,14 @@ import {
 } from 'lucide-react';
 
 export default function HomePage() {
-  const [alert, setAlert] = useState({
+  type AlertSeverity = 'success' | 'info' | 'warning' | 'error';
+
+  const [alert, setAlert] = useState<{
+    open: boolean;
+    message: string;
+    severity: AlertSeverity;
+    dbPath: string;
+  }>({
     open: false,
     message: '',
     severity: 'success',
@@ -33,7 +40,7 @@ export default function HomePage() {
           open: true,
           message: 'Database location changed successfully!',
           severity: 'success',
-          dbPath: result.dbPath
+          dbPath: result.dbPath ?? ''
         });
       } else {
         setAlert({

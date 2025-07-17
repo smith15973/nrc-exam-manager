@@ -287,7 +287,7 @@ interface Window {
       questions: (questionIds: number[]) => Promise<QuestionsExportResponse>
     },
     openLocation: (filePath: string) => void,
-    changeDBLocation: () => Promise<ApiResponse>;
+    changeDBLocation: () => Promise<{ success: boolean; dbPath?: string; error?: string }>;
     selectSBDBLocation: () => Promise<ApiResponse>;
   }
 }
