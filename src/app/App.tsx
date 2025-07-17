@@ -1,6 +1,6 @@
 // src/App.tsx
 import { createRoot } from 'react-dom/client';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import PlantPage from '../features/plants/pages/PlantPage';
 import DrawerAppBar from '../common/components/DrawerAppbar';
 import HomePage from '../pages/HomePage';
@@ -25,33 +25,43 @@ import ExamQuestionsPage from '../features/examsQuestions/pages/ExamQuestionsPag
 
 
 
+const AppContent = () => {
+    const location = useLocation();
+    const isHomePage = location.pathname === '/';
+
+    return (
+        <>
+            {!isHomePage && <DrawerAppBar />}
+            <Routes>
+                <Route path='/' element={<HomePage />} />
+                <Route path='/plants' element={<PlantsPage />} />
+                <Route path='/plants/:plantId' element={<PlantPage />} />
+                <Route path='/exams/' element={<ExamsPage />} />
+                <Route path='/exams/:examId' element={<ExamPage />} />
+                <Route path='/exams/:examId/questions' element={<ExamQuestionsPage />} />
+                <Route path='/exams/:examId/questions/:questionId' element={<ExamQuestionPage />} />
+                <Route path='/questions' element={<QuestionsPage />} />
+                <Route path='/questions/:questionId' element={<QuestionPage />} />
+                <Route path='/systems' element={<SystemsPage />} />
+                <Route path='/systems/:systemNum' element={<SystemPage />} />
+                <Route path='/stems' element={<StemsPage />} />
+                <Route path='/stems/:stemId' element={<StemPage />} />
+                <Route path='/kas' element={<KasPage />} />
+                <Route path='/kas/:kaNum' element={<KaPage />} />
+                <Route path='/system_kas' element={<SystemKasPage />} />
+                <Route path='/system_kas/:system_kaNum' element={<SystemKaPage />} />
+                <Route path='/sandbox' element={<SandboxPage />} />
+                <Route path="*" element={<HomePage />} />
+            </Routes>
+        </>
+    );
+};
 
 const App = () => {
     return (
         <DialogsProvider>
             <HashRouter>
-                <DrawerAppBar />
-                    <Routes>
-                        <Route path='/' element={<HomePage />} />
-                        <Route path='/plants' element={<PlantsPage />} />
-                        <Route path='/plants/:plantId' element={<PlantPage />} />
-                        <Route path='/exams/' element={<ExamsPage />} />
-                        <Route path='/exams/:examId' element={<ExamPage />} />
-                        <Route path='/exams/:examId/questions' element={<ExamQuestionsPage />} />
-                        <Route path='/exams/:examId/questions/:questionId' element={<ExamQuestionPage />} />
-                        <Route path='/questions' element={<QuestionsPage />} />
-                        <Route path='/questions/:questionId' element={<QuestionPage />} />
-                        <Route path='/systems' element={<SystemsPage />} />
-                        <Route path='/systems/:systemNum' element={<SystemPage />} />
-                        <Route path='/stems' element={<StemsPage />} />
-                        <Route path='/stems/:stemId' element={<StemPage />} />
-                        <Route path='/kas' element={<KasPage />} />
-                        <Route path='/kas/:kaNum' element={<KaPage />} />
-                        <Route path='/system_kas' element={<SystemKasPage />} />
-                        <Route path='/system_kas/:system_kaNum' element={<SystemKaPage />} />
-                        <Route path='/sandbox' element={<SandboxPage />} />
-                        <Route path="*" element={<HomePage />} />
-                    </Routes>
+                <AppContent />
             </HashRouter>
         </DialogsProvider>
     );
