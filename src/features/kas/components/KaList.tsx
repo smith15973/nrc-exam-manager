@@ -52,7 +52,7 @@ export default function KasList({ kas, deleteKa }: KaListProps) {
     };
 
     // Key function for stable list items
-    const getItemKey = (ka: Ka, index: number) => ka.ka_number;
+    const getItemKey = (ka: Ka) => ka.ka_number;
 
     return (
         <ListWithSearch

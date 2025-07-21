@@ -37,20 +37,20 @@ export default function SystemKasList({ system_kas, deleteSystemKa }: SystemKaLi
       disablePadding
     >
       <ListItemButton component={Link} to={`/system_kas/${system_ka.system_ka_number}`}>
-        {system_ka.system_ka_number}
+        {system_ka.system_ka_number} {system_ka.category}
       </ListItemButton>
     </ListItem>
   );
 
   // Search filter function
   const searchFilter = (system_ka: SystemKa, searchTerm: string) => {
-    return system_ka.system_ka_number
+    return `${system_ka.system_ka_number} ${system_ka.category}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
   };
 
   // Key function for stable list items
-  const getItemKey = (system_ka: SystemKa, index: number) => system_ka.system_ka_number;
+  const getItemKey = (system_ka: SystemKa) => system_ka.system_ka_number;
 
   return (
     <ListWithSearch

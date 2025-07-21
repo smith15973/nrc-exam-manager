@@ -46,13 +46,13 @@ export default function SystemsList({ systems, deleteSystem }: SystemListProps) 
 
     // Search filter function
     const searchFilter = (system: System, searchTerm: string) => {
-        return system.system_number
+        return `${system.system_number} ${system.system_name}`
             .toLowerCase()
             .includes(searchTerm.toLowerCase());
     };
 
     // Key function for stable list items
-    const getItemKey = (system: System, index: number) => system.system_number;
+    const getItemKey = (system: System) => system.system_number;
 
     return (
         <ListWithSearch

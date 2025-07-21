@@ -46,13 +46,13 @@ export default function StemsList({ stems, deleteStem }: StemListProps) {
 
     // Search filter function
     const searchFilter = (stem: Stem, searchTerm: string) => {
-        return stem.stem_id
+        return `${stem.stem_id} ${stem.stem_statement}`
             .toLowerCase()
             .includes(searchTerm.toLowerCase());
     };
 
     // Key function for stable list items
-    const getItemKey = (stem: Stem, index: number) => stem.stem_id;
+    const getItemKey = (stem: Stem) => stem.stem_id;
 
     return (
         <ListWithSearch
