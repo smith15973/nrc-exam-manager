@@ -278,7 +278,12 @@ interface Window {
       update: (ka: Ka) => Promise<KaResponse>;
       delete: (kaNum: string) => Promise<KaResponse>;
     }
+    
   };
+
+  electronAPI: {
+      openExternal: (url: string) => Promise<void>;
+    }
 
   files: {
     import: {

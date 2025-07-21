@@ -472,6 +472,10 @@ app.on('activate', async () => {
   }
 });
 
+ipcMain.handle('open-external', async (_event, url) => {
+    await shell.openExternal(url);
+  });
+
 // Import handlers
 ipcMain.handle('files-operation', async (_event, { operation, data }) => {
   // Ensure database is initialized

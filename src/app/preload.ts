@@ -106,3 +106,7 @@ contextBridge.exposeInMainWorld('files', {
   changeDBLocation: () => filesCall('change-db-location'),
   selectSBDBLocation: () => filesCall('select-sb-db-location'),
 })
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  openExternal: (url: string) => ipcRenderer.invoke('open-external', url)
+});
