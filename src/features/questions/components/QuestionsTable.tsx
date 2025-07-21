@@ -13,6 +13,7 @@ import {
   TableHead,
   TableRow,
   IconButton,
+  Typography,
 } from '@mui/material';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
 import { TableVirtuoso, TableComponents } from 'react-virtuoso';
@@ -148,6 +149,39 @@ const SortIndicator: React.FC<SortIndicatorProps> = ({ field, sortConfig, onSort
   );
 };
 
+// No data component
+const NoDataDisplay: React.FC<{ hasFilters: boolean; onResetFilters: () => void }> = ({ 
+  hasFilters, 
+  onResetFilters 
+}) => (
+  <Box
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '300px',
+      p: 4,
+      textAlign: 'center'
+    }}
+  >
+    <Typography variant="h6" color="text.secondary" gutterBottom>
+      {hasFilters ? 'No questions match your filters' : 'No questions available'}
+    </Typography>
+    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+      {hasFilters 
+        ? 'Try adjusting your search criteria or clearing filters to see more results.'
+        : 'This exam doesn\'t have any questions yet.'
+      }
+    </Typography>
+    {hasFilters && (
+      <Button variant="outlined" onClick={onResetFilters}>
+        Clear All Filters
+      </Button>
+    )}
+  </Box>
+);
+
 const VirtuosoTableComponents: TableComponents<Question> = {
   Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
     <TableContainer component={Paper} {...props} ref={ref} />
@@ -182,6 +216,17 @@ export default function QuestionsTable(props: QuestionTableProps) {
       direction: SORT_STATES.ASC
     });
   }, [examId]);
+
+  // Check if any filters are applied
+  const hasActiveFilters = React.useMemo(() => {
+    if (!filters) return false;
+    return Object.entries(filters).some(([key, value]) => {
+      if (key === 'examIds') return false; // Don't count examIds as a user filter
+      if (Array.isArray(value)) return value.length > 0;
+      if (typeof value === 'string') return value.trim() !== '';
+      return value !== null && value !== undefined;
+    });
+  }, [filters]);
 
   // Sort handler function
   const handleSort = (field: SortField): void => {
@@ -453,6 +498,37 @@ export default function QuestionsTable(props: QuestionTableProps) {
     }
     onSelectionChange?.(newSelected);
   };
+
+  // If no questions, show the no data state
+  if (questions.length === 0) {
+    return (
+      <Box sx={{
+        height: '80vh',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        py: 2
+      }}>
+        <QuestionsTableToolbar
+          numSelected={selectedIds.length}
+          searchQuery={filters?.query || ''}
+          onSearchChange={handleSearchQueryChange}
+          open={openFilters}
+          onCloseFilter={() => setOpenFilters(false)}
+          onOpenFilter={() => setOpenFilters(true)}
+          onFilterChange={onFilterChange}
+          filters={filters || {}}
+          onResetFilters={onResetFilters}
+        />
+        <Paper style={{ flexGrow: 1, width: '100%', minHeight: 0 }}>
+          <NoDataDisplay 
+            hasFilters={hasActiveFilters} 
+            onResetFilters={onResetFilters} 
+          />
+        </Paper>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{
