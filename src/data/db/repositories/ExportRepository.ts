@@ -16,7 +16,7 @@ export class ExportRepository {
       filters
     });
 
-    return result.canceled ? null : result.filePath!;
+    return result.canceled ? null : result.filePath;
   }
 
   async openFileDialog(filters: Electron.FileFilter[], allowMultiple = false): Promise<string[] | null> {

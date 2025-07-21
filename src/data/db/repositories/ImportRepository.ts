@@ -168,17 +168,20 @@ export class ImportRepository {
     const allData: unknown[] = [];
 
     for (const file of files) {
-      if (!(typeof file === 'object' && file !== null && 'data' in file)) {
-        console.warn('File object missing data property:', file);
-        continue;
-      }
+  if (!(typeof file === 'object' && file !== null && 'data' in file)) {
+    console.warn('File object missing data property:', file);
+    continue;
+  }
 
-      if (Array.isArray(file.data)) {
-        allData.push(...file.data); // Spread arrays
-      } else {
-        allData.push(file.data); // Push single objects
-      }
-    }
+  const { data } = file as { data: unknown | unknown[] };
+
+  if (Array.isArray(data)) {
+    allData.push(...data);
+  } else {
+    allData.push(data);
+  }
+}
+
 
     return allData;
   }
@@ -322,6 +325,7 @@ export class ImportRepository {
           ka_match_justification: this.extractString(exam.ka_match_justification || exam.ka_justification) || '',
           sro_match_justification: this.extractString(exam.sro_match_justification || exam.sro_justification) || '',
           answers_order: this.extractString(exam.answers_order || exam.order) || 'ABCD',
+          question_number: this.extractNumber(exam.question_number || exam.question_number) || 0,
         }));
       } else if (typeof examData === 'object') {
         question.question_exams = [{
@@ -331,6 +335,7 @@ export class ImportRepository {
           ka_match_justification: this.extractString(examData.ka_match_justification || examData.ka_justification) || '',
           sro_match_justification: this.extractString(examData.sro_match_justification || examData.sro_justification) || '',
           answers_order: this.extractString(examData.answers_order || examData.order) || 'ABCD',
+          question_number: this.extractNumber(examData.question_number || examData.question_number) || 0,
         }];
       }
 
@@ -501,7 +506,8 @@ export class ImportRepository {
         main_ka: exam.main_ka || '',
         ka_match_justification: exam.ka_match_justification || '',
         sro_match_justification: exam.sro_match_justification || '',
-        answers_order: exam.answers_order || 'ABCD'
+        answers_order: exam.answers_order || 'ABCD',
+        question_number: exam.question_number || 0
       }));
     }
 

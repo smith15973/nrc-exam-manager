@@ -65,6 +65,7 @@ interface QuestionForDataTransfer {
     ka_match_justification: string;
     sro_match_justification: string;
     answers_order: string;
+    question_number: number;
   }[];
   exam_ids?: number[];
   system_ka_numbers?: string[];

@@ -89,7 +89,8 @@ export class QuestionService {
             main_ka: qe.main_system_ka_ka || '',
             ka_match_justification: qe.ka_match_justification || '',
             sro_match_justification: qe.sro_match_justification || '',
-            answers_order: qe.answers_order || ''
+            answers_order: qe.answers_order || '',
+            question_number: qe.question_number || 0
         }));
 
         // Extract system_ka_numbers

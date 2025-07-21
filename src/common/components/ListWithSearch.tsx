@@ -1,9 +1,9 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
-import { 
-  Box, 
-  TextField, 
-  InputAdornment, 
+import {
+  Box,
+  TextField,
+  InputAdornment,
   SxProps,
   Typography,
   IconButton
@@ -49,12 +49,12 @@ function ListWithSearch<T>({
     };
 
     calculateHeight();
-    
+
     const resizeObserver = new ResizeObserver(calculateHeight);
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current);
     }
-    
+
     return () => resizeObserver.disconnect();
   }, []);
 
@@ -72,24 +72,24 @@ function ListWithSearch<T>({
   }, []);
 
   // Row renderer for react-window
-  const renderRow = useCallback((props: ListChildComponentProps) => {
-    const { index, style } = props;
+  const renderRow: React.FC<ListChildComponentProps> = ({ index, style }) => {
     const item = filteredData[index];
-    
-    if (!item) return null; // Safety check
-    
-    return renderItem(item, index, style);
-  }, [filteredData, renderItem]);
+    if (!item) return null;
+
+    const result = renderItem(item, index, style);
+    return result === undefined ? null : <>{result}</>;
+  };
+
 
   return (
-    <Box 
+    <Box
       ref={containerRef}
-      sx={{ 
-        height: '100vh', 
-        width: '100%', 
-        display: 'flex', 
+      sx={{
+        height: '100vh',
+        width: '100%',
+        display: 'flex',
         flexDirection: 'column',
-        ...sx 
+        ...sx
       }}
     >
       {/* Search Bar */}
@@ -120,12 +120,12 @@ function ListWithSearch<T>({
       {/* List Container */}
       <Box sx={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
         {filteredData.length === 0 ? (
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              justifyContent: 'center', 
-              alignItems: 'center', 
-              height: '100%' 
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
             }}
           >
             <Typography variant="body1" color="text.secondary">

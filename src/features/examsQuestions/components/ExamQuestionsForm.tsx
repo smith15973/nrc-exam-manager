@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, TextField, Typography, Autocomplete } from '@mui/material';
 
 interface ExamQuestionsFormProps {
@@ -67,6 +67,7 @@ export default function ExamQuestionsForm({
         const key = `${fieldName}_${examIndex}`;
         return examQuestionTouched[key] || false;
     };
+    
 
     return (
         <Box>
