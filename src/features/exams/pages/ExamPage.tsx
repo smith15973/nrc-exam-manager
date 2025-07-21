@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useDatabase } from '../../../common/hooks/useDatabase';
-import { Alert, CircularProgress, FormControlLabel, Switch, Typography, Box } from '@mui/material';
+import { Alert, CircularProgress, FormControlLabel, Switch, Typography, Box, Button } from '@mui/material';
 import { defaultExam } from '../../../data/db/schema';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import ExamForm from '../components/ExamForm';
 import ImportViewer from '../../../features/questions/components/ImportViewer';
 import QuestionsTable from '../../../features/questions/components/QuestionsTable';
@@ -10,6 +10,7 @@ import ConfirmDelete from '../../../common/components/ConfirmDelete';
 import ExportQuestionsButton from '../../../features/questions/components/ExportQuestionsButton';
 import QuestionForm from '../../../features/questions/components/QuestionForm';
 import QuestionTemplate from '../../../features/questions/components/QuestionTemplate';
+import { Language } from '@mui/icons-material';
 
 
 export default function ExamPage() {
@@ -167,6 +168,18 @@ export default function ExamPage() {
                 <Typography sx={{ pb: 2 }} variant='h4'>Exam: {exam.name} - {exam.plant?.name}</Typography>
                 <ExamForm exam={exam} handleSubmit={handleSubmit} />
             </Box>
+            <Box>
+                {exam.nrc_url ? (
+                    <Button
+                        type="button"
+                        variant="text"
+                        onClick={() => exam.nrc_url && window.electronAPI.openExternal(exam.nrc_url)}
+                        startIcon={<Language/>}
+                    >
+                        View in Adams Database
+                    </Button>
+                ) : ''}
+            </Box>
 
             {error && (
                 <Alert severity="error" sx={{ mb: 2 }}>
@@ -218,7 +231,7 @@ export default function ExamPage() {
                 /> : examQuestions?.map((examQuestion) => {
                     const examQuestionData = examQuestion.question_exams?.find(qe => qe.exam_id === examId)
                     return (
-                        <QuestionTemplate key={examQuestion.question_id} question={examQuestion} examName={exam.name} student={student} examQuestionData={examQuestionData}/>
+                        <QuestionTemplate key={examQuestion.question_id} question={examQuestion} examName={exam.name} student={student} examQuestionData={examQuestionData} />
                     )
                 })}
 

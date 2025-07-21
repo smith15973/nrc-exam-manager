@@ -78,7 +78,7 @@ const COLUMN_CONFIG = {
     maxWidth: '500px'
   },
   systemKA: {
-    minWidth: 100,
+    minWidth: 150,
     flex: 0,
     basis: '15%',
     maxWidth: '500px'
