@@ -6,6 +6,7 @@ import FilterQuestions from "./FilterQuestions";
 
 interface EnhancedTableToolbarProps {
   numSelected: number;
+  numberOfQuestions: number;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   open: boolean;
@@ -17,7 +18,7 @@ interface EnhancedTableToolbarProps {
 }
 
 export default function QuestionsTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected, searchQuery, onSearchChange, open, onOpenFilter, onCloseFilter, onFilterChange, filters, onResetFilters } = props;
+  const { numSelected, numberOfQuestions, searchQuery, onSearchChange, open, onOpenFilter, onCloseFilter, onFilterChange, filters, onResetFilters } = props;
 
   return (
     <Toolbar
@@ -48,7 +49,7 @@ export default function QuestionsTableToolbar(props: EnhancedTableToolbarProps) 
           id="tableTitle"
           component="div"
         >
-          Questions
+          Questions - {numberOfQuestions} Questions found
         </Typography>
       )}
       <SearchField
@@ -56,11 +57,7 @@ export default function QuestionsTableToolbar(props: EnhancedTableToolbarProps) 
         onChange={onSearchChange}
       />
       {numSelected > 0 ? (
-        ''// <Tooltip title="Delete">
-        //   <IconButton>
-        //     <Delete />
-        //   </IconButton>
-        // </Tooltip>
+        ''
       ) : (
         <Tooltip title="Filter list">
           <IconButton onClick={onOpenFilter}>

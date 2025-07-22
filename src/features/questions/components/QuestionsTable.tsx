@@ -519,6 +519,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
           onFilterChange={onFilterChange}
           filters={filters || {}}
           onResetFilters={onResetFilters}
+          numberOfQuestions={questions.length}
         />
         <Paper style={{ flexGrow: 1, width: '100%', minHeight: 0 }}>
           <NoDataDisplay 
@@ -548,6 +549,7 @@ export default function QuestionsTable(props: QuestionTableProps) {
         onFilterChange={onFilterChange}
         filters={filters || {}}
         onResetFilters={onResetFilters}
+        numberOfQuestions={questions.length}
       />
       <Paper style={{ flexGrow: 1, width: '100%', minHeight: 0 }}>
         <TableVirtuoso
