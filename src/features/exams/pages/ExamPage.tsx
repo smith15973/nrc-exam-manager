@@ -8,9 +8,9 @@ import ImportViewer from '../../../features/questions/components/ImportViewer';
 import QuestionsTable from '../../../features/questions/components/QuestionsTable';
 import ConfirmDelete from '../../../common/components/ConfirmDelete';
 import ExportQuestionsButton from '../../../features/questions/components/ExportQuestionsButton';
-import QuestionForm from '../../../features/questions/components/QuestionForm';
 import QuestionTemplate from '../../../features/questions/components/QuestionTemplate';
 import { Language } from '@mui/icons-material';
+import QuestionFormModal from '../../../features/questions/components/QuestionForm';
 
 
 export default function ExamPage() {
@@ -195,6 +195,7 @@ export default function ExamPage() {
                 </Alert>
             )}
 
+            <QuestionFormModal onSubmit={handleCreateNewQuestion} examId={examId} exam={exam} />
             <ExportQuestionsButton questionIds={selectedIds} onExport={() => setSelectedIds([])} />
             <ConfirmDelete
                 onConfirmDelete={handleRemoveQuestionFromExam}
