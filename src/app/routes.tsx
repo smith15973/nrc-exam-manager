@@ -67,15 +67,9 @@ export const routes: RouteConfig[] = [
     isNested: true,
   },
   {
-    path: '/exams/:examId/questions',
-    element: ExamQuestionsPage,
-    parentPath: '/exams/:examId',
-    isNested: true,
-  },
-  {
     path: '/exams/:examId/questions/:questionId',
     element: ExamQuestionPage,
-    parentPath: '/exams/:examId/questions',
+    parentPath: '/exams/:examId',
     isNested: true,
   },
 
@@ -154,6 +148,13 @@ export const routes: RouteConfig[] = [
     path: '/sandbox',
     element: SandboxPage,
     showInNav: true,
+    navLabel: 'Sandbox',
+  },
+  // General Catch
+  {
+    path: '/*',
+    element: HomePage,
+    showInNav: false,
     navLabel: 'Sandbox',
   },
 ];
