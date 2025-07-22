@@ -32,7 +32,7 @@ export default function DrawerAppBar(props: Props) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Use the route configuration
   const navItems = getNavItems();
   const showBackButton = shouldShowBackButton(location.pathname);
@@ -90,7 +90,7 @@ export default function DrawerAppBar(props: Props) {
           >
             {showBackButton ? <ArrowBackIcon /> : <MenuIcon />}
           </IconButton>
-          
+
           {/* Desktop back button */}
           {showBackButton && (
             <IconButton
@@ -103,7 +103,7 @@ export default function DrawerAppBar(props: Props) {
               <ArrowBackIcon />
             </IconButton>
           )}
-          
+
           <Typography
             variant="h6"
             component="div"
@@ -111,25 +111,23 @@ export default function DrawerAppBar(props: Props) {
           >
             NEM
           </Typography>
-          
-          {/* Desktop navigation - hide when showing back button to save space */}
-          {!showBackButton && (
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              {navItems.map((item) => (
-                <Button
-                  key={item.label}
-                  component={Link}
-                  to={item.link}
-                  sx={{ color: '#fff' }}
-                >
-                  {item.label}
-                </Button>
-              ))}
-            </Box>
-          )}
+
+          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            {navItems.map((item) => (
+              <Button
+                key={item.label}
+                component={Link}
+                to={item.link}
+                sx={{ color: '#fff' }}
+              >
+                {item.label}
+              </Button>
+            ))}
+          </Box>
+
         </Toolbar>
       </AppBar>
-      
+
       <nav>
         <Drawer
           container={container}
@@ -147,7 +145,7 @@ export default function DrawerAppBar(props: Props) {
           {drawer}
         </Drawer>
       </nav>
-      
+
       <Box component="main" sx={{ p: 3 }}>
         <Toolbar />
       </Box>
