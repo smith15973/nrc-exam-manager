@@ -19,7 +19,6 @@ export default function ExamPage() {
     const examId = examIdParam ? parseInt(examIdParam, 10) : undefined;
     const { getExamById,
         updateExam,
-        addQuestionsBatch,
         removeQuestionFromExam,
         addQuestion,
         getQuestionsComplete
@@ -125,14 +124,9 @@ export default function ExamPage() {
         );
     }
 
-    const handleExport = async () => {
-        const questionIds = examQuestions.map(question => question.question_id) ?? [];
-        const result = await window.files.export.questions(questionIds);
-    }
-
-    const handleImport = async (questions: Question[]) => {
-        const result = await addQuestionsBatch(questions)
+    const handleImport = async () => {
         await loadQuestions();
+        setSelectedIds([]);
     }
 
     const handleRemoveQuestionFromExam = async () => {
@@ -196,6 +190,7 @@ export default function ExamPage() {
             )}
 
             <QuestionFormModal onSubmit={handleCreateNewQuestion} examId={examId} exam={exam} />
+            <ImportViewer onImport={handleImport} examId={examId} />
             <ExportQuestionsButton questionIds={selectedIds} onExport={() => setSelectedIds([])} />
             <ConfirmDelete
                 onConfirmDelete={handleRemoveQuestionFromExam}

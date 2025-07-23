@@ -60,6 +60,7 @@ interface QuestionForDataTransfer {
   question_exams?:
   {
     exam_name: string;
+    exam_id?: number;
     main_system: string;
     main_ka: string;
     ka_match_justification: string;

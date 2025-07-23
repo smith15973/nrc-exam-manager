@@ -6,13 +6,14 @@ import { useDatabase } from '../../../common/hooks/useDatabase';
 
 interface ImportViewerProps {
   onImport: () => void;
+  examId?: number;
 }
 
 interface ExtendedQuestion extends Question {
   questionNumber: number;
 }
 
-export default function ImportViewer({ onImport }: ImportViewerProps) {
+export default function ImportViewer({ onImport, examId }: ImportViewerProps) {
   const [open, setOpen] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [reviewedQuestions, setReviewedQuestions] = useState<ExtendedQuestion[]>([]);
@@ -21,7 +22,7 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
 
   const currentQuestion = reviewedQuestions.find((q) => q.questionNumber === currentQuestionNumber) || defaultQuestion;
   const [selectedSystemKas, setSelectedSystemKas] = useState<string[]>([]);
-  const { getExamByName, addQuestion, addQuestionsBatch } = useDatabase();
+  const { getExamByName, addQuestion, getExamById } = useDatabase();
   const [validationStatus, setValidationStatus] = useState<{ state: string; message: string }>({
     state: 'error',
     message: 'Form incomplete',
@@ -147,28 +148,78 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
         questions = result.questions;
       }
 
+      // Fix: Use Promise.all with map instead of forEach
+      const processedQuestions = await Promise.all(
+        questions.map(async (question) => {
 
-      questions.forEach(async (question) => {
-        if (Array.isArray(question.question_exams)) {
-          const exams = await Promise.all(
-            question.question_exams.map(qe =>
-              getExamByName(qe.exam_name)
-            )
-          );
-          question.exam_ids = exams.map(exam => exam?.exam_id).filter((id): id is number => id !== undefined);
-        }
-      });
+          if (Array.isArray(question.question_exams)) {
+            const exams = await Promise.all(
+              question.question_exams.map(qe =>
+                getExamByName(qe.exam_name)
+              )
+            );
+
+            // Process exam_ids
+            question.exam_ids = exams.map(exam => exam?.exam_id).filter((id): id is number => id !== undefined);
+
+            // Add current examId if it's provided and not already included
+            if (examId && !question.exam_ids.includes(examId)) {
+
+              const currentExam = await getExamById(examId);
+
+              if (currentExam) {
+                exams.push(currentExam);
+                question.exam_ids.push(examId);
 
 
+                // Also add to question_exams array if it exists
+                if (!question.question_exams) {
+                  question.question_exams = [];
+                }
+                question.question_exams.push({
+                  exam_name: currentExam.name, // Make sure this matches the property name
+                  exam_id: currentExam.exam_id,
+                  main_ka: '',
+                  main_system: '',
+                  ka_match_justification: '',
+                  sro_match_justification: '',
+                  answers_order: 'ABCD',
+                  question_number: 0
+                });
+              }
+            }
 
+          }
 
+          return question; // Return the modified question
+        })
+      );
 
-      if (result.questions && result.questions.length > 0) {
-        setQuestions(result.questions);
+      if (processedQuestions && processedQuestions.length > 0) {
+        // Transform QuestionForDataTransfer to Question format
+        const questionsForState: Question[] = processedQuestions.map(q => ({
+          ...q,
+          question_id:  0, // Provide default if missing
+          question_exams: q.question_exams?.map(qe => ({
+            exam_id: qe.exam_id ?? 0,
+            question_id:  0,
+            exam_name: qe.exam_name,
+            main_system: qe.main_system,
+            main_ka: qe.main_ka,
+            ka_match_justification: qe.ka_match_justification,
+            sro_match_justification: qe.sro_match_justification,
+            answers_order: qe.answers_order,
+            question_number: qe.question_number,
+            main_system_ka_system: qe.main_ka,
+            main_system_ka_ka: qe.main_system,
+          })) ?? [],
+        }));
+        setQuestions(questionsForState);
         setOpen(true);
       } else {
         console.error('Import failed or no questions returned:', result);
       }
+
       if (result.stats?.warnings && result.stats.warnings.length > 0) {
         setImportErrors(result.stats.warnings);
       } else {
@@ -204,13 +255,6 @@ export default function ImportViewer({ onImport }: ImportViewerProps) {
     setOpen(false);
   };
 
-  const handleConfirmImports = async () => {
-    // console.log('Submitting reviewed questions:', reviewedQuestions);
-    const result = await addQuestionsBatch(reviewedQuestions)
-    // console.log(result)
-    onImport();
-    setOpen(false);
-  };
 
   const getButtonColor = () => {
     switch (validationStatus.state) {

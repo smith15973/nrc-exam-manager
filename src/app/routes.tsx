@@ -7,7 +7,6 @@ const PlantsPage = lazy(() => import('../features/plants/pages/PlantsPage'));
 const PlantPage = lazy(() => import('../features/plants/pages/PlantPage'));
 const ExamsPage = lazy(() => import('../features/exams/pages/ExamsPage'));
 const ExamPage = lazy(() => import('../features/exams/pages/ExamPage'));
-const ExamQuestionsPage = lazy(() => import('../features/examsQuestions/pages/ExamQuestionsPage'));
 const ExamQuestionPage = lazy(() => import('../features/examsQuestions/pages/ExamQuestionPage'));
 const QuestionsPage = lazy(() => import('../features/questions/pages/QuestionsPage'));
 const QuestionPage = lazy(() => import('../features/questions/pages/QuestionPage'));
