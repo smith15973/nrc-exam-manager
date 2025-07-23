@@ -68,7 +68,7 @@ export default function ExamForm(props: ExamFormProps) {
             })}
 
             <Box sx={{ pt: 2 }}>
-                <PlantSelect handleChange={handleChange} plant_id={examForm.plant_id} plants={plants} />
+                <PlantSelect handleChange={handleChange} selectedId={examForm.plant_id} plants={plants} multiple={false} />
             </Box>
         </>
     )

@@ -199,12 +199,13 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                             selectedIdList={filters.system_kaNums || []}
                         />
                     </Box>
-                    {/* System_KAs */}
+                    {/* Plants */}
                     <Box sx={{ pt: 2 }} >
                         <PlantSelect
                             plants={plants}
                             handleChange={handlePlantChange}
                             selectedIdList={filters.plantIds || []}
+                            multiple={true}
                         />
                     </Box>
 
