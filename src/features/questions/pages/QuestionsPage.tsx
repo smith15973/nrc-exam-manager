@@ -58,7 +58,7 @@ export default function QuestionsPage() {
     }
 
     const handleFilterChange = (key: string, value: unknown) => {
-        // console.log(value)
+        console.log(filters)
         setFilters((prev) => ({ ...prev, [key]: value }))
     }
 

@@ -311,6 +311,7 @@ interface QuestionFilters {
   kaNums?: string[];
   systemNums?: string[];
   system_kaNums?: string[];
+  plantIds?: number[];
   exam_level?: 0 | 1 | '';
   cognitive_level?: 0 | 1 | '';
   objective?: string;

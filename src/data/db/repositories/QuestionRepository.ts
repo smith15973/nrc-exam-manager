@@ -394,6 +394,18 @@ export class QuestionRepository {
                     params.push(...filters.examIds);
                 }
 
+                // Filter by plant IDs - NEW IMPLEMENTATION
+                if (filters.plantIds?.length) {
+                    const placeholders = filters.plantIds.map(() => '?').join(',');
+                    conditions.push(`q.question_id IN (
+                        SELECT DISTINCT eq.question_id 
+                        FROM exam_questions eq
+                        INNER JOIN exams e ON eq.exam_id = e.exam_id
+                        WHERE e.plant_id IN (${placeholders})
+                    )`);
+                    params.push(...filters.plantIds);
+                }
+
                 // Filter by KA numbers - updated to use current schema
                 if (filters.kaNums?.length) {
                     const placeholders = filters.kaNums.map(() => '?').join(',');
@@ -530,6 +542,18 @@ export class QuestionRepository {
                     params.push(...filters.examIds);
                 }
 
+                // Filter by plant IDs - NEW IMPLEMENTATION
+                if (filters.plantIds?.length) {
+                    const placeholders = filters.plantIds.map(() => '?').join(',');
+                    conditions.push(`q.question_id IN (
+                        SELECT DISTINCT eq.question_id 
+                        FROM exam_questions eq
+                        INNER JOIN exams e ON eq.exam_id = e.exam_id
+                        WHERE e.plant_id IN (${placeholders})
+                    )`);
+                    params.push(...filters.plantIds);
+                }
+
                 // Filter by KA numbers - updated to use current schema
                 if (filters.kaNums?.length) {
                     const placeholders = filters.kaNums.map(() => '?').join(',');
@@ -619,6 +643,18 @@ export class QuestionRepository {
                     const placeholders = filters.examIds.map(() => '?').join(',');
                     conditions.push(`qe.exam_id IN (${placeholders})`);
                     params.push(...filters.examIds);
+                }
+
+                // Add plant filter with JOIN - NEW IMPLEMENTATION
+                if (filters.plantIds && filters.plantIds.length > 0) {
+                    // Only add the JOIN if we haven't already added it for examIds
+                    if (!joins.some(join => join.includes('exam_questions'))) {
+                        joins.push('JOIN exam_questions qe ON q.question_id = qe.question_id');
+                    }
+                    joins.push('JOIN exams e ON qe.exam_id = e.exam_id');
+                    const placeholders = filters.plantIds.map(() => '?').join(',');
+                    conditions.push(`e.plant_id IN (${placeholders})`);
+                    params.push(...filters.plantIds);
                 }
 
                 if (filters.kaNums && filters.kaNums.length > 0) {

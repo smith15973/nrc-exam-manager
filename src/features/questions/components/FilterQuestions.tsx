@@ -5,6 +5,7 @@ import { useDatabase } from "../../../common/hooks/useDatabase";
 import CheckKas from "../../kas/components/CheckKas";
 import CheckExams from "../../../features/exams/components/CheckExams";
 import SystemKaSelect from "../../../features/system_kas/components/SystemKaSelect";
+import PlantSelect from "../../../features/plants/components/PlantSelect";
 
 interface FilterQuestionsProps {
     open: boolean;
@@ -18,11 +19,15 @@ interface FilterQuestionsProps {
 export default function FilterQuestions(props: FilterQuestionsProps) {
     const { open, onClose, onFilterChange, filters, onResetFilters } = props;
 
-    const { kas, systems, exams, system_kas } = useDatabase();
+    const { plants, kas, systems, exams, system_kas } = useDatabase();
 
     const handleSystemKaChange = (key: string, value: SystemKa[]) => {
         const idList = value.map(sk => sk.system_ka_number)
         onFilterChange('system_kaNums', idList)
+    }
+    const handlePlantChange = (key: string, value: Plant[]) => {
+        const idList = value.map(plant => plant.plant_id)
+        onFilterChange('plantIds', idList)
     }
 
     const handleRadioClick = <K extends keyof QuestionFilters>(
@@ -192,6 +197,14 @@ export default function FilterQuestions(props: FilterQuestionsProps) {
                             system_kas={system_kas}
                             handleChange={handleSystemKaChange}
                             selectedIdList={filters.system_kaNums || []}
+                        />
+                    </Box>
+                    {/* System_KAs */}
+                    <Box sx={{ pt: 2 }} >
+                        <PlantSelect
+                            plants={plants}
+                            handleChange={handlePlantChange}
+                            selectedIdList={filters.plantIds || []}
                         />
                     </Box>
 
