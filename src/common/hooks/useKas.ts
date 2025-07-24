@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import { useErrorHandler } from "./useErrorHandler";
 
 export const useKas = () => {
     const [kas, setKas] = useState<Ka[]>([]);
-    const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const { handleError } = useErrorHandler();
 
@@ -14,13 +14,11 @@ export const useKas = () => {
 
             if (result.success) {
                 setKas(result.kas || []);
-                setError(null);
                 return result.ka || null;
             } else {
-                const errorMsg = result.error || 'Failed to fetch ka';
-                setError(errorMsg);
+                const errorMsg = result.error || "Failed to fetch ka";
 
-                if (errorMsg.toLowerCase().includes('not found')) {
+                if (errorMsg.toLowerCase().includes("not found")) {
                     return null;
                 }
 
@@ -28,8 +26,7 @@ export const useKas = () => {
             }
         } catch (err) {
             const fallbackMsg = "Failed to fetch ka";
-            setError(fallbackMsg);
-            console.error('Database error:', err);
+            console.error("Database error:", err);
             throw err instanceof Error ? err : new Error(fallbackMsg);
         } finally {
             setIsLoading(false);
@@ -43,22 +40,19 @@ export const useKas = () => {
 
             if (result.success) {
                 setKas(result.kas || []);
-                setError(null);
                 return result.kas || [];
             } else {
-                const errorMsg = result.error || 'Failed to fetch kas';
-                setError(errorMsg);
+                const errorMsg = result.error || "Failed to fetch kas";
 
-                if (errorMsg.toLowerCase().includes('database connection')) {
-                    throw new Error('Database connection error');
+                if (errorMsg.toLowerCase().includes("database connection")) {
+                    throw new Error("Database connection error");
                 }
 
                 throw new Error(errorMsg);
             }
         } catch (err) {
             const fallbackMsg = "Failed to fetch kas";
-            setError(fallbackMsg);
-            console.error('Database error:', err);
+            console.error("Database error:", err);
             throw err instanceof Error ? err : new Error(fallbackMsg);
         } finally {
             setIsLoading(false);
@@ -67,8 +61,7 @@ export const useKas = () => {
 
     const addKa = async (ka: Ka): Promise<void> => {
         if (!ka.ka_number || !ka.stem_id) {
-            const validationError = 'Please fill in all fields';
-            setError(validationError);
+            toast.error("Please fill in all fields");
             return;
         }
 
@@ -77,23 +70,21 @@ export const useKas = () => {
             const result = await window.db.kas.add(ka);
 
             if (result.success) {
-                setError(null);
                 await getKas();
+                toast.success("Ka added");
             } else {
-                const errorMsg = result.error || 'Failed to add ka';
-                setError(errorMsg);
+                const errorMsg = result.error || "Failed to add ka";
 
-                if (errorMsg.toLowerCase().includes('database connection')) {
-                    handleError(new Error(errorMsg), 'network');
+                if (errorMsg.toLowerCase().includes("database connection")) {
+                    handleError(new Error(errorMsg), "network");
                 } else {
-                    handleError(new Error(errorMsg), 'general');
+                    handleError(new Error(errorMsg), "general");
                 }
             }
         } catch (err) {
             const fallbackMsg = "Failed to add ka";
-            setError(fallbackMsg);
-            console.error('Database error:', err);
-            handleError(err instanceof Error ? err : new Error(fallbackMsg), 'general');
+            console.error("Database error:", err);
+            handleError(err instanceof Error ? err : new Error(fallbackMsg), "general");
         } finally {
             setIsLoading(false);
         }
@@ -101,8 +92,7 @@ export const useKas = () => {
 
     const updateKa = async (ka: Ka): Promise<void> => {
         if (!ka.ka_number || !ka.stem_id) {
-            const validationError = 'Please fill in all fields';
-            setError(validationError);
+            toast.error("Please fill in all fields");
             return;
         }
 
@@ -111,25 +101,23 @@ export const useKas = () => {
             const result = await window.db.kas.update(ka);
 
             if (result.success) {
-                setError(null);
                 await getKas();
+                toast.success("Ka updated");
             } else {
-                const errorMsg = result.error || 'Failed to update ka';
-                setError(errorMsg);
+                const errorMsg = result.error || "Failed to update ka";
 
-                if (errorMsg.toLowerCase().includes('not found')) {
-                    handleError(new Error('Ka not found'), 'notFound');
-                } else if (errorMsg.toLowerCase().includes('database connection')) {
-                    handleError(new Error(errorMsg), 'network');
+                if (errorMsg.toLowerCase().includes("not found")) {
+                    handleError(new Error("Ka not found"), "notFound");
+                } else if (errorMsg.toLowerCase().includes("database connection")) {
+                    handleError(new Error(errorMsg), "network");
                 } else {
-                    handleError(new Error(errorMsg), 'general');
+                    handleError(new Error(errorMsg), "general");
                 }
             }
         } catch (err) {
             const fallbackMsg = "Failed to update ka";
-            setError(fallbackMsg);
-            console.error('Database error:', err);
-            handleError(err instanceof Error ? err : new Error(fallbackMsg), 'general');
+            console.error("Database error:", err);
+            handleError(err instanceof Error ? err : new Error(fallbackMsg), "general");
         } finally {
             setIsLoading(false);
         }
@@ -141,25 +129,23 @@ export const useKas = () => {
             const result = await window.db.kas.delete(kaNum);
 
             if (result.success) {
-                setError(null);
                 await getKas();
+                toast.success("Ka deleted");
             } else {
-                const errorMsg = result.error || 'Failed to delete ka';
-                setError(errorMsg);
+                const errorMsg = result.error || "Failed to delete ka";
 
-                if (errorMsg.toLowerCase().includes('not found')) {
-                    handleError(new Error('Ka not found'), 'notFound');
-                } else if (errorMsg.toLowerCase().includes('database connection')) {
-                    handleError(new Error(errorMsg), 'network');
+                if (errorMsg.toLowerCase().includes("not found")) {
+                    handleError(new Error("Ka not found"), "notFound");
+                } else if (errorMsg.toLowerCase().includes("database connection")) {
+                    handleError(new Error(errorMsg), "network");
                 } else {
-                    handleError(new Error(errorMsg), 'general');
+                    handleError(new Error(errorMsg), "general");
                 }
             }
         } catch (err) {
             const fallbackMsg = "Failed to delete ka";
-            setError(fallbackMsg);
-            console.error('Database error:', err);
-            handleError(err instanceof Error ? err : new Error(fallbackMsg), 'general');
+            console.error("Database error:", err);
+            handleError(err instanceof Error ? err : new Error(fallbackMsg), "general");
         } finally {
             setIsLoading(false);
         }
@@ -167,11 +153,11 @@ export const useKas = () => {
 
     useEffect(() => {
         getKas().catch((err) => {
-            const msg = err?.message?.toLowerCase?.() || '';
-            if (msg.includes('database connection')) {
-                handleError(err, 'network');
+            const msg = err?.message?.toLowerCase?.() || "";
+            if (msg.includes("database connection")) {
+                handleError(err, "network");
             } else {
-                handleError(err, 'general');
+                handleError(err, "general");
             }
         });
     }, []);
@@ -183,7 +169,6 @@ export const useKas = () => {
         addKa,
         updateKa,
         deleteKa,
-        error,
-        isLoading
+        isLoading,
     };
 };
