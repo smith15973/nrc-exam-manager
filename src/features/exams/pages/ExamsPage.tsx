@@ -6,7 +6,7 @@ import { Typography } from '@mui/material';
 
 
 export default function ExamsPage() {
-    const { exams, addExam, deleteExam, error } = useDatabase();
+    const { exams, addExam, deleteExam} = useDatabase();
 
     const handleSubmit = async (exam: Exam) => {
         await addExam(exam);
@@ -17,7 +17,6 @@ export default function ExamsPage() {
             <Typography variant='h4'>Exams</Typography>
             <ExamForm handleSubmit={handleSubmit} />
             <ExamsList exams={exams} deleteExam={deleteExam} />
-            {error && <Typography variant='body2' style={{ color: 'red' }}>{error}</Typography>}
         </>
     )
 }

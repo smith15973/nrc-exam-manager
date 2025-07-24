@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { defaultSystem} from '../../../data/db/schema';
-import { Alert, Box, Button, TextField } from '@mui/material';
-import { useDatabase } from '../../../common/hooks/useDatabase';
+import { Box, Button, TextField } from '@mui/material';
 import { FormDialog } from '../../../common/components/FormDialog';
 
 interface SystemFormProps {
@@ -13,7 +12,6 @@ export default function SystemForm(props: SystemFormProps) {
     const { system, handleSubmit } = props;
     const [systemForm, setSystemForm] = useState<System>(system || defaultSystem);
     const [open, setOpen] = useState(false);
-    const { errors } = useDatabase();
 
     useEffect(() => {
         if (system) {
@@ -91,12 +89,6 @@ export default function SystemForm(props: SystemFormProps) {
             >
                 {system ? 'Edit' : 'Add'} System
             </Button>
-
-            {errors.systems ? (
-                <Alert severity="error" sx={{ mb: 2 }}>
-                    {errors.systems}
-                </Alert>
-            ) : null}
         </>
     );
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { defaultKa } from '../../../data/db/schema';
-import { Alert, Box, Button, TextField } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import { FormDialog } from '../../../common/components/FormDialog';
 import StemSelect from '../../../features/stems/components/StemSelect';
@@ -14,7 +14,7 @@ export default function KaForm(props: KaFormProps) {
     const { ka, handleSubmit } = props;
     const [kaForm, setKaForm] = useState<Ka>(ka || defaultKa);
     const [open, setOpen] = useState(false);
-    const { errors, stems } = useDatabase();
+    const { stems } = useDatabase();
 
     useEffect(() => {
         if (ka) {
@@ -86,12 +86,6 @@ export default function KaForm(props: KaFormProps) {
             >
                 {ka ? 'Edit' : 'Add'} Ka
             </Button>
-
-            {errors.kas ? (
-                <Alert severity="error" sx={{ mb: 2 }}>
-                    {errors.kas}
-                </Alert>
-            ) : null}
         </>
     );
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { defaultSystemKa } from '../../../data/db/schema';
-import { Alert, Box, Button, TextField } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import { useDatabase } from '../../../common/hooks/useDatabase';
 import { FormDialog } from '../../../common/components/FormDialog';
 
@@ -16,7 +16,7 @@ export default function SystemKaForm(props: SystemKaFormProps) {
     const { system_ka, handleSubmit } = props;
     const [system_kaForm, setSystemKaForm] = useState<SystemKa>(system_ka || defaultSystemKa);
     const [open, setOpen] = useState(false);
-    const { errors, systems, kas } = useDatabase();
+    const { systems, kas } = useDatabase();
 
     useEffect(() => {
         if (system_ka) {

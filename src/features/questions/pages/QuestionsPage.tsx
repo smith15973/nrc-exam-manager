@@ -5,6 +5,7 @@ import ExportQuestionsButton from "../components/ExportQuestionsButton";
 import ImportViewer from "../components/ImportViewer";
 import QuestionsTable from "../components/QuestionsTable";
 import QuestionFormModal from "../components/QuestionForm";
+import { useErrorHandler } from "../../../common/hooks/useErrorHandler";
 
 
 
@@ -15,9 +16,8 @@ export default function QuestionsPage() {
     const { addQuestion, getQuestionsComplete, deleteQuestion } = useDatabase();
     const [questions, setQuestions] = useState<Question[]>([]);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
-
-    const [error, setError] = useState<string | null>(null);
     const [filters, setFilters] = useState<QuestionFilters>();
+    const { navigateToError } = useErrorHandler();
 
 
 
@@ -32,7 +32,13 @@ export default function QuestionsPage() {
             setQuestions(questions)
 
         } catch (err) {
-            setError("Failed to load exam questions")
+            const message = (err instanceof Error ? err.message : '').toLowerCase();
+
+            if (message.includes('database') || message.includes('connection')) {
+                navigateToError('network', 'Database connection failed while loading questions.');
+            } else {
+                navigateToError('general', 'An unexpected error occurred while loading KA.');
+            }
         }
     }
 

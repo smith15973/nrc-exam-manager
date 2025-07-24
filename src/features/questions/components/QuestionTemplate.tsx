@@ -7,12 +7,11 @@ type QuestionTemplateProps = {
     question: Question;
     print?: true | boolean;
     student?: true | boolean;
-    questionNumber?: number;
     examName?: string;
     examQuestionData?: ExamQuestion
 };
 
-export default function QuestionTemplate({ question, print = false, student = false, questionNumber, examName, examQuestionData }: QuestionTemplateProps) {
+export default function QuestionTemplate({ question, print = false, student = false, examName, examQuestionData }: QuestionTemplateProps) {
 
     const main_system_ka = examQuestionData ? question.system_kas?.find(system_ka =>
         system_ka.ka_number === examQuestionData.main_system_ka_ka && system_ka.system_number === examQuestionData.main_system_ka_system)
