@@ -32,7 +32,6 @@ export const useDatabase = () => {
 
         // If you want to namespace errors to avoid conflicts:
         errors: {
-            plants: plantsHook.error,
             exams: examsHook.error,
             questions: questionsHook.error,
             systems: systemsHook.error,

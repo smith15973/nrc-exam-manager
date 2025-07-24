@@ -50,7 +50,9 @@ const App = () => {
     <DialogsProvider>
       <HashRouter>
         <AppContent />
-        <ToastContainer />
+        <ToastContainer
+          position='bottom-right'
+        />
       </HashRouter>
     </DialogsProvider>
   );
