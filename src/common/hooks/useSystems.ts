@@ -1,31 +1,29 @@
-// useDatabase.ts 
 import { useState, useEffect } from "react";
-
+import { toast } from "react-toastify";
 
 export const useSystems = () => {
     const [systems, setSystems] = useState<System[]>([]);
-    const [error, setError] = useState<string | null>(null);
 
     const addSystem = async (system: System): Promise<void> => {
         if (!system.system_number) {
-            setError('Please fill in system number');
+            toast.error("Please fill in system number");
             return;
         }
         if (!system.system_name) {
-            setError('Please fill in system name');
+            toast.error("Please fill in system name");
             return;
         }
+
         try {
             const result = await window.db.systems.add(system);
             if (result.success) {
-                setError(null);
                 await getSystems();
+                toast.success("System added");
             } else {
-                setError(result.error || 'Failed to add system');
+                toast.error(result.error || "Failed to add system");
             }
-        }
-        catch (err) {
-            setError("Failed to add system");
+        } catch (err) {
+            toast.error("Failed to add system");
         }
     };
 
@@ -36,11 +34,11 @@ export const useSystems = () => {
                 setSystems(result.systems || []);
                 return result.system || null;
             } else {
-                setError(result.error || 'Failed to fetch systems');
+                toast.error(result.error || "Failed to fetch systems");
                 return null;
             }
         } catch (err) {
-            setError("Failed to fetch systems");
+            toast.error("Failed to fetch systems");
             return null;
         }
     };
@@ -52,35 +50,31 @@ export const useSystems = () => {
                 setSystems(result.systems || []);
                 return result.systems || [];
             } else {
-                setError(result.error || 'Failed to fetch systems');
+                toast.error(result.error || "Failed to fetch systems");
                 return [];
             }
         } catch (err) {
-            setError("Failed to fetch systems");
+            toast.error("Failed to fetch systems");
             return [];
         }
     };
 
-
-
     const updateSystem = async (system: System): Promise<void> => {
         if (!system.system_name) {
-            setError('Please fill in all fields');
-            return
+            toast.error("Please fill in all fields");
+            return;
         }
+
         try {
             const result = await window.db.systems.update(system);
             if (result.success) {
-                setError(null);
                 await getSystems();
-                return
+                toast.success("System updated");
             } else {
-                setError(result.error || 'Failed to update system');
-                return;
+                toast.error(result.error || "Failed to update system");
             }
         } catch (err) {
-            setError("Failed to update system");
-            return;
+            toast.error("Failed to update system");
         }
     };
 
@@ -89,18 +83,25 @@ export const useSystems = () => {
             const result = await window.db.systems.delete(systemNum);
             if (result.success) {
                 await getSystems();
+                toast.success("System deleted");
             } else {
-                setError(result.error || 'Failed to delete system');
+                toast.error(result.error || "Failed to delete system");
             }
         } catch (err) {
-            setError("Failed to delete system")
+            toast.error("Failed to delete system");
         }
-    }
+    };
+
     useEffect(() => {
         getSystems();
     }, []);
 
     return {
-        systems, getSystem, getSystems, addSystem, updateSystem, deleteSystem, error
-    }
-}
+        systems,
+        getSystem,
+        getSystems,
+        addSystem,
+        updateSystem,
+        deleteSystem,
+    };
+};
