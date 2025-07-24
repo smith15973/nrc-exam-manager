@@ -63,6 +63,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.0",
+    "react-toastify": "^11.0.5",
     "react-virtuoso": "^4.13.0",
     "react-window": "^1.8.11",
     "sheetjs": "^2.0.0",

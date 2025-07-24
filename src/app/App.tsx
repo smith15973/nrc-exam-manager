@@ -7,6 +7,7 @@ import { DialogsProvider } from '@toolpad/core/useDialogs';
 import DrawerAppBar from '../common/components/DrawerAppbar';
 import { routes, NotFoundPage } from '../app/routes';
 import ErrorBoundary from '../common/components/ErrorBoundary';
+import { ToastContainer } from 'react-toastify';
 
 // Loading component for Suspense
 const Loading = () => (
@@ -49,6 +50,7 @@ const App = () => {
     <DialogsProvider>
       <HashRouter>
         <AppContent />
+        <ToastContainer />
       </HashRouter>
     </DialogsProvider>
   );
