@@ -1,37 +1,33 @@
-// useDatabase.ts 
 import { useState, useEffect } from "react";
-
+import { toast } from "react-toastify";
 
 export const useSystemKas = () => {
     const [system_kas, setSystemKas] = useState<SystemKa[]>([]);
-    const [error, setError] = useState<string | null>(null);
 
     const addSystemKa = async (system_ka: SystemKa): Promise<void> => {
-        console.log(system_ka)
         if (!system_ka.system_number) {
-            setError('Please fill in system number');
+            toast.error("Please fill in system number");
             return;
         }
         if (!system_ka.ka_number) {
-            setError('Please fill in system number');
+            toast.error("Please fill in KA number");
+            return;
+        }
+        if (!system_ka.category) {
+            toast.error("Please fill in category");
             return;
         }
 
-        if (!system_ka.category) {
-            setError('Please fill in category');
-            return;
-        }
         try {
             const result = await window.db.system_kas.add(system_ka);
             if (result.success) {
-                setError(null);
                 await getSystemKas();
+                toast.success("System KA added");
             } else {
-                setError(result.error || 'Failed to add system_ka');
+                toast.error(result.error || "Failed to add system KA");
             }
-        }
-        catch (err) {
-            setError("Failed to add system_ka");
+        } catch (err) {
+            toast.error("Failed to add system KA");
         }
     };
 
@@ -42,11 +38,11 @@ export const useSystemKas = () => {
                 setSystemKas(result.system_kas || []);
                 return result.system_ka || null;
             } else {
-                setError(result.error || 'Failed to fetch system_kas');
+                toast.error(result.error || "Failed to fetch system KA");
                 return null;
             }
         } catch (err) {
-            setError("Failed to fetch system_kas");
+            toast.error("Failed to fetch system KA");
             return null;
         }
     };
@@ -54,49 +50,43 @@ export const useSystemKas = () => {
     const getSystemKas = async (params?: DBSearchParams): Promise<SystemKa[]> => {
         try {
             const result = await window.db.system_kas.getMany(params);
-            console.log(result)
             if (result.success) {
                 setSystemKas(result.system_kas || []);
                 return result.system_kas || [];
             } else {
-                setError(result.error || 'Failed to fetch system_kas');
+                toast.error(result.error || "Failed to fetch system KAs");
                 return [];
             }
         } catch (err) {
-            setError("Failed to fetch system_kas");
+            toast.error("Failed to fetch system KAs");
             return [];
         }
     };
 
-
-
     const updateSystemKa = async (system_ka: SystemKa): Promise<void> => {
         if (!system_ka.system_number) {
-            setError('Please fill in system number');
+            toast.error("Please fill in system number");
             return;
         }
         if (!system_ka.ka_number) {
-            setError('Please fill in system number');
+            toast.error("Please fill in KA number");
+            return;
+        }
+        if (!system_ka.category) {
+            toast.error("Please fill in category");
             return;
         }
 
-        if (!system_ka.category) {
-            setError('Please fill in category');
-            return;
-        }
         try {
             const result = await window.db.system_kas.update(system_ka);
             if (result.success) {
-                setError(null);
                 await getSystemKas();
-                return
+                toast.success("System KA updated");
             } else {
-                setError(result.error || 'Failed to update system_ka');
-                return;
+                toast.error(result.error || "Failed to update system KA");
             }
         } catch (err) {
-            setError("Failed to update system_ka");
-            return;
+            toast.error("Failed to update system KA");
         }
     };
 
@@ -105,18 +95,25 @@ export const useSystemKas = () => {
             const result = await window.db.system_kas.delete(system_kaNum);
             if (result.success) {
                 await getSystemKas();
+                toast.success("System KA deleted");
             } else {
-                setError(result.error || 'Failed to delete system_ka');
+                toast.error(result.error || "Failed to delete system KA");
             }
         } catch (err) {
-            setError("Failed to delete system_ka")
+            toast.error("Failed to delete system KA");
         }
-    }
+    };
+
     useEffect(() => {
         getSystemKas();
     }, []);
 
     return {
-        system_kas, getSystemKa, getSystemKas, addSystemKa, updateSystemKa, deleteSystemKa, error
-    }
-}
+        system_kas,
+        getSystemKa,
+        getSystemKas,
+        addSystemKa,
+        updateSystemKa,
+        deleteSystemKa,
+    };
+};
