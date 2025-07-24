@@ -8,6 +8,7 @@ import SystemKaSelect from '../../../features/system_kas/components/SystemKaSele
 import ExamQuestionSelect from '../../exams/components/ExamQuestionSelect';
 import SystemKaForm from '../../../features/system_kas/components/SystemKaForm';
 import ExamQuestionsForm from '../../../features/examsQuestions/components/ExamQuestionsForm';
+import QuestionTextFieldWithValidation from './QuestionTextFieldWithValidation';
 
 interface QuestionFormProps {
     question?: Question;
@@ -90,7 +91,7 @@ export function QuestionFormContent({
         for (const qe of questionForm.question_exams || []) {
             const examName = exams.find(e => e.exam_id === qe.exam_id)?.name || 'Unknown';
             const { errors, warnings } = isExamQuestionValid(qe, questionForm, examName);
-            
+
             allErrors.push(...errors);
             allWarnings.push(...warnings);
         }
@@ -104,6 +105,15 @@ export function QuestionFormContent({
         }
 
         return { status: 'success', message: 'All exam questions are valid' };
+    };
+
+    // In your parent component, add state to track duplicate status:
+    const [hasDuplicateQuestion, setHasDuplicateQuestion] = useState(false);
+    const [duplicateQuestionId, setDuplicateQuestionId] = useState<string | number | undefined>();
+
+    const handleDuplicateStatusChange = (hasDuplicate: boolean, duplicateId?: string | number) => {
+        setHasDuplicateQuestion(hasDuplicate);
+        setDuplicateQuestionId(duplicateId);
     };
 
     // Original validation functions
@@ -149,6 +159,9 @@ export function QuestionFormContent({
         // Check for errors first (blocking validation)
         if (!isQuestionTextValid()) {
             return { state: 'error', message: 'Question text is required.' };
+        }
+        if (hasDuplicateQuestion) {
+            return { state: 'error', message: `Duplicate question found (ID: ${duplicateQuestionId})` };
         }
         if (!isCorrectAnswerValid()) {
             return { state: 'error', message: 'A valid correct answer (A–D) is required.' };
@@ -206,28 +219,14 @@ export function QuestionFormContent({
         <Box sx={containerSx}>
             {/* Question Form Section */}
             <Box>
-                <Box sx={{ pb: 2 }}>
-                    <TextField
-                        fullWidth
-                        type={'text'}
-                        value={questionForm.question_text || ''}
-                        onChange={(e) => handleChange('question_text', e.target.value)}
-                        onBlur={() => handleFieldBlur('question_text')}
-                        label={"Question"}
-                        required={true}
-                        rows={5}
-                        multiline={true}
-                        error={touched.question_text && !isQuestionTextValid()}
-                        helperText={touched.question_text && !isQuestionTextValid() ? 'Question is required' : ''}
-                        sx={{
-                            '& .MuiOutlinedInput-root': {
-                                '& fieldset': {
-                                    borderColor: touched.question_text && !isQuestionTextValid() ? 'error.main' : 'default',
-                                },
-                            },
-                        }}
-                    />
-                </Box>
+                <QuestionTextFieldWithValidation
+                    value={questionForm.question_text}
+                    onChange={(e) => handleChange('question_text', e.target.value)}
+                    onBlur={() => handleFieldBlur('question_text')}
+                    touched={touched.question_text}
+                    isQuestionTextValid={isQuestionTextValid}
+                    onDuplicateStatusChange={handleDuplicateStatusChange}
+                />
                 <Box sx={{ pb: 2 }}>
                     <TextField
                         fullWidth
@@ -332,9 +331,9 @@ export function QuestionFormContent({
                         selectedList={questionForm.question_exams || []}
                     />
 
-                    <ExamQuestionsForm questionForm={questionForm} exams={exams} handleQuestionExamChange={handleQuestionExamChange}/>
+                    <ExamQuestionsForm questionForm={questionForm} exams={exams} handleQuestionExamChange={handleQuestionExamChange} />
 
-                    
+
                 </Box>
             </Box>
 
