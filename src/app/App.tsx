@@ -5,15 +5,15 @@ import { Suspense } from 'react';
 import { CssBaseline, CircularProgress, Box } from '@mui/material';
 import { DialogsProvider } from '@toolpad/core/useDialogs';
 import DrawerAppBar from '../common/components/DrawerAppbar';
-import HomePage from '../pages/HomePage';
-import { routes } from '../app/routes';
+import { routes, NotFoundPage } from '../app/routes';
+import ErrorBoundary from '../common/components/ErrorBoundary';
 
 // Loading component for Suspense
 const Loading = () => (
-  <Box 
-    display="flex" 
-    justifyContent="center" 
-    alignItems="center" 
+  <Box
+    display="flex"
+    justifyContent="center"
+    alignItems="center"
     minHeight="200px"
   >
     <CircularProgress />
@@ -23,9 +23,9 @@ const Loading = () => (
 const AppContent = () => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
-  
+
   return (
-    <>
+    <ErrorBoundary>
       {!isHomePage && <DrawerAppBar />}
       <Suspense fallback={<Loading />}>
         <Routes>
@@ -36,11 +36,11 @@ const AppContent = () => {
               element={<route.element />}
             />
           ))}
-          {/* Fallback route */}
-          <Route path="*" element={<HomePage />} />
+          {/* 404 Not Found route */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
-    </>
+    </ErrorBoundary>
   );
 };
 

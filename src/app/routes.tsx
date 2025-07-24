@@ -3,6 +3,7 @@ import { lazy } from 'react';
 
 // Lazy load components for better performance
 const HomePage = lazy(() => import('../pages/HomePage'));
+const ErrorPage = lazy(() => import('../pages/ErrorPage'));
 const PlantsPage = lazy(() => import('../features/plants/pages/PlantsPage'));
 const PlantPage = lazy(() => import('../features/plants/pages/PlantPage'));
 const ExamsPage = lazy(() => import('../features/exams/pages/ExamsPage'));
@@ -149,14 +150,12 @@ export const routes: RouteConfig[] = [
     showInNav: true,
     navLabel: 'Sandbox',
   },
-  // General Catch
-  {
-    path: '/*',
-    element: HomePage,
-    showInNav: false,
-    navLabel: 'Sandbox',
-  },
 ];
+
+// Component for 404 Not Found
+export const NotFoundPage = () => (
+  <ErrorPage errorType="notFound" showBackButton={true} />
+);
 
 // Helper functions
 export const getNavItems = () => {
