@@ -1,34 +1,31 @@
-// useDatabase.ts 
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 export const useExams = () => {
     const [exams, setExams] = useState<Exam[]>([]);
-    const [error, setError] = useState<string | null>(null);
 
     const addExam = async (exam: Exam): Promise<void> => {
         if (!exam.name) {
-            setError('Please fill in exam name');
+            toast.error("Please fill in exam name");
             return;
         }
         if (!exam.plant_id) {
-            setError('Please fill in the exam plant_id');
+            toast.error("Please fill in the exam plant_id");
             return;
         }
         try {
             const result = await window.db.exams.add(exam);
             if (result.success) {
-                setError(null);
                 await getExams();
+                toast.success("Exam added");
             } else {
-                setError(result.error || 'Failed to add exam');
+                toast.error(result.error || "Failed to add exam");
             }
-        }
-        catch (err) {
-            setError("Failed to add exam");
+        } catch {
+            toast.error("Failed to add exam");
         }
     };
 
-    // New flexible methods
     const getExamsByParams = async (params?: DBSearchParams): Promise<Exam[]> => {
         try {
             const result = await window.db.exams.getMany(params);
@@ -36,11 +33,11 @@ export const useExams = () => {
                 setExams(result.exams || []);
                 return result.exams || [];
             } else {
-                setError(result.error || 'Failed to fetch exams');
+                toast.error(result.error || "Failed to fetch exams");
                 return [];
             }
-        } catch (err) {
-            setError("Failed to fetch exams");
+        } catch {
+            toast.error("Failed to fetch exams");
             return [];
         }
     };
@@ -51,16 +48,15 @@ export const useExams = () => {
             if (result.success) {
                 return result.exam || null;
             } else {
-                setError(result.error || 'Failed to fetch exam');
+                toast.error(result.error || "Failed to fetch exam");
                 return null;
             }
-        } catch (err) {
-            setError("Failed to fetch exam");
+        } catch {
+            toast.error("Failed to fetch exam");
             return null;
         }
     };
 
-    // Backward compatibility methods
     const getExams = async (): Promise<Exam[]> => {
         try {
             const result = await window.db.exams.getAll();
@@ -68,11 +64,11 @@ export const useExams = () => {
                 setExams(result.exams || []);
                 return result.exams || [];
             } else {
-                setError(result.error || 'Failed to fetch exams');
+                toast.error(result.error || "Failed to fetch exams");
                 return [];
             }
-        } catch (err) {
-            setError("Failed to fetch exams");
+        } catch {
+            toast.error("Failed to fetch exams");
             return [];
         }
     };
@@ -83,16 +79,15 @@ export const useExams = () => {
             if (result.success) {
                 return result.exam || null;
             } else {
-                setError(result.error || 'Failed to fetch exam');
+                toast.error(result.error || "Failed to fetch exam");
                 return null;
             }
-        } catch (err) {
-            setError("Failed to fetch exam");
+        } catch {
+            toast.error("Failed to fetch exam");
             return null;
         }
     };
 
-    // Convenience methods using the new flexible system
     const getExamsByName = async (name: string): Promise<Exam[]> => {
         return getExamsByParams({ name });
     };
@@ -111,32 +106,30 @@ export const useExams = () => {
             if (result.success) {
                 return result.exams || [];
             } else {
-                setError(result.error || `Failed to get exams with questionId ${questionId}`);
+                toast.error(result.error || `Failed to get exams with questionId ${questionId}`);
                 return [];
             }
-        } catch (err) {
-            setError(`Failed to get exams with questionId ${questionId}`);
+        } catch {
+            toast.error(`Failed to get exams with questionId ${questionId}`);
             return [];
         }
     };
 
     const updateExam = async (exam: Exam): Promise<void> => {
         if (!exam.name) {
-            setError('Please fill in all fields');
+            toast.error("Please fill in all fields");
             return;
         }
         try {
             const result = await window.db.exams.update(exam);
             if (result.success) {
-                setError(null);
                 await getExams();
+                toast.success("Exam updated");
             } else {
-                setError(result.error || 'Failed to update exam');
-                return;
+                toast.error(result.error || "Failed to update exam");
             }
-        } catch (err) {
-            setError("Failed to update exam");
-            return;
+        } catch {
+            toast.error("Failed to update exam");
         }
     };
 
@@ -145,37 +138,34 @@ export const useExams = () => {
             const result = await window.db.exams.delete(examId);
             if (result.success) {
                 await getExams();
+                toast.success("Exam deleted");
             } else {
-                setError(result.error || 'Failed to delete exam');
+                toast.error(result.error || "Failed to delete exam");
             }
-        } catch (err) {
-            setError("Failed to delete exam")
+        } catch {
+            toast.error("Failed to delete exam");
         }
     };
 
     const removeQuestionFromExam = async (examId: number, questionId: number): Promise<void> => {
         try {
-            const result = await window.db.exams.removeQuestion(examId, questionId)
-            if (result.success) {
-                return
-            } else {
-                setError(result.error || 'Failed to remove questions');
+            const result = await window.db.exams.removeQuestion(examId, questionId);
+            if (!result.success) {
+                toast.error(result.error || "Failed to remove questions");
             }
-        } catch (err) {
-            setError('Failed to remove questions')
+        } catch {
+            toast.error("Failed to remove questions");
         }
     };
 
     const addExamQuestion = async (examId: number, questionId: number): Promise<void> => {
         try {
-            const result = await window.db.exams.addQuestionToExam(examId, questionId)
-            if (result.success) {
-                return
-            } else {
-                setError(result.error || 'Failed to add exam question');
+            const result = await window.db.exams.addQuestionToExam(examId, questionId);
+            if (!result.success) {
+                toast.error(result.error || "Failed to add exam question");
             }
-        } catch (err) {
-            setError('Failed to add exam question')
+        } catch {
+            toast.error("Failed to add exam question");
         }
     };
 
@@ -185,19 +175,14 @@ export const useExams = () => {
 
     return {
         exams,
-        error,
-        // New flexible methods
         getExamsByParams,
         getExamByParams,
-        // Convenience methods
         getExamsByName,
         getExamsByPlantId,
         getExamByName,
-        // Backward compatibility methods
         getExams,
         getExamById,
         getExamsByQuestionId,
-        // CRUD operations
         addExam,
         updateExam,
         deleteExam,
