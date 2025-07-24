@@ -1,31 +1,29 @@
-// useDatabase.ts 
 import { useState, useEffect } from "react";
-
+import { toast } from "react-toastify";
 
 export const useStems = () => {
     const [stems, setStems] = useState<Stem[]>([]);
-    const [error, setError] = useState<string | null>(null);
 
     const addStem = async (stem: Stem): Promise<void> => {
         if (!stem.stem_id) {
-            setError('Please fill in stem number');
+            toast.error("Please fill in stem number");
             return;
         }
         if (!stem.stem_statement) {
-            setError('Please fill in stem name');
+            toast.error("Please fill in stem statement");
             return;
         }
+
         try {
             const result = await window.db.stems.add(stem);
             if (result.success) {
-                setError(null);
                 await getStems();
+                toast.success("Stem added");
             } else {
-                setError(result.error || 'Failed to add stem');
+                toast.error(result.error || "Failed to add stem");
             }
-        }
-        catch (err) {
-            setError("Failed to add stem");
+        } catch (err) {
+            toast.error("Failed to add stem");
         }
     };
 
@@ -36,11 +34,11 @@ export const useStems = () => {
                 setStems(result.stems || []);
                 return result.stem || null;
             } else {
-                setError(result.error || 'Failed to fetch stems');
+                toast.error(result.error || "Failed to fetch stem");
                 return null;
             }
         } catch (err) {
-            setError("Failed to fetch stems");
+            toast.error("Failed to fetch stem");
             return null;
         }
     };
@@ -52,35 +50,31 @@ export const useStems = () => {
                 setStems(result.stems || []);
                 return result.stems || [];
             } else {
-                setError(result.error || 'Failed to fetch stems');
+                toast.error(result.error || "Failed to fetch stems");
                 return [];
             }
         } catch (err) {
-            setError("Failed to fetch stems");
+            toast.error("Failed to fetch stems");
             return [];
         }
     };
 
-
-
     const updateStem = async (stem: Stem): Promise<void> => {
         if (!stem.stem_statement) {
-            setError('Please fill in all fields');
-            return
+            toast.error("Please fill in all fields");
+            return;
         }
+
         try {
             const result = await window.db.stems.update(stem);
             if (result.success) {
-                setError(null);
                 await getStems();
-                return
+                toast.success("Stem updated");
             } else {
-                setError(result.error || 'Failed to update stem');
-                return;
+                toast.error(result.error || "Failed to update stem");
             }
         } catch (err) {
-            setError("Failed to update stem");
-            return;
+            toast.error("Failed to update stem");
         }
     };
 
@@ -89,18 +83,25 @@ export const useStems = () => {
             const result = await window.db.stems.delete(stemNum);
             if (result.success) {
                 await getStems();
+                toast.success("Stem deleted");
             } else {
-                setError(result.error || 'Failed to delete stem');
+                toast.error(result.error || "Failed to delete stem");
             }
         } catch (err) {
-            setError("Failed to delete stem")
+            toast.error("Failed to delete stem");
         }
-    }
+    };
+
     useEffect(() => {
         getStems();
     }, []);
 
     return {
-        stems, getStem, getStems, addStem, updateStem, deleteStem, error
-    }
-}
+        stems,
+        getStem,
+        getStems,
+        addStem,
+        updateStem,
+        deleteStem,
+    };
+};
