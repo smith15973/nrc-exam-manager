@@ -38,6 +38,11 @@ export const routes: RouteConfig[] = [
     showInNav: true,
     navLabel: 'Home',
   },
+  // Error Page
+  {
+    path: '/error',
+    element: ErrorPage,
+  },
 
   // Plants
   {
@@ -170,7 +175,7 @@ export const getNavItems = () => {
 export const getParentRoute = (currentPath: string): string | null => {
   // Remove trailing slash and normalize
   const cleanPath = currentPath.replace(/\/$/, '');
-  
+
   // Find the current route config
   const currentRoute = routes.find(route => {
     if (route.path.includes(':')) {
@@ -190,7 +195,7 @@ export const getParentRoute = (currentPath: string): string | null => {
   if (currentRoute.parentPath.includes(':')) {
     const currentPathParts = cleanPath.split('/');
     const parentPathParts = currentRoute.parentPath.split('/');
-    
+
     let resolvedParentPath = '';
     for (let i = 0; i < parentPathParts.length; i++) {
       const part = parentPathParts[i];

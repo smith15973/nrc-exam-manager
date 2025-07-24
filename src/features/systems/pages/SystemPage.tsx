@@ -13,7 +13,7 @@ export default function SystemPage() {
 
     const loadSystem = async (sysNum: string) => {
         try {
-            const fetchedSystem = await getSystem({ number: sysNum })
+            const fetchedSystem = await getSystem({ system_number: sysNum })
             if (fetchedSystem) {
                 setSystem(fetchedSystem);
             }

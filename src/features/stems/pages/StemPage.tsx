@@ -11,9 +11,9 @@ export default function StemPage() {
     const { stemId } = useParams<{ stemId: string }>();
     const { updateStem, getStem } = useDatabase();
 
-    const loadStem = async (sysNum: string) => {
+    const loadStem = async (stemNum: string) => {
         try {
-            const fetchedStem = await getStem({ number: sysNum })
+            const fetchedStem = await getStem({ stem_id: stemNum })
             if (fetchedStem) {
                 setStem(fetchedStem);
             }

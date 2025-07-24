@@ -1,102 +1,189 @@
-// useDatabase.ts 
 import { useState, useEffect } from "react";
-
+import { useErrorHandler } from "./useErrorHandler";
 
 export const useKas = () => {
     const [kas, setKas] = useState<Ka[]>([]);
     const [error, setError] = useState<string | null>(null);
-
-    const addKa = async (ka: Ka): Promise<void> => {
-        if (!ka.ka_number || !ka.stem_id) {
-            setError('Please fill in all fields');
-            return;
-        }
-        try {
-            const result = await window.db.kas.add(ka);
-            if (result.success) {
-                setError(null);
-                await getKas();
-            } else {
-                setError(result.error || 'Failed to add ka');
-            }
-        }
-        catch (err) {
-            setError("Failed to add ka");
-        }
-    };
+    const [isLoading, setIsLoading] = useState(false);
+    const { handleError } = useErrorHandler();
 
     const getKa = async (params?: DBSearchParams): Promise<Ka | null> => {
+        setIsLoading(true);
         try {
             const result = await window.db.kas.get(params);
+
             if (result.success) {
                 setKas(result.kas || []);
+                setError(null);
                 return result.ka || null;
             } else {
-                setError(result.error || 'Failed to fetch kas');
-                return null;
+                const errorMsg = result.error || 'Failed to fetch ka';
+                setError(errorMsg);
+
+                if (errorMsg.toLowerCase().includes('not found')) {
+                    return null;
+                }
+
+                throw new Error(errorMsg);
             }
         } catch (err) {
-            setError("Failed to fetch kas");
-            return null;
+            const fallbackMsg = "Failed to fetch ka";
+            setError(fallbackMsg);
+            console.error('Database error:', err);
+            throw err instanceof Error ? err : new Error(fallbackMsg);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const getKas = async (params?: DBSearchParams): Promise<Ka[]> => {
+        setIsLoading(true);
         try {
             const result = await window.db.kas.getMany(params);
+
             if (result.success) {
                 setKas(result.kas || []);
+                setError(null);
                 return result.kas || [];
             } else {
-                setError(result.error || 'Failed to fetch kas');
-                return [];
+                const errorMsg = result.error || 'Failed to fetch kas';
+                setError(errorMsg);
+
+                if (errorMsg.toLowerCase().includes('database connection')) {
+                    throw new Error('Database connection error');
+                }
+
+                throw new Error(errorMsg);
             }
         } catch (err) {
-            setError("Failed to fetch kas");
-            return [];
+            const fallbackMsg = "Failed to fetch kas";
+            setError(fallbackMsg);
+            console.error('Database error:', err);
+            throw err instanceof Error ? err : new Error(fallbackMsg);
+        } finally {
+            setIsLoading(false);
         }
     };
 
-
-
-    const updateKa = async (ka: Ka): Promise<void> => {
+    const addKa = async (ka: Ka): Promise<void> => {
         if (!ka.ka_number || !ka.stem_id) {
-            setError('Please fill in all fields');
-            return
+            const validationError = 'Please fill in all fields';
+            setError(validationError);
+            return;
         }
+
+        setIsLoading(true);
         try {
-            const result = await window.db.kas.update(ka);
+            const result = await window.db.kas.add(ka);
+
             if (result.success) {
                 setError(null);
                 await getKas();
-                return
             } else {
-                setError(result.error || 'Failed to update ka');
-                return;
+                const errorMsg = result.error || 'Failed to add ka';
+                setError(errorMsg);
+
+                if (errorMsg.toLowerCase().includes('database connection')) {
+                    handleError(new Error(errorMsg), 'network');
+                } else {
+                    handleError(new Error(errorMsg), 'general');
+                }
             }
         } catch (err) {
-            setError("Failed to update ka");
+            const fallbackMsg = "Failed to add ka";
+            setError(fallbackMsg);
+            console.error('Database error:', err);
+            handleError(err instanceof Error ? err : new Error(fallbackMsg), 'general');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const updateKa = async (ka: Ka): Promise<void> => {
+        if (!ka.ka_number || !ka.stem_id) {
+            const validationError = 'Please fill in all fields';
+            setError(validationError);
             return;
+        }
+
+        setIsLoading(true);
+        try {
+            const result = await window.db.kas.update(ka);
+
+            if (result.success) {
+                setError(null);
+                await getKas();
+            } else {
+                const errorMsg = result.error || 'Failed to update ka';
+                setError(errorMsg);
+
+                if (errorMsg.toLowerCase().includes('not found')) {
+                    handleError(new Error('Ka not found'), 'notFound');
+                } else if (errorMsg.toLowerCase().includes('database connection')) {
+                    handleError(new Error(errorMsg), 'network');
+                } else {
+                    handleError(new Error(errorMsg), 'general');
+                }
+            }
+        } catch (err) {
+            const fallbackMsg = "Failed to update ka";
+            setError(fallbackMsg);
+            console.error('Database error:', err);
+            handleError(err instanceof Error ? err : new Error(fallbackMsg), 'general');
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const deleteKa = async (kaNum: string): Promise<void> => {
+        setIsLoading(true);
         try {
             const result = await window.db.kas.delete(kaNum);
+
             if (result.success) {
+                setError(null);
                 await getKas();
             } else {
-                setError(result.error || 'Failed to delete ka');
+                const errorMsg = result.error || 'Failed to delete ka';
+                setError(errorMsg);
+
+                if (errorMsg.toLowerCase().includes('not found')) {
+                    handleError(new Error('Ka not found'), 'notFound');
+                } else if (errorMsg.toLowerCase().includes('database connection')) {
+                    handleError(new Error(errorMsg), 'network');
+                } else {
+                    handleError(new Error(errorMsg), 'general');
+                }
             }
         } catch (err) {
-            setError("Failed to delete ka")
+            const fallbackMsg = "Failed to delete ka";
+            setError(fallbackMsg);
+            console.error('Database error:', err);
+            handleError(err instanceof Error ? err : new Error(fallbackMsg), 'general');
+        } finally {
+            setIsLoading(false);
         }
-    }
+    };
+
     useEffect(() => {
-        getKas();
+        getKas().catch((err) => {
+            const msg = err?.message?.toLowerCase?.() || '';
+            if (msg.includes('database connection')) {
+                handleError(err, 'network');
+            } else {
+                handleError(err, 'general');
+            }
+        });
     }, []);
 
     return {
-        kas, getKa, getKas, addKa, updateKa, deleteKa, error
-    }
-}
+        kas,
+        getKa,
+        getKas,
+        addKa,
+        updateKa,
+        deleteKa,
+        error,
+        isLoading
+    };
+};
