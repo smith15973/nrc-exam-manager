@@ -226,6 +226,7 @@ export function QuestionFormContent({
                     touched={touched.question_text}
                     isQuestionTextValid={isQuestionTextValid}
                     onDuplicateStatusChange={handleDuplicateStatusChange}
+                    questionId={questionForm.question_id}
                 />
                 <Box sx={{ pb: 2 }}>
                     <TextField
