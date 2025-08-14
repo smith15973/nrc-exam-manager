@@ -337,9 +337,11 @@ const handleShutdown = async (): Promise<void> => {
   if (isShuttingDown) return;
   isShuttingDown = true;
   console.log('Application shutting down...');
+  
   if (mainWindow && !mainWindow.isDestroyed()) {
     saveWindowState(mainWindow);
   }
+  
   if (db) {
     console.log('Closing database...');
     try {
@@ -350,7 +352,17 @@ const handleShutdown = async (): Promise<void> => {
     }
     db = null;
   }
-  process.exit(0);
+  
+  if (sbdb) {
+    console.log('Closing secure database...');
+    try {
+      sbdb.close();
+      console.log('Secure database closed successfully');
+    } catch (err) {
+      console.error('Error closing secure database:', err);
+    }
+    sbdb = null;
+  }
 };
 
 if (require('electron-squirrel-startup')) {
@@ -409,6 +421,7 @@ const createWindow = async (): Promise<void> => {
     y: windowState.y,
     width: windowState.width,
     height: windowState.height,
+    show: false, // Don't show initially
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       contextIsolation: true,
@@ -436,12 +449,12 @@ const createWindow = async (): Promise<void> => {
   // Show window when ready
   mainWindow.once('ready-to-show', () => {
     if (mainWindow) {
-      mainWindow.show();
-
-      if (!app.isPackaged) {
-        mainWindow.webContents.openDevTools();
-      }
+    mainWindow.show();
+    
+    if (!app.isPackaged) {
+      mainWindow.webContents.openDevTools();
     }
+  }
   });
 
   mainWindow.on('close', () => {
@@ -459,26 +472,43 @@ app.on('ready', async () => {
   await createWindow();
 });
 
-process.on('SIGINT', handleShutdown);
-process.on('SIGTERM', handleShutdown);
-process.on('SIGHUP', handleShutdown);
+// Handle process signals
+process.on('SIGINT', async () => {
+  await handleShutdown();
+  process.exit(0);
+});
 
-app.on('will-quit', (event) => {
+process.on('SIGTERM', async () => {
+  await handleShutdown();
+  process.exit(0);
+});
+
+process.on('SIGHUP', async () => {
+  await handleShutdown();
+  process.exit(0);
+});
+
+app.on('will-quit', async (event) => {
   if (!isShuttingDown) {
     event.preventDefault();
-    handleShutdown();
+    await handleShutdown();
+    app.exit(0);
   }
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  // Quit the app when all windows are closed (even on macOS)
+  app.quit();
 });
 
+// Handle app activation on macOS (when dock icon is clicked)
 app.on('activate', async () => {
+  // On macOS, re-create window when dock icon is clicked and no windows are open
   if (BrowserWindow.getAllWindows().length === 0) {
     await createWindow();
+  } else if (mainWindow) {
+    // If window exists but is hidden, show it
+    mainWindow.show();
   }
 });
 
