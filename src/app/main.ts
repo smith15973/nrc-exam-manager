@@ -432,7 +432,17 @@ const createWindow = async (): Promise<void> => {
   }
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-  mainWindow.webContents.openDevTools();
+
+  // Show window when ready
+  mainWindow.once('ready-to-show', () => {
+    if (mainWindow) {
+      mainWindow.show();
+
+      if (!app.isPackaged) {
+        mainWindow.webContents.openDevTools();
+      }
+    }
+  });
 
   mainWindow.on('close', () => {
     if (mainWindow) {
@@ -473,8 +483,8 @@ app.on('activate', async () => {
 });
 
 ipcMain.handle('open-external', async (_event, url) => {
-    await shell.openExternal(url);
-  });
+  await shell.openExternal(url);
+});
 
 // Import handlers
 ipcMain.handle('files-operation', async (_event, { operation, data }) => {
