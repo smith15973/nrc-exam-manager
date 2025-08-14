@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main  # or your default branch
+      - main
 
 jobs:
   build-linux:
@@ -50,9 +50,11 @@ jobs:
       - name: 🔨 Build for macOS
         run: npm run make
 
-      - name: 🪄 Remove macOS quarantine attribute
+      # Remove macOS quarantine attribute
+      - name: 🧹 Remove quarantine attribute
         run: |
-          find out/make -name "*.app" -exec xattr -r -d com.apple.quarantine {} \;
+          find out/make -name "*.app" -exec xattr -d com.apple.quarantine {} \; || true
+          find out/make -name "*.dmg" -exec xattr -d com.apple.quarantine {} \; || true
 
       - name: 📤 Upload macOS artifacts
         uses: actions/upload-artifact@v4
@@ -79,10 +81,15 @@ jobs:
       - name: 🔨 Build for Windows
         run: npm run make
 
+      # Optional: unblock downloaded files (PowerShell equivalent)
+      - name: 🧹 Remove Windows block
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path out/make -Recurse -Include *.exe,*.msi | Unblock-File
+
       - name: 📤 Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
           path: |
             out/make/squirrel.windows/x64/*.exe
-
