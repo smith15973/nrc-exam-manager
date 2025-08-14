@@ -16,7 +16,7 @@ export default function QuestionPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [student, setStudent] = useState(false);
-    const { updateQuestion } = useDatabase();
+    const { addQuestion, updateQuestion } = useDatabase();
 
 
     // Single source of truth for loading question data
@@ -60,8 +60,14 @@ export default function QuestionPage() {
         );
     }
 
-    const handleSubmit = async (updatedQuestion: Question) => {
+    const handleEditQuestion = async (updatedQuestion: Question) => {
         await updateQuestion(updatedQuestion);
+        if (questionId) {
+            loadQuestion();
+        }
+    }
+    const handleDuplicateQuestion = async (duplicatedQuestion: Question) => {
+        await addQuestion(duplicatedQuestion);
         if (questionId) {
             loadQuestion();
         }
@@ -78,7 +84,16 @@ export default function QuestionPage() {
                 />
             </Box>
             <Box display={'flex'} justifyContent={'space-between'}>
-                <QuestionFormModal onSubmit={handleSubmit} question={question} />
+                <Box display="flex" gap={2}>
+                    <QuestionFormModal onSubmit={handleEditQuestion} question={question} />
+                    <QuestionFormModal
+                        onSubmit={handleDuplicateQuestion}
+                        question={{ ...question, question_id: 0 }} // removes ID for the child
+                        buttonText="Duplicate"
+                    />
+
+                </Box>
+
                 <ConfirmDelete
                     message='Are you sure you want to delete this question? This will remove it from all exam associations! This action cannot be undone!'
                     onConfirmDelete={() => deleteQuestion(question.question_id)}

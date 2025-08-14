@@ -15,6 +15,7 @@ interface QuestionFormProps {
     exam?: Exam;
     onSubmit: (question: Question) => void;
     examId?: number;
+    buttonText?: string;
 }
 
 interface QuestionFormContentProps {
@@ -350,7 +351,7 @@ export function QuestionFormContent({
 }
 
 export default function QuestionFormModal(props: QuestionFormProps) {
-    const { question, onSubmit, exam, examId } = props;
+    const { question, onSubmit, exam, examId, buttonText } = props;
     const [questionForm, setQuestionForm] = useState<Question>(question || defaultQuestion);
     const [selectedSystemKas, setSelectedSystemKas] = useState<string[]>([]);
     const [open, setOpen] = useState(false);
@@ -461,8 +462,8 @@ export default function QuestionFormModal(props: QuestionFormProps) {
         <>
             <FormDialog
                 open={open}
-                title={`${question ? 'Edit' : 'Add'} Question`}
-                submitText={`${question ? 'Update' : 'Add'} Question`}
+                title={`${buttonText ? buttonText : question ? 'Edit' : 'Add'} Question`}
+                submitText={`${buttonText ? buttonText : question ? 'Update' : 'Add'} Question`}
                 onSubmit={handleSubmit}
                 onClose={() => setOpen(false)}
                 validate={() => validationStatus.state !== 'error'}
@@ -482,7 +483,7 @@ export default function QuestionFormModal(props: QuestionFormProps) {
                 variant="contained"
                 onClick={() => setOpen(true)}
             >
-                {question ? 'Edit' : 'Add'} Question
+                {buttonText ? buttonText : question ? 'Edit' : 'Add'} Question
             </Button>
         </>
     );
