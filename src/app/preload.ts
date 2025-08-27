@@ -101,6 +101,7 @@ contextBridge.exposeInMainWorld('files', {
   },
   export: {
     questions: (questionIds: number[]) => filesCall('export-questions', questionIds),
+    docx: (questionIds: number[], examId?: number, templatePath?: string) => filesCall('export-docx', { questionIds, examId, templatePath })
   },
   openLocation: (filePath: string) => filesCall('open-location', filePath),
   changeDBLocation: () => filesCall('change-db-location'),

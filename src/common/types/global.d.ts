@@ -279,12 +279,12 @@ interface Window {
       update: (ka: Ka) => Promise<KaResponse>;
       delete: (kaNum: string) => Promise<KaResponse>;
     }
-    
+
   };
 
   electronAPI: {
-      openExternal: (url: string) => Promise<void>;
-    }
+    openExternal: (url: string) => Promise<void>;
+  }
 
   files: {
     import: {
@@ -292,6 +292,7 @@ interface Window {
     },
     export: {
       questions: (questionIds: number[]) => Promise<QuestionsExportResponse>
+      docx: (questionIds: number[], examId?: number, templatePath?: string) => Promise<QuestionsExportResponse>
     },
     openLocation: (filePath: string) => void,
     changeDBLocation: () => Promise<{ success: boolean; dbPath?: string; error?: string }>;

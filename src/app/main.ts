@@ -337,11 +337,11 @@ const handleShutdown = async (): Promise<void> => {
   if (isShuttingDown) return;
   isShuttingDown = true;
   console.log('Application shutting down...');
-  
+
   if (mainWindow && !mainWindow.isDestroyed()) {
     saveWindowState(mainWindow);
   }
-  
+
   if (db) {
     console.log('Closing database...');
     try {
@@ -352,7 +352,7 @@ const handleShutdown = async (): Promise<void> => {
     }
     db = null;
   }
-  
+
   if (sbdb) {
     console.log('Closing secure database...');
     try {
@@ -449,12 +449,12 @@ const createWindow = async (): Promise<void> => {
   // Show window when ready
   mainWindow.once('ready-to-show', () => {
     if (mainWindow) {
-    mainWindow.show();
-    
-    if (!app.isPackaged) {
-      mainWindow.webContents.openDevTools();
+      mainWindow.show();
+
+      if (!app.isPackaged) {
+        mainWindow.webContents.openDevTools();
+      }
     }
-  }
   });
 
   mainWindow.on('close', () => {
@@ -538,7 +538,10 @@ ipcMain.handle('files-operation', async (_event, { operation, data }) => {
     }
 
     case 'export-questions': {
-      return exportRepository.exportQuestions(data)
+      return exportRepository.exportQuestions(data);
+    }
+    case 'export-docx': {
+      return exportRepository.exportDocx(data);
     }
     case 'open-location': {
       return shell.showItemInFolder(data);
