@@ -64,6 +64,7 @@ export class ExportRepository {
 
   async exportDocx({ questionIds, examId, templatePath }: { questionIds: number[]; examId?: number; templatePath?: string }): Promise<QuestionsExportResponse> {
     try {
+      // examId = 4;
       // Step 1: Read template file once (consider caching this)
       const resolvedTemplatePath = templatePath ?? '/Users/noah/Desktop/Projects/Davis_Besse_2025/nrc-exam-manager/src/resources/default-questions-template.docx';
       const content = fs.readFileSync(resolvedTemplatePath, 'binary');
@@ -74,14 +75,15 @@ export class ExportRepository {
 
       // Step 3: Fetch data in parallel
       const [questions, exam] = await Promise.all([
-        Promise.all(questionIds.map(id => this.db.questionService.getQuestionForExport(id))),
+        Promise.all(questionIds.map(id => this.db.questionService.getCompleteQuestion(id))),
         examId ? this.db.exams.getById(examId) : Promise.resolve(null)
       ]);
+
 
       const examName = exam?.name || '';
 
       // Step 4: Create efficient answer reordering system
-      const createAnswersData = (question: QuestionForDataTransfer, answersOrder = 'ABCD') => {
+      const createAnswersData = (question: Question, answersOrder = 'ABCD') => {
         // Map from original positions to new positions
         const orderMap = {
           A: answersOrder.indexOf('A'),
@@ -127,29 +129,30 @@ export class ExportRepository {
         const newCorrectAnswer = reverseMap[newCorrectIndex];
 
         return {
-          answer_a: reorderedAnswers[0],
-          answer_b: reorderedAnswers[1],
-          answer_c: reorderedAnswers[2],
-          answer_d: reorderedAnswers[3],
-          answer_a_justification: reorderedJustifications[0],
-          answer_b_justification: reorderedJustifications[1],
-          answer_c_justification: reorderedJustifications[2],
-          answer_d_justification: reorderedJustifications[3],
-          correct_answer: newCorrectAnswer
-        };
+          answers: [
+            { letter: "A", text: reorderedAnswers[0], justification: reorderedJustifications[0] },
+            { letter: "B", text: reorderedAnswers[1], justification: reorderedJustifications[1] },
+            { letter: "C", text: reorderedAnswers[2], justification: reorderedJustifications[2] },
+            { letter: "D", text: reorderedAnswers[3], justification: reorderedJustifications[3] },
+          ],
+          correct_answer: newCorrectAnswer,
+        }
       };
 
-      const createBaseQuestionData = (question: QuestionForDataTransfer) => ({
-        question_text: question.question_text,
-        exam_level: question.exam_level ? 'SRO' : 'RO',
-        cognitive_level: question.cognitive_level ? 'HIGH' : 'LOW',
-        technical_references: question.technical_references,
-        references_provided: question.references_provided,
-        objective: question.objective,
-        related_system_kas: question.question_exams?.map((qe) => `${qe.main_system}_${qe.main_ka}`) || [],
-        related_exams: question.question_exams?.map((qe) => ({
-          exam_name: qe.exam_name,
-          question_number: qe.question_number
+      const createBaseQuestionData = (question: Question) => ({
+        question_text: question?.question_text || '',
+        exam_level: question?.exam_level ? 'SRO' : 'RO',
+        isSRO: question?.exam_level ? true : false,
+        cognitive_level: question?.cognitive_level ? 'HIGH' : 'LOW',
+        technical_references: question?.technical_references || '',
+        references_provided: question?.references_provided || false,
+        objective: question?.objective || '',
+        related_system_kas: question?.question_exams?.map((qe) =>
+          `${qe?.main_system_ka_system || ''}_${qe?.main_system_ka_ka || ''}`
+        ) || [],
+        related_exams: question?.question_exams?.map((qe) => ({
+          exam_name: qe?.exam?.name || '',
+          question_number: qe?.question_number || 0
         })) || []
       });
 
@@ -159,29 +162,59 @@ export class ExportRepository {
 
       if (examId && exam) {
         // Process questions for specific exam
-        processedQuestions = questions.map(question => {
-          const examData = question.question_exams?.find((qe) => qe.exam_id === examId);
-          const answersData = createAnswersData(question, examData?.answers_order);
+        processedQuestions = await Promise.all(questions.map(async (question, index) => {
+          const examData = question?.question_exams?.find((qe) => qe?.exam_id === examId);
+          const answersData = createAnswersData(question, examData?.answers_order || 'ABCD');
+
+          const main_system_ka = question?.system_kas?.find(sk =>
+            sk?.system_number === examData?.main_system_ka_system &&
+            sk?.ka_number === examData?.main_system_ka_ka
+          );
+
+          const system_number = examData?.main_system_ka_system;
+          let system = null;
+
+          // Safe system lookup
+          if (system_number) {
+            try {
+              system = await this.db.systems.get({ system_number });
+            } catch (error) {
+              // Silently handle error, system stays null
+              system = null;
+            }
+          }
 
           return {
             ...createBaseQuestionData(question),
             ...answersData,
-            system_number: examData?.main_system,
-            ka_number: examData?.main_ka,
-            ka_match_justification: examData?.ka_match_justification,
-            sro_match_justification: examData?.sro_match_justification,
-            question_number: examData?.question_number,
+            category: main_system_ka?.category || '',
+            ka_statement: main_system_ka?.ka_statement || '',
+            ka_importance: question?.exam_level === 1
+              ? (main_system_ka?.sro_importance || '')
+              : (main_system_ka?.ro_importance || ''),
+            cfr_content: main_system_ka?.cfr_content || '',
+            system_number: system_number || '',
+            system_name: system?.system_name || '',
+            ka_number: examData?.main_system_ka_ka || '',
+            ka_match_justification: examData?.ka_match_justification || '',
+            sro_match_justification: examData?.sro_match_justification || '',
+            question_number: examData?.question_number || (index + 1),
           };
-        });
-        examName_final = examName;
+        }));
+
+        examName_final = exam?.name || '';
       } else {
         // Process questions without specific exam
-        processedQuestions = questions.map((question, idx) => ({
-          ...createBaseQuestionData(question),
-          ...createAnswersData(question), // Uses default ABCD order
-          question_number: idx + 1,
-        }));
-        examName_final = `${questions.length} NEM Questions`;
+        processedQuestions = questions?.map((question, idx) => {
+          const answersData = createAnswersData(question); // Uses default ABCD order
+          return {
+            ...createBaseQuestionData(question),
+            ...answersData,
+            question_number: idx + 1,
+          };
+        }) || [];
+
+        examName_final = `${questions?.length || 0} NEM Questions`;
       }
 
       // Step 6: Render the document
