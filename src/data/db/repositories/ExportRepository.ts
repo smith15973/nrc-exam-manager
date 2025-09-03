@@ -1,8 +1,10 @@
-import { dialog } from 'electron';
+import { dialog, app } from 'electron';
 import * as fs from 'fs';
 import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import { Database } from '../database';
+import * as path from 'path';
+
 
 export class ExportRepository {
   private db: Database;
@@ -10,6 +12,11 @@ export class ExportRepository {
   constructor(db: Database) {
     this.db = db;
   }
+
+  getDefaultTemplatePath = () => {
+    const appPath = app.getAppPath();
+    return path.join(appPath, 'src', 'resources', 'default-questions-template.docx');
+  };
 
   // File Dialog Helpers
   async saveFileDialog(defaultName: string, filters: Electron.FileFilter[]): Promise<string | null> {
@@ -66,7 +73,7 @@ export class ExportRepository {
     try {
       // examId = 4;
       // Step 1: Read template file once (consider caching this)
-      const resolvedTemplatePath = templatePath ?? '/Users/noah/Desktop/Projects/Davis_Besse_2025/nrc-exam-manager/src/resources/default-questions-template.docx';
+      const resolvedTemplatePath = templatePath ?? this.getDefaultTemplatePath();
       const content = fs.readFileSync(resolvedTemplatePath, 'binary');
 
       // Step 2: Load the template
